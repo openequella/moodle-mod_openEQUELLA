@@ -15,27 +15,38 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('../../config.php');
-require_once('lib.php');
-require_once($CFG->libdir.'/resourcelib.php');
-
-global $DB, $PAGE, $OUTPUT;
+require_once("../../config.php");
+require_once("lib.php");
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // newmodule ID
 
-if( $id ) {  // Two ways to specify the module
-    $cm = get_coursemodule_from_id('equella', $id, 0, false, MUST_EXIST);
-    $equella = $DB->get_record('equella', array('id' => $cm->instance), '*', MUST_EXIST);
+if ($id) {
+	if (! $cm = get_coursemodule_from_id("equella", $id)) {
+		error("Course Module ID was incorrect");
+	}
+
+	if (! $course = get_record("course", "id", $cm->course)) {
+		error("Course is misconfigured");
+	}
+
+	if (! $equella = get_record("equella", "id", $cm->instance)) {
+		error("Course module is incorrect");
+	}
+
 } else {
-    $equella = $DB->get_record('url', array('id' => $a), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('url', $equella->id, $equella->course, false, MUST_EXIST);
+	if (! $equella = get_record("equella", "id", $a)) {
+		error("Course module is incorrect");
+	}
+	if (! $course = get_record("course", "id", $equella->course)) {
+		error("Course is misconfigured");
+	}
+	if (! $cm = get_coursemodule_from_instance("equella", $equella->id, $course->id)) {
+		error("Course Module ID was incorrect");
+	}
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
-# Require authentication and course participation
-require_course_login($course, true, $cm);
+require_course_login($course);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('moodle/course:viewparticipants', $context);
 
@@ -45,31 +56,48 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $con
 
 add_to_log($course->id, "equella", "view", "view.php?id=$cm->id", $equella->id, $cm->id);
 
-$PAGE->set_url('/mod/equella/view.php', array('id' => $cm->id));
-
 $url = equella_appendtoken($equella->url);
 if (optional_param('inpopup', 0, PARAM_BOOL))
 {
 	redirect($url);
 }
+else
+{
+    $navigation = build_navigation(array(), $cm);          
+	print_header_simple($equella->name, "", $navigation, "", "", true, 
+		update_module_button($cm->id, $course->id, get_string("modulename", "equella")), navmenu($course, $cm));
 
-$PAGE->set_title($course->shortname . ': ' . $equella->name);
-$PAGE->set_heading($course->fullname);
-$PAGE->set_activity_record($equella);
-echo $OUTPUT->header();
+	$formatoptions = new object();
+	$formatoptions->noclean = true;
 
-if( trim(strip_tags($equella->intro)) ) {
-	echo $OUTPUT->box_start('mod_introbox', 'equellaintro');
-	echo format_module_intro('equella', $equella, $cm->id);
-	echo $OUTPUT->box_end();
+	if( trim($equella->summary) ) {
+		print_simple_box(format_text($equella->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
+	}
+
+	print_simple_box_start("CENTER");
+
+	if($CFG->version >=  2007021560) {
+		$width = "99%";
+	} else {
+		$width = "750px";
+	}
+	echo '<iframe id="ifm" src="'.htmlentities ($url).'" width="'.$width.'" height="500"></iframe>';
+	echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/equella/iframe.js"></script>';
+
+	print_simple_box_end();
+	echo "<br />";
+
+	print_footer($course);
 }
-
-$mimetype = resourcelib_guess_url_mimetype($equella->url);
-$link = html_writer::tag('a', $equella->name, array('href'=>str_replace('&amp;', '&', $url)));
-$clicktoopen = get_string('clicktoopen', 'equella', $link);
-echo resourcelib_embed_general($url, null, $clicktoopen, $mimetype);
-
-
-echo $OUTPUT->footer($course);
 ?>
+<script language="JavaScript" type="text/javascript">
+	<!--
+		try {
+			document.getElementById('ifm').onload=resizeIframe;
+			window.onresize = resizeIframe;
+		} catch (e) {
+			// ignore
+		}
+	//-->
+</script>
 

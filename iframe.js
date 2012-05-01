@@ -1,5 +1,3 @@
-<?php
-
 // This file is part of the EQUELLA Moodle Integration - http://code.google.com/p/equella-moodle-module/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,6 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$module->version  = 2010100900;
-$module->requires = 2007021500;  // Requires this Moodle version
-?>
+function pageY(elem) {
+    return elem.offsetParent ? (elem.offsetTop + pageY(elem.offsetParent)) : elem.offsetTop;
+}
+var buffer = 20; //scroll bar buffer
+function resizeIframe() {
+    var height = document.documentElement.clientHeight;
+    height -= pageY(document.getElementById('ifm'))+ buffer ;
+    height = (height < 0) ? 0 : height;
+    document.getElementById('ifm').style.height = height + 'px';
+}

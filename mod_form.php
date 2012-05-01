@@ -17,7 +17,6 @@
 
 require_once($CFG->dirroot.'/config.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->libdir.'/resourcelib.php');
 require_once('lib.php');
 
 class mod_equella_mod_form extends moodleform_mod {
@@ -33,30 +32,28 @@ class mod_equella_mod_form extends moodleform_mod {
 		$mform->setType('name', PARAM_TEXT);
 		$mform->addRule('name', null, 'required', null, 'client');
 
-        $this->add_intro_editor();
+		$mform->addElement('htmleditor', 'summary', get_string('summary'));
+		$mform->setType('summary', PARAM_RAW);
 
     	$mform->addElement('text', 'url', get_string('location'), array('size'=>'80'));
-
     	$mform->addElement('hidden', 'activation', '');
     	
-		$mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
+		$mform->addElement('header', 'displaysettings', get_string('display', 'resource') );
 
-		$woptions = array(0 => get_string('option.pagewindow.same', 'equella'), 1 => get_string('option.pagewindow.new', 'equella'));
-		$mform->addElement('select', 'windowpopup', get_string('option.pagewindow', 'equella'), $woptions);
+		$woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
+		$mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
 		$mform->setDefault('windowpopup', !empty($CFG->resource_popup));
 		
 		foreach( equella_get_window_options() as $option ) {
-			$label = get_string('option.popup.'.$option, 'equella');
 			if ($option == 'height' or $option == 'width') {
-				$mform->addElement('text', $option, $label, array('size'=>'4'));
+				$mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
+				$mform->setDefault($option, $CFG->{'resource_popup'.$option});
+				$mform->disabledIf($option, 'windowpopup', 'eq', 0);
 			} else {
-				$mform->addElement('checkbox', $option, $label);
+				$mform->addElement('checkbox', $option, get_string('new'.$option, 'resource'));
+				$mform->setDefault($option, $CFG->{'resource_popup'.$option});
+				$mform->disabledIf($option, 'windowpopup', 'eq', 0);
 			}
-			
-			if( isset($CFG->{"resource_popup".$option}) ) {
-				$mform->setDefault($option, $CFG->{"resource_popup".$option});
-			}
-			$mform->disabledIf($option, 'windowpopup', 'eq', 0);
 			$mform->setAdvanced($option);
 		}
 
@@ -119,7 +116,8 @@ class mod_equella_mod_form extends moodleform_mod {
 				$url .= '&'.$CFG->equella_select_restriction.'=true';
 			}
 
-			echo resourcelib_embed_general($url, null, $url, 'text/html');
+			echo '<iframe id="ifm" src="'.htmlentities($url).'" width="100%" height="1000"></iframe>';
+			echo '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/equella/iframe.js"></script>';
 		}
 		else
 		{

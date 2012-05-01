@@ -56,7 +56,7 @@ if( $password_param != $password ) {
 	exit;
 }
 
-global $DB, $CFG;
+global $CFG;
 
 // Re-use the same CURL instance to maintain the same EQUELLA session for all URL checks
 $ch = curl_init();
@@ -69,7 +69,7 @@ curl_setopt($ch, CURLOPT_COOKIEJAR, $temp);
 
 echo '<style>.ok {color: green;} .bad {color: red;}</style><ul>';
 
-foreach( $DB->get_records('equella') as $resource ) {
+foreach( get_records('equella') as $resource ) {
 
 	curl_setopt($ch, CURLOPT_URL, equella_append_with_token($resource->url, equella_getssotoken_api()));
 
@@ -79,18 +79,23 @@ foreach( $DB->get_records('equella') as $resource ) {
 	} else {
 		echo '<span class="bad">Could not find in EQUELLA</span><br>';
 
-		//tell someone - get users with course edit perms for the course in question
-		$recipients = $DB->get_records_list('user', 'username', $notify);
+		$recipients = get_records_list('user', 'username', "'".implode("','", $notify)."'");
 		if( $recipients ) {
 			$from = get_admin();
 			$subject = get_string('checker.subject', 'equella');
-			$course = $DB->get_record('course', array('id' => $resource->course));
+			$course = get_record('course','id',$resource->course);
 			$message = get_string('checker.message', 'equella',	array(
 				'name' => $resource->name,
 				'url' => $resource->url,
 				'coursename' => $course->shortname,
 				'courseurl' => $CFG->wwwroot.'/course/view.php?id='.$course->id
 			));
+
+			$a->name = $resource->name;
+			$a->url = $resource->url;
+			$a->coursename = $course->shortname;
+			$a->courseurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
+			$message = get_string('checker.message', 'equella', $a);
 
 			echo 'Emailing the following users:<ul>';
 			foreach( $recipients as $recipient ) {
@@ -104,24 +109,19 @@ foreach( $DB->get_records('equella') as $resource ) {
 
 		//now mark the resource as hidden
 		if( $disable_links ) {
-			$cms = $DB->get_records_sql(
-				"SELECT cm.* FROM {course_modules} cm
-				INNER JOIN {modules} m ON cm.module = m.id
-				WHERE m.name = :modname
-				AND cm.course = :course
-				AND cm.instance = :resource",
-				array(			
-					'modname' => 'equella',
-					'course' => $resource->course,
-					'resource' => $resource->id
-				)
+			$cms = get_records_sql(
+				"SELECT cm.* FROM {$CFG->prefix}course_modules cm
+				INNER JOIN {$CFG->prefix}modules m ON cm.module = m.id
+				WHERE m.name = 'equella' 
+				AND cm.course = {$resource->course}
+				AND cm.instance = {$resource->id}"
 			);
 
 			foreach( $cms as $cm ) {
 				set_coursemodule_visible($cm->id, 0);
 			}
 			rebuild_course_cache($resource->course);
-		}
+		}	
 	}
 	echo '</li>';
 }
@@ -134,99 +134,69 @@ echo '</ul>';
 // The following method is currently disabled/deprecated due to incorrect users being emailed in some cases.
 // Future investigations will be made to determine what the problem is here and correct it.
 function get_course_editors($courseid) {
-	global $DB;
-
 	//get the 'course editors' with the lowest level context
 	$capability = 'moodle/course:manageactivities';
 
 	//course level editors
-	$course_editors = $DB->get_records_sql(
-		"SELECT u.* FROM {user} u
-		INNER JOIN {role_assignments} ra ON u.id = ra.userid
-		INNER JOIN {context} x ON ra.contextid = x.id
-		INNER JOIN {course} c ON x.instanceid = c.id
-		INNER JOIN {role} r ON ra.roleid = r.id
-		INNER JOIN {role_capabilities} rc ON r.id = rc.roleid AND ra.contextid = rc.contextid
-		WHERE rc.capability = :capability
-		AND x.contextlevel = :contextlevel
-		AND c.id = :courseid
-		AND u.deleted = 0
-		AND u.emailstop = 0",
-		array(
-			'contextlevel' => CONTEXT_COURSE,
-			'capability' => $capability,
-			'courseid' => $courseid,
-		)
-	);
-	if( $course_editors ) {
+	$q = "select u.* from {$CFG->prefix}user u
+		inner join {$CFG->prefix}role_assignments ra on u.id = ra.userid
+		inner join {$CFG->prefix}context x on ra.contextid = x.id
+		inner join {$CFG->prefix}course c on x.instanceid = c.id and contextlevel = " . CONTEXT_COURSE . "
+		inner join {$CFG->prefix}role r on ra.roleid = r.id
+		inner join {$CFG->prefix}role_capabilities rc on r.id = rc.roleid
+		where rc.capability = '$capability'
+		and c.id = $courseid and u.deleted = 0 and emailstop = 0";
+	if( $course_editors = get_records_sql($q) ) {
 		return $course_editors;
 	}
 
 	//cat level editors
-	$course_editors = $DB->get_records_sql(
-		"SELECT u.* FROM {user} u
-		INNER JOIN {role_assignments} ra ON u.id = ra.userid
-		INNER JOIN {context} x ON ra.contextid = x.id
-		INNER JOIN {course_categories} cc ON x.instanceid = cc.id
-		INNER JOIN {course} c ON cc.id = c.category
-		INNER JOIN {role} r ON ra.roleid = r.id
-		INNER JOIN {role_capabilities} rc ON r.id = rc.roleid AND ra.contextid = rc.contextid
-		WHERE rc.capability = :capability
-		AND x.contextlevel = :contextlevel
-		AND c.id = :courseid
-		AND u.deleted = 0
-		AND u.emailstop = 0",
-		array(
-			'contextlevel' => CONTEXT_COURSECAT,
-			'capability' => $capability,
-			'courseid' => $courseid,
-		)
-	);
-	if( $course_editors ) {
+	$q = "select u.* from {$CFG->prefix}user u
+		inner join {$CFG->prefix}role_assignments ra on u.id = ra.userid
+		inner join {$CFG->prefix}context x on ra.contextid = x.id
+		inner join {$CFG->prefix}course_categories cc on x.instanceid = cc.id and contextlevel = " . CONTEXT_COURSECAT . "
+		inner join {$CFG->prefix}course c on cc.id = c.category
+		inner join {$CFG->prefix}role r on ra.roleid = r.id
+		inner join {$CFG->prefix}role_capabilities rc on r.id = rc.roleid
+		where rc.capability = '$capability'
+		and c.id = $courseid and u.deleted = 0 and emailstop = 0";
+	if( $course_editors = get_records_sql($q) ) {
 		return $course_editors;
 	}
 
 	//global level editors not admin
-	$course_editors = $DB->get_records_sql(
-		"SELECT u.* FROM {user} u
-		INNER JOIN {role_assignments} ra ON u.id = ra.userid
-		INNER JOIN {context} x ON ra.contextid = x.id
-		INNER JOIN {role} r ON ra.roleid = r.id
-		INNER JOIN {role_capabilities} rc ON r.id = rc.roleid AND ra.contextid = rc.contextid
-		WHERE rc.capability = :capability
-		AND x.contextlevel = :contextlevel
-		AND r.name != 'Administrator'
-		AND u.deleted = 0
-		AND u.emailstop = 0",
-		array(
-			'contextlevel' => CONTEXT_SYSTEM,
-			'capability' => $capability,
-		)
-	);
-	if( $course_editors ) {
+	$q = "select u.* from {$CFG->prefix}user u
+		inner join {$CFG->prefix}role_assignments ra on u.id = ra.userid
+		inner join {$CFG->prefix}context x on ra.contextid = x.id
+		inner join {$CFG->prefix}role r on ra.roleid = r.id
+		inner join {$CFG->prefix}role_capabilities rc on r.id = rc.roleid
+		where rc.capability = '$capability'
+		and x.contextlevel = " . CONTEXT_SYSTEM . "
+		and r.name != 'Administrator'
+		and u.deleted = 0 and emailstop = 0";
+	if( $course_editors = get_records_sql($q) ) {
 		return $course_editors;
 	}
 
 	//global admins
-	$course_editors = $DB->get_records_sql(
-		"SELECT u.* FROM {user} u
-		INNER JOIN {role_assignments} ra ON u.id = ra.userid
-		INNER JOIN {context} x ON ra.contextid = x.id
-		INNER JOIN {role} r ON ra.roleid = r.id
-		INNER JOIN {role_capabilities} rc ON r.id = rc.roleid AND ra.contextid = rc.contextid
-		WHERE rc.capability = :capability
-		AND x.contextlevel = :contextlevel
-		AND r.name = 'Administrator'
-		AND u.deleted = 0
-		AND u.emailstop = 0",
-		array(
-			'contextlevel' => CONTEXT_SYSTEM,
-			'capability' => $capability,
-		)
-	);
-	if( $course_editors ) {
+	$q = "select u.* from {$CFG->prefix}user u
+		inner join {$CFG->prefix}role_assignments ra on u.id = ra.userid
+		inner join {$CFG->prefix}context x on ra.contextid = x.id
+		inner join {$CFG->prefix}role r on ra.roleid = r.id
+		inner join {$CFG->prefix}role_capabilities rc on r.id = rc.roleid
+		where rc.capability = '$capability'
+		and x.contextlevel = " . CONTEXT_SYSTEM . "
+		and r.name = 'Administrator'
+		and u.deleted = 0 and emailstop = 0";
+	if( $course_editors = get_records_sql($q) ) {
 		return $course_editors;
 	}
-
 	return false;
 }
+
+
+
+
+
+
+

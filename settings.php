@@ -40,15 +40,15 @@ if( $ADMIN->fulltree ) {
 	$restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
 					 EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
 					 EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));	
-	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));    
-	
+	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
+
 	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));    
 
 	$options = array(EQUELLA_CONFIG_LOCATION_RESOURCE => trim(ecs('location.option.resource')),
 					 EQUELLA_CONFIG_LOCATION_ACTIVITY => trim(ecs('location.option.activity')));
 	$settings->add(new admin_setting_configselect('equella_location', ecs('location.title'), ecs('location.desc'), EQUELLA_CONFIG_LOCATION_RESOURCE, $options));
 
-	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));    
+  	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//

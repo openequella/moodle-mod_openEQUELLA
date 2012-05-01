@@ -15,31 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'EQUELLA Resource';
-$string['pluginadministration'] = 'EQUELLA module administration';
 $string['modulename'] = 'EQUELLA Resource';
 $string['description'] = 'Content';
 $string['noinstances'] = 'There are no EQUELLA Resources in this course';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
 $string['solutionname'] = 'Name';
-$string['clicktoopen'] = 'Click {$a} link to open resource.';
-
-////////////////////////////////////////////////////////
-// OPTIONS
-
-$string['option.pagewindow'] = 'Display';
-$string['option.pagewindow.same'] = 'Same window';
-$string['option.pagewindow.new'] = 'New window';
-$string['option.popup.width'] = 'Default window width (in pixels)';
-$string['option.popup.height'] = 'Default window height (in pixels)';
-$string['option.popup.resizable'] = 'Allow the window to be resized';
-$string['option.popup.scrollbars'] = 'Allow the window to be scrolled';
-$string['option.popup.directories'] = 'Show the directory links';
-$string['option.popup.location'] = 'Show the location bar';
-$string['option.popup.menubar'] = 'Show the menu bar';
-$string['option.popup.toolbar'] = 'Show the toolbar';
-$string['option.popup.status'] = 'Show the status bar';
 
 ////////////////////////////////////////////////////////
 // CONFIGURATION: General Settings
@@ -85,24 +66,10 @@ $string['config.sharedsecret.title'] = 'Shared secret';
 $string['checker.subject'] = 'EQUELLA Resource Checker';
 $string['checker.message'] = 'The URL for one of the EQUELLA resources was found to be unavailable:<br>
 <br>
-<a href="{$a->url}">{$a->url}</a><br>
-Name: {$a->name}<br>
-Unit: <a href="{$a->courseurl}">{$a->coursename}</a><br>
+<a href="$a->url">$a->url</a><br>
+Name: $a->name<br>
+Unit: <a href="$a->courseurl">$a->coursename</a><br>
 <br>
 You have received this email because you have sufficient permission to fix this.';
-
-////////////////////////////////////////////////////////
-// EQUELLA LMS PUSH
-/*
-$string['push.name'] = 'Name';
-$string['push.description'] = 'Description';
-$string['push.views'] = 'Total views';
-$string['push.version'] = 'Version';
-$string['push.version.latest'] = 'Latest version';
-$string['push.archived'] = 'Visible';
-$string['push.archived.yes'] = 'yes';
-$string['push.archived.no'] = 'no';
-$string['push.attachment'] = 'Selected attachment';
-*/
 
 ?>

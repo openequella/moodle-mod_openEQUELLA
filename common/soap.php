@@ -90,7 +90,7 @@ class EQUELLA
 	{
 		return new XMLWrapper($this->client->getSearchableCollections()->out);
 	}
-	
+
 	/**
 	* @return XMLWrapper
 	*/

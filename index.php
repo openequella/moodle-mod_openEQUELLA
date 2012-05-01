@@ -18,16 +18,13 @@
 require_once("../../config.php");
 require_once("lib.php");
 
-$id = required_param('id', PARAM_INT);   // course
+$id = required_param('id');   // course
 
-global $DB;
-
-if (! $course = $DB->get_record("course", array("id" => $id))) {
+if (! $course = get_record("course", "id", $id)) {
     error("Course ID is incorrect");
 }
 
 require_course_login($course);
-$PAGE->set_pagelayout('incourse');
 add_to_log($course->id, "equella", "view all", "index.php?id=$course->id", "");
 
 $strnoinst = get_string("noinstances", "equella");
@@ -37,11 +34,11 @@ $strweek = get_string("week");
 $strtopic = get_string("topic");
 $strname = get_string("name");
 
-$PAGE->set_url('/mod/equella/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strequellas);
-$PAGE->set_heading($course->fullname);
-$PAGE->navbar->add($strequellas);
-echo $OUTPUT->header();
+$navlinks = array();
+$navlinks[] = array('name' => $strequellas, 'link' => '', 'type' => 'activityinstance');
+$navigation = build_navigation($navlinks);
+    
+print_header_simple($strequellas, "", $navigation, "", "", true, "", navmenu($course));
 
 if (! $equellas = get_all_instances_in_course("equella", $course)) {
     notice($strnoinst, "../../course/view.php?id=$course->id");
@@ -49,7 +46,7 @@ if (! $equellas = get_all_instances_in_course("equella", $course)) {
 }
 
 $timenow = time();
-$table = new html_table();
+
 if ($course->format == "weeks") {
     $table->head  = array ($strweek, $strname);
     $table->align = array ("center", "left");
@@ -63,7 +60,7 @@ if ($course->format == "weeks") {
 
 $currentgroup = get_current_group($course->id);
 if ($currentgroup and isteacheredit($course->id)) {
-    $group = $DB->get_record("groups", array("id" => $currentgroup));
+    $group = get_record("groups", "id", $currentgroup);
     $groupname = " ($group->name)";
 } else {
     $groupname = "";
@@ -100,6 +97,7 @@ foreach ($equellas as $equella) {
 
 echo "<br />";
 
-echo html_writer::table($table);
-echo $OUTPUT->footer();
+print_table($table);
+
+print_footer($course);
 ?>

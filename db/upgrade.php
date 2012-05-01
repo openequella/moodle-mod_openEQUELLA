@@ -15,97 +15,48 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
+function xmldb_equella_upgrade($oldversion=0)
+{
+	$result = 1;
+	if ($result && $oldversion < 2009101300) {
 
-function xmldb_equella_upgrade($oldversion) {
-    global $CFG, $DB, $OUTPUT;
+		/// Changing type of field name on table equella to text
+		$table = new XMLDBTable('equella');
+		$field = new XMLDBField('name');
+		$field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'course');
 
-    $dbman = $DB->get_manager();
+		/// Launch change of type for field name
+		$result = $result && change_field_type($table, $field);
+	}
+	if ($result && $oldversion < 2009101300) {
 
-    if ($oldversion < 2011012700) {
-	    // Rename summary to intro
-        $table = new xmldb_table('equella');
-        $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
-        if ($dbman->field_exists($table, $field))
-        {
-        	$dbman->rename_field($table, $field, 'intro');
-        	upgrade_mod_savepoint(true, 2011012700, 'equella');
-        }
+		/// Define field summary to be added to equella
+		$table = new XMLDBTable('equella');
+		$field = new XMLDBField('summary');
+		$field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'url');
+
+		/// Launch add field summary
+		$result = $result && add_field($table, $field);
+	}
+	if ($result && $oldversion < 2009101300) {
+
+		/// Define field popup to be added to equella
+		$table = new XMLDBTable('equella');
+		$field = new XMLDBField('popup');
+		$field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'summary');
+
+		/// Launch add field popup
+		$result = $result && add_field($table, $field);
+	}
+	if ($result && $oldversion < 2009102700) {
+
+		/// Define field activation to be added to equella
+        $table = new XMLDBTable('equella');
+        $field = new XMLDBField('activation');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null, 'popup');
+
+		/// Launch add field activation
+        $result = $result && add_field($table, $field);
     }
-
-    if ($oldversion < 2011012701) {
-		// Add field introformat
-        $table = new xmldb_table('equella');
-        $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'intro');
-        if (!$dbman->field_exists($table, $field))
-        {
-	        if (!$dbman->field_exists($table, $field)) {
-	            $dbman->add_field($table, $field);
-	        }
-	        upgrade_mod_savepoint(true, 2011012701, 'equella');
-        }
-    }
-
-    if ($oldversion < 2011072600) {
-        $table = new xmldb_table('equella');
-        $field1 = new xmldb_field('uuid', XMLDB_TYPE_TEXT, '40', null, null, null, null, 'activation');
-        if (!$dbman->field_exists($table, $field1)) {
-            $dbman->add_field($table, $field1);
-        }
-		$field2 = new xmldb_field('version', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'uuid');
-        if (!$dbman->field_exists($table, $field2)) {
-            $dbman->add_field($table, $field2);
-        }
-	
-		$equella_items = $DB->get_records('equella');
-		$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)/";
-	
-		foreach ($equella_items as $item) 
-		{
-			$url = $item->url;
-			preg_match($pattern, $url, $matches);
-			$item->uuid = $matches['uuid'];
-			$item->version=$matches['version'];
-			$DB->update_record("equella", $item);
-		}
-
-        upgrade_mod_savepoint(true, 2011072600, 'equella');
-    }
-
-    if ($oldversion < 2011080500) {
-        $table = new xmldb_table('equella');
-        $field = new xmldb_field('path', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'version');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-		$equella_items = $DB->get_records('equella');
-		$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
-	
-		foreach ($equella_items as $item) 
-		{
-			$url = $item->url;
-			preg_match($pattern, $url, $matches);
-			$item->path=$matches['path'];
-			$DB->update_record("equella", $item);
-		}
-
-        upgrade_mod_savepoint(true, 2011080500, 'equella');
-    }
-    
-    if ($oldversion < 2012010901)
-    {
-    	$table = new xmldb_table('equella');
-    	$field = new xmldb_field('attachmentuuid', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'path');
-    	if (!$dbman->field_exists($table, $field)) 
-    	{
-    		$dbman->add_field($table, $field);
-    	}
-    	
-    	upgrade_mod_savepoint(true, 2012010901, 'equella');
-    }
-
-    return true;
+	return $result;
 }
-
-

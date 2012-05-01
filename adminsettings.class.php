@@ -50,13 +50,12 @@ class equella_setting_left_heading extends admin_setting {
     }
 
     function output_html($data, $query='') {
-    	global $OUTPUT;
         $return = '';
         if ($this->visiblename != '') {
-            $return .= $OUTPUT->heading($this->visiblename, 3, '', true);
+            $return .= print_heading('<a name="'.$this->name.'">'.highlightfast($query, $this->visiblename).'</a>', 'left', 3, 'main', true);
         }
         if ($this->description != '') {
-        	$return .= $OUTPUT->box(highlight($query, markdown_to_html($this->description)), 'generalbox formsettingheading', '', true);
+            $return .= print_box(highlight($query, $this->description), 'generalbox formsettingheading', '', true);
         }
         return $return;
     }

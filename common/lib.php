@@ -20,16 +20,15 @@
  * integration points in Moodle like the Blocks and Repository APIs.
  */
 
-function get_block_configdata($blockname) {
-	global $DB, $PAGE;
-	$blockinstance = $DB->get_record_sql(
-		"SELECT * FROM {block_instances} bi
-		WHERE bi.blockname = :name and bi.parentcontextid = :parentcontextid",
-		array(
-			'name' => $blockname,
-			'parentcontextid' => $PAGE->context->id
-		)
+function get_block_configdata($blockname, $courseid) {
+	global $CFG;
+
+	$blockinstance = get_record_sql(
+		"SELECT * FROM {$CFG->prefix}block_instance bi
+		INNER JOIN {$CFG->prefix}block b ON bi.blockid = b.id
+		WHERE b.name = 'equella_search' AND bi.pageid = {$courseid}"
 	);
+
 	return unserialize(base64_decode($blockinstance->configdata));
 }
 
@@ -46,7 +45,7 @@ function equella_getssotoken($readwrite = 'read') {
 	global $USER, $CFG, $COURSE;
 
 	if( $readwrite == 'write' ) {
-		$context_sys = get_context_instance(CONTEXT_SYSTEM, 0);
+		$context_sys = get_context_instance(CONTEXT_SYSTEM, $COURSE->id);
 		$context_cc = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
 		$context_c = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
@@ -99,16 +98,14 @@ function equella_getssotoken_api() {
 }
 
 function get_all_editing_roles(){
-	global $DB;
-	return $DB->get_records_sql(
-		"SELECT r.* FROM {role_capabilities} rc
-		INNER JOIN {role} r ON rc.roleid = r.id
-		WHERE capability = :capability
+	global $CFG;
+	return get_records_sql(
+		"SELECT r.* FROM {$CFG->prefix}role_capabilities rc
+		INNER JOIN {$CFG->prefix}role r ON rc.roleid = r.id
+		WHERE capability = 'moodle/course:manageactivities'
 		AND permission = 1
-		ORDER BY r.shortname",
-		array(
-			'capability' => 'moodle/course:manageactivities'
-		)
+		ORDER BY r.shortname"
 	);
 }
+
 ?>
