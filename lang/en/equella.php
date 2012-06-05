@@ -24,6 +24,8 @@ $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
 $string['solutionname'] = 'Name';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
+$string['equella:addinstance'] = 'Add a new EQUELLA resource';
+$string['equella:view'] = 'View EQUELLA resource';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
