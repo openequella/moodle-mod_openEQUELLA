@@ -19,9 +19,6 @@ require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
-define('EQUELLA_CONFIG_LOCATION_RESOURCE', 'resource');
-define('EQUELLA_CONFIG_LOCATION_ACTIVITY', 'activity');
-
 define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY', 'attachmentonly');
@@ -45,21 +42,6 @@ function equella_get_courseId($courseid) {
 	global $DB;
 	$record = $DB->get_record("course", array('id' => $courseid));
 	return $record->idnumber;
-}
-
-function equella_get_types()
-{
-	global $CFG;
-
-	$type = new object();
-	$type->modclass = $CFG->equella_location == EQUELLA_CONFIG_LOCATION_RESOURCE ? MOD_CLASS_RESOURCE : MOD_CLASS_ACTIVITY;
-	$type->name = "equella";
-	$type->type = "equella";
-	$type->typestr = get_string("modulename", "equella");
-
-	$types = array();
-	$types[] = $type;
-	return $types;
 }
 
 function equella_add_instance($equella) {

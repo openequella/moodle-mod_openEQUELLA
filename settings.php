@@ -44,10 +44,6 @@ if( $ADMIN->fulltree ) {
 	
 	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));    
 
-	$options = array(EQUELLA_CONFIG_LOCATION_RESOURCE => trim(ecs('location.option.resource')),
-					 EQUELLA_CONFIG_LOCATION_ACTIVITY => trim(ecs('location.option.activity')));
-	$settings->add(new admin_setting_configselect('equella_location', ecs('location.title'), ecs('location.desc'), EQUELLA_CONFIG_LOCATION_RESOURCE, $options));
-
 	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));    
 
 	/////////////////////////////////////////////////////////////////////////////////

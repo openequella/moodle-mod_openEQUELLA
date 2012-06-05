@@ -18,7 +18,10 @@
 $string['pluginname'] = 'EQUELLA Resource';
 $string['pluginadministration'] = 'EQUELLA module administration';
 $string['modulename'] = 'EQUELLA Resource';
+$string['modulename_help'] = 'The EQUELLA module enables a teacher to link to content stored in an EQUELLA repository. Users are automatically authenticated to the EQUELLA repository when they choose a resource.';
+$string['modulenameplural'] = 'EQUELLA Resources';
 $string['description'] = 'Content';
+
 $string['noinstances'] = 'There are no EQUELLA Resources in this course';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
@@ -62,11 +65,6 @@ $string['config.restriction.attachmentsonly'] = 'Attachments only';
 
 $string['config.options.title'] = 'EQUELLA options';
 $string['config.options.desc'] = 'The options string for EQUELLA (e.g. allPowerSearches=true&contributionCollectionIds=uuid1,uuid2). Please note that there should not be a ? or a & at the start or end of the string.  This field is optional.';
-
-$string['config.location.title'] = 'Integration location';
-$string['config.location.desc'] = 'Choose which drop-down control the \'EQUELLA Resource\' entry will be available in.';
-$string['config.location.option.resource'] = 'Resource drop down';
-$string['config.location.option.activity'] = 'Activity drop down';
 
 $string['config.adminuser.title'] = 'EQUELLA administrator username';
 $string['config.adminuser.desc'] = 'The username of an administrative account in EQUELLA.  This account is used by high-level admin functions such as the Backup Course To EQUELLA block, and also for background tasks that don\'t have a user session such as EQUELLA Resource Checker.  When an activity requires an session with this user, they will be logged in using the Default shared secret values configured below.';
