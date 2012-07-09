@@ -819,19 +819,19 @@ class equella_external extends external_api {
 		// to each other, so we have to update one of them twice.
 		if (! $mod->coursemodule = add_course_module($mod) )
 		{
-			error("Could not add a new course module");
+			print_error('cannotaddcoursemodule');
 			$success = false;
 		}
 		$modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 		if (! $sectionid = add_mod_to_section($mod) )
 		{
-			error("Could not add the new course module to that section");
+			print_error('cannotaddcoursemoduletosection');
 			return null;
 		}
 
 		if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule)))
 		{
-			error("Could not update the course module with the correct section");
+			print_error("Could not update the course module with the correct section");
 			return null;
 		}
 
@@ -975,7 +975,7 @@ class equella_external extends external_api {
 
 			if (! $sectionid = add_mod_to_section($item) )
 			{
-				error("Could not add the new course module to that section");
+				print_error('cannotaddcoursemoduletosection');
 				return null;
 			}
 				
@@ -1023,12 +1023,12 @@ class equella_external extends external_api {
 		if ($success)
 		{
 			if (!delete_course_module($courseModule->id)) {
-				error("Could not delete the $courseModule->modname (coursemodule)");
+				print_error('deletednot', '', '', "the {$courseModule->modname} (coursemodule)");
 				$success = false;
 			}
 			
 			if (!delete_mod_from_section($courseModule->id, $courseModule->section)) {
-				error("Could not delete the $courseModule->modname from that section");
+				print_error('deletednot', '', '', "the {$courseModule->modname} from that section");
 				$success = false;
 			}
 			
