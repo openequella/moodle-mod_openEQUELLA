@@ -47,17 +47,17 @@ foreach ($links as $link)
 	// course_modules and course_sections each contain a reference
 	// to each other, so we have to update one of them twice.
 	if (! $mod->coursemodule = add_course_module($mod) ) {
-		error('Could not add a new course module');
+		print_error('cannotaddcoursemodule');
 	}
 
 	$modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 	
 	if (! $sectionid = add_mod_to_section($mod) ) {
-		error('Could not add the new course module to that section');
+		print_error('cannotaddcoursemoduletosection');
 	}
 
 	if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule))) {
-		error('Could not update the course module with the correct section');
+		print_error('Could not update the course module with the correct section');
 	}
 	
 	set_coursemodule_visible($mod->coursemodule, true);
