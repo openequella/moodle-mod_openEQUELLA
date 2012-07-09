@@ -23,7 +23,7 @@ $id = required_param('id', PARAM_INT);   // course
 global $DB;
 
 if (! $course = $DB->get_record("course", array("id" => $id))) {
-    error("Course ID is incorrect");
+    print_error('invalidcourseid', '', '', $id);
 }
 
 require_course_login($course);
