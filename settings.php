@@ -93,6 +93,7 @@ if( $ADMIN->fulltree ) {
         if (!empty($CFG->equella_oauth_access_token)) {
             $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('sharedsecret.title'), '', ''));
         }
+        $settings->add(new admin_setting_configcheckbox('equella_intercept_moodle_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0));
 
 
 }
