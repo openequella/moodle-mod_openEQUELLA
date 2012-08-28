@@ -26,14 +26,14 @@ $handlers = array (
     'mod_updated' => array (
         'handlerfile'      => '/mod/equella/lib.php',
         'handlerfunction'  => 'equella_handle_mod_updated',
-        'schedule'         => 'cron',
+        'schedule'         => 'instant',
         'internal'         => 1,
     ),
 
     'mod_created' => array (
         'handlerfile'      => '/mod/equella/lib.php',
         'handlerfunction'  => 'equella_handle_mod_created',
-        'schedule'         => 'cron',
+        'schedule'         => 'instant',
         'internal'         => 1,
     ),
 );
