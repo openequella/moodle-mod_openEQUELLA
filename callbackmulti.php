@@ -19,9 +19,8 @@ require_once("../../config.php");
 require_once("../../course/lib.php");
 require_once("lib.php");
 
-global $DB, $USER;;
-
 require_login();
+
 $links = required_param('tlelinks', PARAM_RAW);
 $links = json_decode($links, true);
 

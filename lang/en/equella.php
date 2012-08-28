@@ -29,6 +29,7 @@ $string['solutionname'] = 'Name';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
 $string['equella:addinstance'] = 'Add a new EQUELLA resource';
 $string['equella:view'] = 'View EQUELLA resource';
+$string['dnduploadresource'] = 'Contribute to EQUELLA';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
@@ -80,6 +81,15 @@ $string['config.sharedid.title'] = 'Shared secret ID';
 $string['config.sharedsecret.title'] = 'Shared secret';
 
 ////////////////////////////////////////////////////////
+// CONFIGURATION: OAuth
+//
+$string['config.oauth.heading'] = 'EQUELLA OAuth options';
+$string['config.oauth.clientid'] = 'OAuth client ID';
+$string['config.oauth.url'] = 'OAuth URL';
+$string['config.oauth.help'] = '';
+
+
+////////////////////////////////////////////////////////
 // EQUELLA Resource Checker
 
 $string['checker.subject'] = 'EQUELLA Resource Checker';
@@ -104,5 +114,3 @@ $string['push.archived.yes'] = 'yes';
 $string['push.archived.no'] = 'no';
 $string['push.attachment'] = 'Selected attachment';
 */
-
-?>
