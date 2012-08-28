@@ -18,6 +18,7 @@
 require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once(dirname(__FILE__) . '/equella_rest_api.php');
 
 define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');
@@ -178,4 +179,162 @@ function equella_guess_icon($fullurl) {
     return $icon;
 }
 
-?>
+/**
+ * Capture moodle files in modules
+ *
+ * @param stdClass $event
+ * @param array
+ */
+function equella_capture_files($event) {
+    global $CFG, $DB;
+    $fs = get_file_storage();
+    if (! $cm = get_coursemodule_from_id($event->modulename, $event->cmid)) {
+        return array();
+    }
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if ($event->modulename != 'folder' && $event->modulename != 'resource') {
+        return array();
+    }
+
+    require_once($CFG->dirroot . '/mod/' . $event->modulename . '/lib.php');
+    //find out all supported areas
+    $functionname     = 'mod_' . $event->modulename . '_get_file_areas';
+    $functionname_old = $event->modulename . '_get_file_areas';
+
+    if (function_exists($functionname)) {
+        $areas = $functionname($course, $cm, $context);
+    } else if (function_exists($functionname_old)) {
+        $areas = $functionname_old($course, $cm, $context);
+    } else {
+        $areas = array();
+    }
+
+    $files = array();
+    foreach ($areas as $area => $name) {
+        $area_files = $fs->get_area_files($context->id, 'mod_' . $event->modulename, $area, false, 'sortorder, itemid', false);
+        $files = array_merge($files, $area_files);
+    }
+    return $files;
+}
+
+function equella_find_repository() {
+    global $CFG;
+    require_once($CFG->dirroot . '/repository/lib.php');
+    $instances = repository::get_instances(array('type'=>'equella'));
+    foreach ($instances as $e) {
+        if ($e->get_option('equella_url') == $CFG->equella_url) {
+            return $e;
+        }
+    }
+    return null;
+}
+
+function equella_replace_contents_with_references($file, $info) {
+    if (empty($info->attachments)) {
+        return;
+    }
+    $items = $info->attachments;
+    $fs = get_file_storage();
+    // replace moodle files with equella references
+    if ($equellarepository = equella_find_repository()) {
+        $item = array_pop($items);
+        $repositoryid = $equellarepository->id;
+        $record = new stdClass;
+        $record->filepath  = $file->get_filepath();
+        $record->filename  = $item->filename;
+        $record->component = $file->get_component();
+        $record->filearea  = $file->get_filearea();
+        $record->itemid    = $file->get_itemid();
+        $record->license   = $file->get_license();
+        $record->source    = $source = base64_encode(serialize((object)array('url'=>$item->links->view,'filename'=>$item->filename)));
+        $record->contextid = $file->get_contextid();
+        $record->userid    = $file->get_userid();
+        $now = time();
+        $record->timecreated  = $now;
+        $record->timemodified = $now;
+        $reference = $equellarepository->get_file_reference($source);
+        $record->referencelifetime = $equellarepository->get_reference_file_lifetime($reference);
+        // delete before create reference to avoid pathnamehash conflict
+        $file->delete();
+        $fs->create_file_from_reference($record, $repositoryid, $reference);
+    }
+}
+
+/**
+ * Handle module created event
+ */
+function equella_handle_mod_created($event) {
+    global $CFG;
+    $files = equella_capture_files($event);
+    foreach ($files as $file) {
+        $handle = $file->get_content_file_handle();
+        // pushing files to equella
+        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        // replace contents
+        equella_replace_contents_with_references($file, $info);
+    }
+    return true;
+}
+
+/**
+ * Handle module updated event
+ */
+function equella_handle_mod_updated($event) {
+    global $CFG;
+    $files = equella_capture_files($event);
+    foreach ($files as $file) {
+        $handle = $file->get_content_file_handle();
+        // pushing files to equella
+        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        if (!empty($info)) {
+            // replace contents
+            equella_replace_contents_with_references($file, $info);
+        }
+    }
+    return true;
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function equella_dndupload_register() {
+    return array('files' => array(
+                     array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
+                 ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function equella_dndupload_handle($uploadinfo) {
+    global $USER;
+    $fs = get_file_storage();
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->coursemodule = $uploadinfo->coursemodule;
+    $data->files = $uploadinfo->draftitemid;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $uploadinfo->draftitemid, 'id', false);
+
+    $moduleid = null;
+    foreach ($draftfiles as $file) {
+        $handle = $file->get_content_file_handle();
+        // pushing files to equella
+        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        $data->name = $info->name;
+        $data->intro = $info->description;
+        $data->introformat = FORMAT_HTML;
+        $item = array_pop($info->attachments);
+	$data->attachmentuuid = $item->uuid;
+	$data->url = $item->links->view;
+        $moduleid = equella_add_instance($data, null);
+    }
+    return $moduleid;
+}

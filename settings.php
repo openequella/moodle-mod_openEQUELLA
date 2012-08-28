@@ -18,6 +18,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once('adminsettings.class.php');
+require_once('equella_rest_api.php');
 
 // Horrible hack to avoid errors displaying error pages
 if( !function_exists('ecs') ) {
@@ -39,24 +40,24 @@ if( $ADMIN->fulltree ) {
 
 	$restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
 					 EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
-					 EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));	
-	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));    
-	
-	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));    
+					 EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));
+	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
-	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));    
+	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
+
+	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
 
 	/////////////////////////////////////////////////////////////////////////////////
 	//
 	// SHARED SECRETS
 	//
 	$settings->add(new admin_setting_heading('equella_dummy_sharedsecrets', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
-	  
-	  
-  	$settings->add(new equella_setting_left_heading('equella_dummy_default', ecs('group', ecs('group.default')), ''));                    
+
+
+  	$settings->add(new equella_setting_left_heading('equella_dummy_default', ecs('group', ecs('group.default')), ''));
 	$settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
 	$settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
-		
+
 	$defaultsharedsecret = '';
 	if( isset($CFG->equella_sharedsecret) ) {
 		$defaultsharedsecret = $CFG->equella_sharedsecret;
@@ -71,5 +72,27 @@ if( $ADMIN->fulltree ) {
 		$settings->add(new equella_setting_left_heading('equella_dummy_'.$role->shortname, ecs('group', format_string($role->name)), ''));
 		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
 		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
-	}	
+	}
+	/////////////////////////////////////////////////////////////////////////////////
+	//
+	// OAuth
+	//
+	$settings->add(new admin_setting_heading('equella_dummy_shareiiiidsecrets', ecs('oauth.heading'), ''));
+
+        //$options = array('client_id'=>'moodle23', 'redirect_uri'=>$url->out(), 'endpoint'=>'http://localhost:9090/vanilla/', 'response_type'=>'code');
+        //$url = equella_restapi::get_auth_code_url($options);
+        //$mform->addElement('static', null, get_string('oauthurl', 'block_equella_contribute'), "<a href='$url' target='_blank'>" . 'auth' . '</a>');
+
+
+	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), '', ''));
+
+        if (!empty($CFG->equella_oauth_client_id) && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
+            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), '', ''));
+        }
+
+        if (!empty($CFG->equella_oauth_access_token)) {
+            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('sharedsecret.title'), '', ''));
+        }
+
+
 }
