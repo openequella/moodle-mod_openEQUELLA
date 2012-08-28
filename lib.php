@@ -262,11 +262,11 @@ function equella_replace_contents_with_references($file, $info) {
     }
 }
 
-/**
- * Handle module created event
- */
-function equella_handle_mod_created($event) {
+function equella_module_event_handler($event) {
     global $CFG;
+    if (empty($CFG->equella_intercept_moodle_files)) {
+        return;
+    }
     $files = equella_capture_files($event);
     foreach ($files as $file) {
         $handle = $file->get_content_file_handle();
@@ -279,21 +279,17 @@ function equella_handle_mod_created($event) {
 }
 
 /**
+ * Handle module created event
+ */
+function equella_handle_mod_created($event) {
+    return equella_module_event_handler();
+}
+
+/**
  * Handle module updated event
  */
 function equella_handle_mod_updated($event) {
-    global $CFG;
-    $files = equella_capture_files($event);
-    foreach ($files as $file) {
-        $handle = $file->get_content_file_handle();
-        // pushing files to equella
-        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
-        if (!empty($info)) {
-            // replace contents
-            equella_replace_contents_with_references($file, $info);
-        }
-    }
-    return true;
+    return equella_module_event_handler();
 }
 
 /**

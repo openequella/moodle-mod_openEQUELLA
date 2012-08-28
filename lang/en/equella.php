@@ -30,6 +30,8 @@ $string['clicktoopen'] = 'Click {$a} link to open resource.';
 $string['equella:addinstance'] = 'Add a new EQUELLA resource';
 $string['equella:view'] = 'View EQUELLA resource';
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
+$string['interceptfiles'] = 'Intercept drag and drop files';
+$string['interceptfilesintro'] = 'Enable this option, files draged into moodle course page will be pushed to EQUELLA';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
