@@ -32,6 +32,8 @@ $string['equella:view'] = 'View EQUELLA resource';
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
 $string['interceptfiles'] = 'Intercept drag and drop files';
 $string['interceptfilesintro'] = 'Enable this option, files draged into moodle course page will be pushed to EQUELLA';
+$string['dndhook'] = 'Enable DnD hook';
+$string['dndhookhelp'] = 'When user drag and drop files to course page, moodle will ask users whether or not to contribute to EQUELLA';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
@@ -80,7 +82,7 @@ $string['config.sharedsecrets.help'] =  '<p>Below you can set a default EQUELLA 
 $string['config.group'] = '{$a} role settings';
 $string['config.group.default'] = 'Default';
 $string['config.sharedid.title'] = 'Shared secret ID';
-$string['config.sharedsecret.title'] = 'Shared secret';
+$string['config.sharedsecret.title'] = 'OAuth access token';
 
 ////////////////////////////////////////////////////////
 // CONFIGURATION: OAuth
@@ -89,6 +91,7 @@ $string['config.oauth.heading'] = 'EQUELLA OAuth options';
 $string['config.oauth.clientid'] = 'OAuth client ID';
 $string['config.oauth.url'] = 'OAuth URL';
 $string['config.oauth.help'] = '';
+$string['config.oauth.accesstoken'] = 'OAuth access token';
 
 
 ////////////////////////////////////////////////////////
