@@ -264,7 +264,6 @@ function equella_replace_contents_with_references($file, $info) {
 
 function equella_module_event_handler($event) {
     global $CFG;
-    flog($CFG->equella_intercept_moodle_files);
     if (empty($CFG->equella_intercept_moodle_files)) {
         return;
     }
@@ -297,14 +296,13 @@ function equella_handle_mod_updated($event) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-
-/**
-function equella_dndupload_register() {
-    return array('files' => array(
-                     array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
-                 ));
+if (!empty($CFG->equella_dnd_hook)) {
+    function equella_dndupload_register() {
+        return array('files' => array(
+                         array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
+                     ));
+    }
 }
-*/
 
 /**
  * Handle a file that has been uploaded

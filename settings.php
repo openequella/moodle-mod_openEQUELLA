@@ -17,6 +17,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot.'/mod/equella/lib.php');
 require_once('adminsettings.class.php');
 require_once('equella_rest_api.php');
 
@@ -28,7 +29,6 @@ if( !function_exists('ecs') ) {
 }
 
 if( $ADMIN->fulltree ) {
-	require_once($CFG->dirroot.'/mod/equella/lib.php');
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// GENERAL SETTINGS
@@ -79,11 +79,6 @@ if( $ADMIN->fulltree ) {
 	//
 	$settings->add(new admin_setting_heading('equella_dummy_shareiiiidsecrets', ecs('oauth.heading'), ''));
 
-        //$options = array('client_id'=>'moodle23', 'redirect_uri'=>$url->out(), 'endpoint'=>'http://localhost:9090/vanilla/', 'response_type'=>'code');
-        //$url = equella_restapi::get_auth_code_url($options);
-        //$mform->addElement('static', null, get_string('oauthurl', 'block_equella_contribute'), "<a href='$url' target='_blank'>" . 'auth' . '</a>');
-
-
 	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), '', ''));
 
         if (!empty($CFG->equella_oauth_client_id) && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
@@ -91,9 +86,8 @@ if( $ADMIN->fulltree ) {
         }
 
         if (!empty($CFG->equella_oauth_access_token)) {
-            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('sharedsecret.title'), '', ''));
+            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), '', ''));
+            $settings->add(new admin_setting_configcheckbox('equella_intercept_moodle_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0));
+            $settings->add(new admin_setting_configcheckbox('equella_dnd_hook', get_string('dndhook', 'equella'), get_string('dndhookhelp', 'equella'), 0));
         }
-        $settings->add(new admin_setting_configcheckbox('equella_intercept_moodle_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0));
-
-
 }
