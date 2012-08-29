@@ -36,7 +36,7 @@ function equella_supports($feature) {
 }
 
 function equella_get_window_options() {
-	return array('width', 'height', 'resizable', 'scrollbars', 'directories', 'location', 'menubar', 'toolbar', 'status');
+	return array('width' => 620, 'height' => 450, 'resizable' => 1, 'scrollbars' => 1, 'directories' => 0, 'location' => 0, 'menubar' => 0, 'toolbar' => 0, 'status' => 0);
 }
 
 function equella_get_courseId($courseid) {
@@ -46,51 +46,60 @@ function equella_get_courseId($courseid) {
 }
 
 function equella_add_instance($equella) {
+	global $DB, $USER;
 	// Given an object containing all the necessary data,
 	// (defined by the form in mod.html) this function
 	// will create a new instance and return the id number
 	// of the new instance.
-	global $DB, $USER;
 	$equella->timecreated = time();
 	$equella->timemodified = time();
-	equella_postprocess($equella);
+        // Use popup by default
+	$equella->windowpopup = 1;
+	$eqeulla = equella_postprocess($equella);
 	return $DB->insert_record("equella", $equella);
 }
 
-function equella_postprocess(&$resource) {
-	if( isset($resource->windowpopup) && $resource->windowpopup ) {
-		$optionlist = array();
-		foreach( equella_get_window_options() as $option ) {
-			if (isset($resource->$option))
-			{
-				$optionlist[] = $option."=".$resource->$option;
-				unset($resource->$option);
-			}
-		}
-		$resource->popup = implode(',', $optionlist);
-		unset($resource->windowpopup);
-	} else {
-		$resource->popup = '';
-	}
+/**
+ * Validate and process EQUELLA options
+ *
+ * @param stdClass $resource
+ * @return stdClass
+ */
+function equella_postprocess($resource) {
+    if(!empty($resource->windowpopup)) {
+        $optionlist = array();
+        foreach(equella_get_window_options() as $option => $value) {
+            if (($option == 'width' or $option == 'height') and empty($resource->$option)) {
+                $resource->$option = $value;
+            }
+            if (isset($resource->$option)) {
+                $optionlist[] = ($option . "=" . $resource->$option);
+                unset($resource->$option);
+            }
+        }
+        $resource->popup = implode(',', $optionlist);
+        unset($resource->windowpopup);
+    } else {
+        $resource->popup = '';
+    }
 
-	$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
+    $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-	$url = $resource->url;
-	preg_match($pattern, $url, $matches);
-	$resource->uuid = $matches['uuid'];
-	$resource->version=$matches['version'];
-	$resource->path=$matches['path'];
+    $url = $resource->url;
+    preg_match($pattern, $url, $matches);
+    $resource->uuid = $matches['uuid'];
+    $resource->version = $matches['version'];
+    $resource->path = $matches['path'];
+    return $resource;
 }
 
 function equella_update_instance($equella) {
+	global $DB;
 	// Given an object containing all the necessary data,
 	// will update an existing instance with new data.
-
 	$equella->timemodified = time();
 	$equella->id = $equella->instance;
-	equella_postprocess($equella);
-
-	global $DB;
+	$equella = equella_postprocess($equella);
 	return $DB->update_record("equella", $equella);
 }
 

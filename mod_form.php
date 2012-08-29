@@ -21,110 +21,104 @@ require_once($CFG->libdir.'/resourcelib.php');
 require_once('lib.php');
 
 class mod_equella_mod_form extends moodleform_mod {
-	var $form;
+    var $form;
 
-	function definition() {
-		global $CFG;
-		$mform =& $this->_form;
+    function definition() {
+        global $CFG;
+        $mform =& $this->_form;
 
-		$mform->addElement('header', 'general', get_string('general', 'form'));
+        $mform->addElement('header', 'general', get_string('general', 'form'));
 
-		$mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
-		$mform->setType('name', PARAM_TEXT);
-		$mform->addRule('name', null, 'required', null, 'client');
+        $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
 
         $this->add_intro_editor();
 
-    	$mform->addElement('text', 'url', get_string('location'), array('size'=>'80'));
+        $mform->addElement('text', 'url', get_string('location'), array('size'=>'80'));
 
-    	$mform->addElement('hidden', 'activation', '');
-    	
-		$mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
+        $mform->addElement('hidden', 'activation', '');
 
-		$woptions = array(0 => get_string('option.pagewindow.same', 'equella'), 1 => get_string('option.pagewindow.new', 'equella'));
-		$mform->addElement('select', 'windowpopup', get_string('option.pagewindow', 'equella'), $woptions);
-		$mform->setDefault('windowpopup', !empty($CFG->resource_popup));
-		
-		foreach( equella_get_window_options() as $option ) {
-			$label = get_string('option.popup.'.$option, 'equella');
-			if ($option == 'height' or $option == 'width') {
-				$mform->addElement('text', $option, $label, array('size'=>'4'));
-			} else {
-				$mform->addElement('checkbox', $option, $label);
-			}
-			
-			if( isset($CFG->{"resource_popup".$option}) ) {
-				$mform->setDefault($option, $CFG->{"resource_popup".$option});
-			}
-			$mform->disabledIf($option, 'windowpopup', 'eq', 0);
-			$mform->setAdvanced($option);
-		}
+        $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
 
-		$this->standard_coursemodule_elements(false);
-		$this->add_action_buttons();
-	}
+        $woptions = array(0 => get_string('option.pagewindow.same', 'equella'), 1 => get_string('option.pagewindow.new', 'equella'));
+        $mform->addElement('select', 'windowpopup', get_string('option.pagewindow', 'equella'), $woptions);
+        $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
 
-	function set_data($data)
-	{
-		$this->form = $data;
-		parent::set_data($data);
-	}
+        foreach(equella_get_window_options() as $option => $value) {
+            $label = get_string('option.popup.'.$option, 'equella');
+            if ($option == 'height' or $option == 'width') {
+                $mform->addElement('text', $option, $label, array('size'=>'4'));
+            } else {
+                $mform->addElement('checkbox', $option, $label);
+            }
 
-	function data_preprocessing(&$defaults){
-		if (!isset($defaults['popup'])) {
-			// use form defaults
+            if( isset($CFG->{"resource_popup".$option}) ) {
+                $mform->setDefault($option, $CFG->{"resource_popup".$option});
+            }
+            $mform->disabledIf($option, 'windowpopup', 'eq', 0);
+            $mform->setAdvanced($option);
+        }
 
-		} else if (!empty($defaults['popup'])) {
-			$defaults['windowpopup'] = 1;
-			if (array_key_exists('popup', $defaults)) {
-				$rawoptions = explode(',', $defaults['popup']);
-				foreach ($rawoptions as $rawoption) {
-					$option = explode('=', trim($rawoption));
-					$defaults[$option[0]] = $option[1];
-				}
-			}
-		}
-	}
+        $this->standard_coursemodule_elements(false);
+        $this->add_action_buttons();
+    }
 
-	function display()
-	{
-		global $CFG,$USER;
-		$form = $this->form;
-		if (isset($form->add))
-		{
-			$callback = $CFG->wwwroot.'/mod/equella/callbackmulti.php'
-				. '?sesskey='.urlencode($USER->sesskey)
-				. '&course='.urlencode($form->course)
-				. '&coursemodule='.urlencode($form->coursemodule)
-				. '&section='.urlencode($form->section)
-				. '&module='.urlencode($form->module)
-				. '&modulename='.urlencode($form->modulename)
-				. '&instance='.urlencode($form->instance);
+    function set_data($data) {
+        $this->form = $data;
+        parent::set_data($data);
+    }
 
-			$cancelurl = $CFG->wwwroot.'/mod/equella/cancel.php?course='.urlencode($form->course);
+    function data_preprocessing(&$defaults) {
+        if (!isset($defaults['popup'])) {
+            // use form defaults
 
-			$url = $CFG->equella_url
-				. '?method=lms'
-				. '&returnurl='.urlencode ($callback)
-				. '&returnprefix=tle'
-				. '&template=standard'
-				. '&token='.urlencode(equella_getssotoken('write'))
-				. '&cancelurl='.urlencode($cancelurl)
-				. '&courseId='.urlencode(equella_get_courseId($form->course))
-				. '&action='.urlencode($CFG->equella_action)
-				. '&options='.urlencode($CFG->equella_options)
-				. '&selectMultiple=true';
+        } else if (!empty($defaults['popup'])) {
+            $defaults['windowpopup'] = 1;
+            if (array_key_exists('popup', $defaults)) {
+                $rawoptions = explode(',', $defaults['popup']);
+                foreach ($rawoptions as $rawoption) {
+                    $option = explode('=', trim($rawoption));
+                    $defaults[$option[0]] = $option[1];
+                }
+            }
+        }
+    }
 
-			if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
-				$url .= '&'.$CFG->equella_select_restriction.'=true';
-			}
+    function display() {
+        global $CFG, $USER;
+        $form = $this->form;
+        if (isset($form->add)) {
+            $callback = $CFG->wwwroot.'/mod/equella/callbackmulti.php'
+                . '?sesskey='.urlencode($USER->sesskey)
+                . '&course='.urlencode($form->course)
+                . '&coursemodule='.urlencode($form->coursemodule)
+                . '&section='.urlencode($form->section)
+                . '&module='.urlencode($form->module)
+                . '&modulename='.urlencode($form->modulename)
+                . '&instance='.urlencode($form->instance);
 
-			echo resourcelib_embed_general($url, null, $url, 'text/html');
-		}
-		else
-		{
-			parent::display();
-		}
-	}
+            $cancelurl = $CFG->wwwroot.'/mod/equella/cancel.php?course='.urlencode($form->course);
+
+            $url = $CFG->equella_url
+                . '?method=lms'
+                . '&returnurl='.urlencode ($callback)
+                . '&returnprefix=tle'
+                . '&template=standard'
+                . '&token='.urlencode(equella_getssotoken('write'))
+                . '&cancelurl='.urlencode($cancelurl)
+                . '&courseId='.urlencode(equella_get_courseId($form->course))
+                . '&action='.urlencode($CFG->equella_action)
+                . '&options='.urlencode($CFG->equella_options)
+                . '&selectMultiple=true';
+
+            if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
+                $url .= '&'.$CFG->equella_select_restriction.'=true';
+            }
+
+            echo resourcelib_embed_general($url, null, $url, 'text/html');
+        } else {
+            parent::display();
+        }
+    }
 }
-?>
