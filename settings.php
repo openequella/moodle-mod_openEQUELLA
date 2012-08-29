@@ -82,7 +82,10 @@ if( $ADMIN->fulltree ) {
 	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), '', ''));
 
         if (!empty($CFG->equella_oauth_client_id) && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
-            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), '', ''));
+            $redirect_url = equella_rest_api::get_redirect_url();
+            $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
+            $url = equella_rest_api::get_auth_code_url($options);
+            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), '', $url));
         }
 
         if (!empty($CFG->equella_oauth_access_token)) {

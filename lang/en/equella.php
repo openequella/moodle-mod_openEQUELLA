@@ -34,6 +34,7 @@ $string['interceptfiles'] = 'Intercept drag and drop files';
 $string['interceptfilesintro'] = 'Enable this option, files draged into moodle course page will be pushed to EQUELLA';
 $string['dndhook'] = 'Enable DnD hook';
 $string['dndhookhelp'] = 'When user drag and drop files to course page, moodle will ask users whether or not to contribute to EQUELLA';
+$string['obtainaccesstoken'] = 'Click the link to obtain access token';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
