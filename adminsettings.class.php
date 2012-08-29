@@ -18,8 +18,14 @@
 require_once($CFG->libdir.'/adminlib.php');
 
 class admin_setting_openlink extends admin_setting {
+
+    public $url;
+    public function __construct($name, $visiblename, $description, $url) {
+        parent::__construct($name, $visiblename, $description, null);
+        $this->url = $url;
+    }
     public function write_setting($data) {
-    // do not write any setting
+        // do not write any setting
         return '';
     }
     public function get_setting() {
@@ -27,26 +33,12 @@ class admin_setting_openlink extends admin_setting {
     }
     public function output_html($data, $query='') {
         global $CFG;
-        $redirect_url = equella_rest_api::get_redirect_url();
-        $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
-        $url = equella_rest_api::get_auth_code_url($options);
-        return format_admin_setting($this, $this->visiblename, '<a href="javascript:window.open(\'' . $url . '\')">Open the link to obtain access token</a>', $this->description, true);
-    }
-}
 
-class admin_setting_text extends admin_setting {
-    public function write_setting($data) {
-    // do not write any setting
-        return '';
-    }
-    public function get_setting() {
-        return true;
-    }
-    public function output_html($data, $query='') {
-        global $CFG;
-        return format_admin_setting($this, $this->visiblename, 'Access token set', $this->description, true);
-    }
+        $attributes = array('onclick'=>'window.open(\'' . $this->url . '\'); return false;');
+        $link = html_writer::link($this->url, get_string('obtainaccesstoken', 'equella'), $attributes);
 
+        return format_admin_setting($this, $this->visiblename, $link, $this->description, true);
+    }
 }
 
 /**
