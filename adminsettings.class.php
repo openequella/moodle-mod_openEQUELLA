@@ -17,6 +17,28 @@
 
 require_once($CFG->libdir.'/adminlib.php');
 
+class admin_setting_statictext extends admin_setting {
+
+    public $text;
+    public function __construct($name, $visiblename, $description, $text) {
+        parent::__construct($name, $visiblename, $description, null);
+        $this->text = $text;
+    }
+
+    public function write_setting($data) {
+        // do not write any setting
+        return '';
+    }
+
+    public function get_setting() {
+        return true;
+    }
+
+    public function output_html($data, $query='') {
+        return format_admin_setting($this, $this->visiblename, $this->text, $this->description, true);
+    }
+}
+
 class admin_setting_openlink extends admin_setting {
 
     public $url;

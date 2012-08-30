@@ -33,7 +33,7 @@ if( $ADMIN->fulltree ) {
 	/////////////////////////////////////////////////////////////////////////////////
 	// GENERAL SETTINGS
 	//
-	$settings->add(new admin_setting_heading('equella_dummy_general', ecs('general.heading'), ''));
+	$settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
 
 	$settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
 	$settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'selectOrAdd'));
@@ -51,10 +51,9 @@ if( $ADMIN->fulltree ) {
 	//
 	// SHARED SECRETS
 	//
-	$settings->add(new admin_setting_heading('equella_dummy_sharedsecrets', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
+	$settings->add(new admin_setting_heading('equella_sharedsecrets_settings', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
 
-
-  	$settings->add(new equella_setting_left_heading('equella_dummy_default', ecs('group', ecs('group.default')), ''));
+  	$settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
 	$settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
 	$settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
 
@@ -69,7 +68,7 @@ if( $ADMIN->fulltree ) {
 			$defaultsecretvalue = $role->shortname . $defaultsharedsecret;
 		}
 
-		$settings->add(new equella_setting_left_heading('equella_dummy_'.$role->shortname, ecs('group', format_string($role->name)), ''));
+		$settings->add(new equella_setting_left_heading('equella_' . $role->shortname . 'role_group', ecs('group', format_string($role->name)), ''));
 		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
 		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
 	}
@@ -77,19 +76,22 @@ if( $ADMIN->fulltree ) {
 	//
 	// OAuth
 	//
-	$settings->add(new admin_setting_heading('equella_dummy_shareiiiidsecrets', ecs('oauth.heading'), ''));
+	$settings->add(new admin_setting_heading('equella_oauth_settings', ecs('oauth.heading'), ecs('oauth.help')));
 
-	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), '', ''));
+	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), ecs('oauth.clientidhelp'), null));
 
         if (!empty($CFG->equella_oauth_client_id) && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
+
             $redirect_url = equella_rest_api::get_redirect_url();
+            $settings->add(new admin_setting_statictext('equella_redirect_url', ecs('oauth.redirecturl'), ecs('oauth.redirecturlhelp'), $redirect_url));
+
             $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
             $url = equella_rest_api::get_auth_code_url($options);
-            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), '', $url));
+            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), ecs('oauth.urlhelp'), $url));
         }
 
         if (!empty($CFG->equella_oauth_access_token)) {
-            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), '', ''));
+            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), ecs('oauth.accesstokenhelp'), ''));
             $settings->add(new admin_setting_configcheckbox('equella_intercept_moodle_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0));
             $settings->add(new admin_setting_configcheckbox('equella_dnd_hook', get_string('dndhook', 'equella'), get_string('dndhookhelp', 'equella'), 0));
         }

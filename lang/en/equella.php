@@ -89,10 +89,15 @@ $string['config.sharedsecret.title'] = 'OAuth access token';
 // CONFIGURATION: OAuth
 //
 $string['config.oauth.heading'] = 'EQUELLA OAuth options';
+$string['config.oauth.help'] = 'EQUELLA OAuth options, this will enable EQUELLA REST API access';
 $string['config.oauth.clientid'] = 'OAuth client ID';
+$string['config.oauth.clientidhelp'] = 'OAuth client ID, must match EQUELLA OAuth settings';
 $string['config.oauth.url'] = 'OAuth URL';
-$string['config.oauth.help'] = '';
+$string['config.oauth.urlhelp'] = 'Click this URL to authorize moodle access';
+$string['config.oauth.redirecturl'] = 'OAuth redirect URL';
+$string['config.oauth.redirecturlhelp'] = 'Add redirect URL to EQUELLA OAuth settings';
 $string['config.oauth.accesstoken'] = 'OAuth access token';
+$string['config.oauth.accesstokenhelp'] = 'Empty this option to re-authorize moodle access';
 
 
 ////////////////////////////////////////////////////////
