@@ -105,12 +105,21 @@ class equella_rest_api {
         $curl->setHeader(array(
             'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
         ));
-        $curl->put($endpoint, array('filehandle'=>$fp));
+        $result = $curl->put($endpoint, array('filehandle'=>$fp));
         fclose($fp);
+
+        if (!empty($result)) {
+            $resultjson = json_decode($result);
+            if (!empty($resultjson->error_description)) {
+                throw new equella_exception($resultjson->error_description);
+            } else {
+                throw new moodle_exception('error');
+            }
+        }
         // URL is in HTTP header
         $resp = $curl->getResponse();
         if (empty($resp['Location'])) {
-            throw new moodle_exception('no location returned');
+            throw new moodle_exception('restapinolocation', 'equella');
         }
         $json = $curl->get($resp['Location']);
         $info = json_decode($json);

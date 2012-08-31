@@ -345,3 +345,9 @@ function equella_dndupload_handle($uploadinfo) {
     }
     return $moduleid;
 }
+
+class equella_exception extends Exception {
+    function __construct($message, $debuginfo=null) {
+        parent::__construct($message, 0);
+    }
+}
