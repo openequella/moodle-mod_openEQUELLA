@@ -24,6 +24,8 @@ global $DB, $USER;;
 require_login();
 $links = required_param('tlelinks', PARAM_RAW);
 $links = json_decode($links, true);
+
+$mod = new stdClass;
 $mod->course = required_param('course', PARAM_INT);
 $mod->module = required_param('module', PARAM_INT);
 $mod->coursemodule = required_param('coursemodule', PARAM_INT);
@@ -51,7 +53,7 @@ foreach ($links as $link)
 	}
 
 	$modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
-	
+
 	if (! $sectionid = add_mod_to_section($mod) ) {
 		print_error('cannotaddcoursemoduletosection');
 	}
@@ -59,7 +61,7 @@ foreach ($links as $link)
 	if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule))) {
 		print_error('Could not update the course module with the correct section');
 	}
-	
+
 	set_coursemodule_visible($mod->coursemodule, true);
 
     $eventdata = new stdClass();
