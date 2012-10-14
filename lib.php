@@ -106,7 +106,7 @@ function equella_update_instance($equella) {
 	$equella->timemodified = time();
 	$equella->id = $equella->instance;
 	equella_postprocess($equella);
-	
+
 	global $DB;
 	return $DB->update_record("equella", $equella);
 }
@@ -153,7 +153,7 @@ function equella_user_complete($course, $user, $mod, $equella) {
 function equella_get_coursemodule_info($coursemodule) {
 	global $DB, $CFG;
 
-	$info = NULL;
+	$info = new stdClass;
 
 	if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
 		require_once($CFG->libdir.'/filelib.php');
