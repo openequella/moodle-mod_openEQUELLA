@@ -32,8 +32,9 @@ $string['equella:view'] = 'View EQUELLA resource';
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
 $string['interceptfiles'] = 'Intercept drag and drop files';
 $string['interceptfilesintro'] = 'Enable this option, files draged into moodle course page will be pushed to EQUELLA';
-$string['dndhook'] = 'Enable DnD hook';
-$string['dndhookhelp'] = 'When the user drags and drops a file onto the Course page, Moodle will ask if the item is to be contributed to EQUELLA';
+$string['interceptnone'] = 'Don\'t intercept files';
+$string['interceptask'] = 'Ask destination before push to EQUELLA';
+$string['interceptpush'] = 'Intercept files and push to EQUELLA';
 $string['obtainaccesstoken'] = 'Click the link to obtain access token';
 $string['restapinolocation'] = 'No location returned';
 
