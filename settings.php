@@ -23,76 +23,83 @@ require_once('equella_rest_api.php');
 
 // Horrible hack to avoid errors displaying error pages
 if( !function_exists('ecs') ) {
-	function ecs($configoption, $params = null) {
-		return get_string('config.'.$configoption, 'equella', $params);
-	}
+    function ecs($configoption, $params = null) {
+        return get_string('config.'.$configoption, 'equella', $params);
+    }
 }
 
 if( $ADMIN->fulltree ) {
+    /////////////////////////////////////////////////////////////////////////////////
+    // GENERAL SETTINGS
+    //
+    $settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
 
-	/////////////////////////////////////////////////////////////////////////////////
-	// GENERAL SETTINGS
-	//
-	$settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
+    $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
+    $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'selectOrAdd'));
 
-	$settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
-	$settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'selectOrAdd'));
+    $restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
+        EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
+        EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));
+    $settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
-	$restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
-					 EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
-					 EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));
-	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
+    $settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
-	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
+    $settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
 
-	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
+    /////////////////////////////////////////////////////////////////////////////////
+    //
+    // SHARED SECRETS
+    //
+    $settings->add(new admin_setting_heading('equella_sharedsecrets_settings', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
 
-	/////////////////////////////////////////////////////////////////////////////////
-	//
-	// SHARED SECRETS
-	//
-	$settings->add(new admin_setting_heading('equella_sharedsecrets_settings', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
+    $settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
+    $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
+    $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
 
-  	$settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
-	$settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
-	$settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
+    $defaultsharedsecret = '';
+    if( isset($CFG->equella_sharedsecret) ) {
+        $defaultsharedsecret = $CFG->equella_sharedsecret;
+    }
 
-	$defaultsharedsecret = '';
-	if( isset($CFG->equella_sharedsecret) ) {
-		$defaultsharedsecret = $CFG->equella_sharedsecret;
-	}
-
-	foreach( get_all_editing_roles() as $role ) {
-		$defaultsecretvalue = '';
-		if( $defaultsharedsecret == '' || $defaultsharedsecret == '0' ) {
-			$defaultsecretvalue = $role->shortname . $defaultsharedsecret;
-		}
-
-		$settings->add(new equella_setting_left_heading('equella_' . $role->shortname . 'role_group', ecs('group', format_string($role->name)), ''));
-		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
-		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
-	}
-	/////////////////////////////////////////////////////////////////////////////////
-	//
-	// OAuth
-	//
-	$settings->add(new admin_setting_heading('equella_oauth_settings', ecs('oauth.heading'), ecs('oauth.help')));
-
-	$settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), ecs('oauth.clientidhelp'), null));
-
-        if (!empty($CFG->equella_oauth_client_id) && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
-
-            $redirect_url = equella_rest_api::get_redirect_url();
-            $settings->add(new admin_setting_statictext('equella_redirect_url', ecs('oauth.redirecturl'), ecs('oauth.redirecturlhelp'), $redirect_url));
-
-            $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
-            $url = equella_rest_api::get_auth_code_url($options);
-            $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), ecs('oauth.urlhelp'), $url));
+    foreach( get_all_editing_roles() as $role ) {
+        $defaultsecretvalue = '';
+        if( $defaultsharedsecret == '' || $defaultsharedsecret == '0' ) {
+            $defaultsecretvalue = $role->shortname . $defaultsharedsecret;
         }
 
-        if (!empty($CFG->equella_oauth_access_token)) {
-            $settings->add(new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), ecs('oauth.accesstokenhelp'), ''));
-            $settings->add(new admin_setting_configcheckbox('equella_intercept_moodle_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0));
-            $settings->add(new admin_setting_configcheckbox('equella_dnd_hook', get_string('dndhook', 'equella'), get_string('dndhookhelp', 'equella'), 0));
-        }
+        $settings->add(new equella_setting_left_heading('equella_' . $role->shortname . 'role_group', ecs('group', format_string($role->name)), ''));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
+    }
+    /////////////////////////////////////////////////////////////////////////////////
+    //
+    // OAuth
+    //
+    $settings->add(new admin_setting_heading('equella_oauth_settings', ecs('oauth.heading'), ecs('oauth.help')));
+
+    $settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), ecs('oauth.clientidhelp'), null));
+
+    if (!empty($CFG->equella_oauth_client_id)
+        && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
+
+        $redirect_url = equella_rest_api::get_redirect_url();
+        $settings->add(new admin_setting_statictext('equella_redirect_url', ecs('oauth.redirecturl'), ecs('oauth.redirecturlhelp'), $redirect_url));
+
+        $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
+        $url = equella_rest_api::get_auth_code_url($options);
+        $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), ecs('oauth.urlhelp'), $url));
+    }
+
+    if (!empty($CFG->equella_oauth_access_token)) {
+        $accesstokenconfig = new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), ecs('oauth.accesstokenhelp'), '');
+        $settings->add($accesstokenconfig);
+
+        $choices = array(
+            EQUELLA_CONFIG_INTERCEPT_NONE => get_string('interceptnone', 'equella'),
+            EQUELLA_CONFIG_INTERCEPT_ASK  => get_string('interceptask', 'equella'),
+            EQUELLA_CONFIG_INTERCEPT_FULL => get_string('interceptpush',  'equella'),
+        );
+        $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
+        $settings->add($intercepttype);
+    }
 }
