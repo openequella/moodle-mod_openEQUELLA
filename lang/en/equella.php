@@ -31,10 +31,10 @@ $string['equella:addinstance'] = 'Add a new EQUELLA resource';
 $string['equella:view'] = 'View EQUELLA resource';
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
 $string['interceptfiles'] = 'Intercept drag and drop files';
-$string['interceptfilesintro'] = 'Enable this option, files draged into moodle course page will be pushed to EQUELLA';
+$string['interceptfilesintro'] = 'Select the action required when dragging and dropping files onto the course page';
 $string['interceptnone'] = 'Don\'t intercept files';
-$string['interceptask'] = 'Ask destination before push to EQUELLA';
-$string['interceptpush'] = 'Intercept files and push to EQUELLA';
+$string['interceptask'] = 'Auto contribute files in EQUELLA';
+$string['interceptpush'] = 'Display file destination dialog';
 $string['obtainaccesstoken'] = 'Click the link to obtain access token';
 $string['restapinolocation'] = 'No location returned';
 
@@ -93,13 +93,13 @@ $string['config.sharedsecret.title'] = 'OAuth access token';
 $string['config.oauth.heading'] = 'EQUELLA OAuth options';
 $string['config.oauth.help'] = 'EQUELLA OAuth options, this will enable EQUELLA REST API access';
 $string['config.oauth.clientid'] = 'OAuth client ID';
-$string['config.oauth.clientidhelp'] = 'OAuth client ID, must match EQUELLA OAuth settings';
+$string['config.oauth.clientidhelp'] = 'Enter the OAuth Client ID (created in EQUELLA OAuth settings)';
 $string['config.oauth.url'] = 'OAuth URL';
 $string['config.oauth.urlhelp'] = 'Click this URL to authorize moodle access';
 $string['config.oauth.redirecturl'] = 'OAuth redirect URL';
 $string['config.oauth.redirecturlhelp'] = 'Add redirect URL to EQUELLA OAuth settings';
 $string['config.oauth.accesstoken'] = 'OAuth access token';
-$string['config.oauth.accesstokenhelp'] = 'Empty this option to re-authorize moodle access';
+$string['config.oauth.accesstokenhelp'] = 'Remove this value to re-authorise Moodle access';
 
 
 ////////////////////////////////////////////////////////
