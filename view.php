@@ -17,6 +17,7 @@
 
 require_once('../../config.php');
 require_once('lib.php');
+require_once('locallib.php');
 require_once($CFG->libdir . '/resourcelib.php');
 
 global $DB, $PAGE, $OUTPUT;
@@ -67,6 +68,6 @@ $mimetype = resourcelib_guess_url_mimetype($equella->url);
 $link = html_writer::tag('a', $equella->name, array('href'=>str_replace('&amp;', '&', $url)));
 $clicktoopen = get_string('clicktoopen', 'equella', $link);
 
-echo resourcelib_embed_general($url, null, $clicktoopen, $mimetype);
+echo equella_embed_general($url, $clicktoopen, $mimetype);
 
 echo $OUTPUT->footer($course);
