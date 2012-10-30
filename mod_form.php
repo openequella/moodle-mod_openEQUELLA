@@ -19,6 +19,7 @@ require_once($CFG->dirroot.'/config.php');
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 require_once($CFG->libdir.'/resourcelib.php');
 require_once('lib.php');
+require_once('locallib.php');
 
 class mod_equella_mod_form extends moodleform_mod {
     var $form;
@@ -116,7 +117,7 @@ class mod_equella_mod_form extends moodleform_mod {
                 $url .= '&'.$CFG->equella_select_restriction.'=true';
             }
 
-            echo resourcelib_embed_general($url, null, $url, 'text/html');
+            echo equella_embed_general($url, $url, 'text/html');
         } else {
             parent::display();
         }
