@@ -339,6 +339,10 @@ function equella_dndupload_handle($uploadinfo) {
         $handle = $file->get_content_file_handle();
         // pushing files to equella
         $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        if (isset($info->error)) {
+            throw new equella_exception($info->error_description);
+        }
+        $data = new stdClass;
         $data->name = $info->name;
         $data->intro = $info->description;
         $data->introformat = FORMAT_HTML;
