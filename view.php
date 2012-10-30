@@ -17,7 +17,7 @@
 
 require_once('../../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/resourcelib.php');
+require_once($CFG->libdir . '/resourcelib.php');
 
 global $DB, $PAGE, $OUTPUT;
 
@@ -54,7 +54,7 @@ if (optional_param('inpopup', 0, PARAM_BOOL))
 
 $PAGE->set_title($course->shortname . ': ' . $equella->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_activity_record($equella);
+$PAGE->set_cm($cm);
 echo $OUTPUT->header();
 
 if( trim(strip_tags($equella->intro)) ) {
@@ -66,9 +66,7 @@ if( trim(strip_tags($equella->intro)) ) {
 $mimetype = resourcelib_guess_url_mimetype($equella->url);
 $link = html_writer::tag('a', $equella->name, array('href'=>str_replace('&amp;', '&', $url)));
 $clicktoopen = get_string('clicktoopen', 'equella', $link);
+
 echo resourcelib_embed_general($url, null, $clicktoopen, $mimetype);
 
-
 echo $OUTPUT->footer($course);
-?>
-
