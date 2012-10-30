@@ -54,7 +54,7 @@ if (optional_param('inpopup', 0, PARAM_BOOL))
 
 $PAGE->set_title($course->shortname . ': ' . $equella->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_activity_record($equella);
+$PAGE->set_cm($cm);
 echo $OUTPUT->header();
 
 if( trim(strip_tags($equella->intro)) ) {
