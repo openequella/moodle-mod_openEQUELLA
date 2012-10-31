@@ -97,7 +97,7 @@ if( $ADMIN->fulltree ) {
         $choices = array(
             EQUELLA_CONFIG_INTERCEPT_NONE => get_string('interceptnone', 'equella'),
             EQUELLA_CONFIG_INTERCEPT_ASK  => get_string('interceptask', 'equella'),
-            EQUELLA_CONFIG_INTERCEPT_FULL => get_string('interceptpush',  'equella'),
+            EQUELLA_CONFIG_INTERCEPT_FULL => get_string('interceptauto',  'equella'),
         );
         $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
         $settings->add($intercepttype);
