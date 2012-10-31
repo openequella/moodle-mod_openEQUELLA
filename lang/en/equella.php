@@ -33,8 +33,8 @@ $string['dnduploadresource'] = 'Contribute to EQUELLA';
 $string['interceptfiles'] = 'Intercept drag and drop files';
 $string['interceptfilesintro'] = 'Select the action required when dragging and dropping files onto the course page';
 $string['interceptnone'] = 'Don\'t intercept files';
-$string['interceptask'] = 'Auto contribute files in EQUELLA';
-$string['interceptpush'] = 'Display file destination dialog';
+$string['interceptauto'] = 'Auto contribute files in EQUELLA';
+$string['interceptask']  = 'Display file destination dialog';
 $string['obtainaccesstoken'] = 'Click the link to obtain access token';
 $string['restapinolocation'] = 'No location returned';
 
