@@ -50,7 +50,7 @@ function equella_get_courseId($courseid) {
 }
 
 function equella_add_instance($equella) {
-	global $DB, $USER;
+	global $DB, $USER, $CFG;
 	// Given an object containing all the necessary data,
 	// (defined by the form in mod.html) this function
 	// will create a new instance and return the id number
@@ -58,7 +58,9 @@ function equella_add_instance($equella) {
 	$equella->timecreated = time();
 	$equella->timemodified = time();
         // Use popup by default
-	$equella->windowpopup = 1;
+        if (!empty($CFG->equellaopeninnewwindow)) {
+            $equella->windowpopup = 1;
+        }
 	$eqeulla = equella_postprocess($equella);
 	return $DB->insert_record("equella", $equella);
 }
