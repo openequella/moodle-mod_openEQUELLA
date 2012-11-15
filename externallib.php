@@ -12,9 +12,10 @@ require_once($CFG->dirroot.'/mod/equella/lib.php');
 
 function equella_exception_handler($exception)
 {
+    global $CFG;
     if (false) //DO-NOT-COMMI
     {
-        $fh = fopen('c:\\temp\\moodle22_error.log', 'a');
+        $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
         fwrite($fh, $exception->getMessage()."\r\n");
         fflush($fh);
         fclose($fh);
@@ -23,6 +24,7 @@ function equella_exception_handler($exception)
 
 function equella_error_handler($errno, $errstr, $errfile, $errline)
 {
+    global $CFG;
     if (!(error_reporting() & $errno)) {
         // This error code is not included in error_reporting
         return;
@@ -30,7 +32,7 @@ function equella_error_handler($errno, $errstr, $errfile, $errline)
 
     if (false) //DO-NOT-COMMI
     {
-        $fh = fopen('c:\\temp\\moodle22_error.log', 'a');
+        $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
         fwrite($fh, "Fatal error on line $errline in file $errfile : $errstr \r\n");
         fflush($fh);
         fclose($fh);
@@ -50,9 +52,10 @@ class equella_external extends external_api {
 
     public static function log($text)
     {
+        global $CFG;
         if (self::DEVMODE)
         {
-            $fh = fopen('c:\\temp\\moodle22.log', 'a');
+            $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
             fwrite($fh, $text."\r\n");
             fflush($fh);
             fclose($fh);
