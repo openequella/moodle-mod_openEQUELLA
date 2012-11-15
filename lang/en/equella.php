@@ -86,7 +86,7 @@ $string['config.sharedsecrets.help'] =  '<p>Below you can set a default EQUELLA 
 $string['config.group'] = '{$a} role settings';
 $string['config.group.default'] = 'Default';
 $string['config.sharedid.title'] = 'Shared secret ID';
-$string['config.sharedsecret.title'] = 'OAuth access token';
+$string['config.sharedsecret.title'] = 'Shared secret';
 
 ////////////////////////////////////////////////////////
 // CONFIGURATION: OAuth
