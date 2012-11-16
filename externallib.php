@@ -462,42 +462,48 @@ class equella_external extends external_api {
             ));
         self::log("find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion)");
 
-        $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
 
         if ($params['allVersion'])
         {
-            $equella_items = $DB->get_records_select('equella', "uuid='$uuid'", null, 'timecreated DESC', '*');
+            $equella_items = $DB->get_recordset('equella', array('uuid'=>$uuid));
         }
         else if ($params['isLatest'])
         {
-            $equella_items = $DB->get_records_select('equella',
-                "uuid='$uuid' AND (version=$version OR version=0)", null, 'timecreated DESC', '*');
+            list($insql, $params) = $DB->get_in_or_equal(array(0, $version));
+            $sql = "SELECT *
+                      FROM {equella}
+                     WHERE version $insql
+                           AND uuid = ?
+                  ORDER BY timecreated DESC";
+            $params[] = $uuid;
+            $equella_items = $DB->get_recordset_sql($sql, $params);
         }
         else
         {
-            $equella_items = $DB->get_records_select('equella',
-                "uuid='$uuid' AND version=$version", null, 'timecreated DESC', '*');
+            $equella_items = $DB->get_recordset('equella', array('uuid'=>$uuid, 'version'=>$version));
         }
 
         $content = array();
         $itemViews = array();
-        $coursemap = array();
+        $coursecaches = array();
         foreach ($equella_items as $item)
         {
-            $course = $coursemap[$item->course];
-            if (empty($course))
-            {
-                $course = $DB->get_record('course', array('id' => $item->course), '*', MUST_EXIST);
-                $coursemap[$item->course] = $course;
+            $cm = get_coursemodule_from_instance('equella', $item->id);
+            if (!empty($coursecaches[$cm->course])) {
+                $course = $coursecaches[$cm->course];
+            } else {
+                $course = $DB->get_record("course", array("id" => $cm->course));
+                $coursecaches[$cm->course] = $course;
             }
 
-            $courseModule = $DB->get_record('course_modules', array('module' => $equella->id, 'instance' => $item->id), '*', MUST_EXIST);
-            if (!$params['archived'] && (!$course->visible || !$courseModule->visible))
+            if (!$params['archived'] && (!$course->visible || !$cm->visible))
             {
                 continue;
             }
 
-            $content[] = self::convert_item($item, $itemViews, $course, $courseModule, $params['archived']);
+            $content[] = self::convert_item($item, $itemViews, $course, $cm, $params['archived']);
+            // reset course
+            $course = null;
         }
 
         return array('results' => $content);
