@@ -465,7 +465,7 @@ class equella_external extends external_api {
 
         if ($params['allVersion'])
         {
-            $equella_items = $DB->get_recordset('equella', array('uuid'=>$uuid));
+            $equella_items = $DB->get_recordset('equella', array('uuid'=>$uuid), 'timecreated DESC');
         }
         else if ($params['isLatest'])
         {
