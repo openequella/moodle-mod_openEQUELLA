@@ -72,7 +72,7 @@ function equella_getssotoken($readwrite = 'read') {
 }
 
 function equella_getssotoken_raw($username, $shareid, $sharedsecret) {
-	$time = mktime() . '000';
+	$time = time() . '000';
 	return urlencode($username)
 		. ':'
 		. $shareid
