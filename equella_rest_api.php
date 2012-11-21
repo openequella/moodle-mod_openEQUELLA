@@ -114,7 +114,11 @@ class equella_rest_api {
             if (!empty($resultjson->error_description)) {
                 throw new equella_exception($resultjson->error_description);
             } else {
-                throw new moodle_exception('error');
+                if (debugging()) {
+                    throw new moodle_exception($resultjson);
+                } else {
+                    throw new moodle_exception('error');
+                }
             }
         }
         // URL is in HTTP header
