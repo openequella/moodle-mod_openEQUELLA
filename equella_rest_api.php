@@ -111,6 +111,9 @@ class equella_rest_api {
 
         if (!empty($result)) {
             $resultjson = json_decode($result);
+            if (empty($resultjson) && debugging()) {
+                throw new moodle_exception(html_to_text($result));
+            }
             if (!empty($resultjson->error_description)) {
                 throw new equella_exception($resultjson->error_description);
             } else {
