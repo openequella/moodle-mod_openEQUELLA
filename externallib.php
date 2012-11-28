@@ -376,8 +376,7 @@ class equella_external extends external_api {
 
 
     public static function list_courses_for_user($user, $modifiable, $archived) {
-        global $DB;
-        global $CFG;
+        global $DB, $CFG;
         $result = array();
 
         $params = self::validate_parameters(self::list_courses_for_user_parameters(),
@@ -398,9 +397,14 @@ class equella_external extends external_api {
             $userobj = null;
         }
 
-        $courses = $DB->get_records('course');
+        $courses = $DB->get_recordset('course');
         foreach ($courses as $course)
         {
+            // Ignore site level course
+            if ($course->id == SITEID)
+            {
+                continue;
+            }
             //Ugh
             if ($userobj != null && !self::has_modify_permissions($userobj, $course->id))
             {
