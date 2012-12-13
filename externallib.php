@@ -473,14 +473,14 @@ class equella_external extends external_api {
         }
         else if ($params['isLatest'])
         {
-            list($insql, $params) = $DB->get_in_or_equal(array(0, $version));
+            list($insql, $inparams) = $DB->get_in_or_equal(array(0, $version));
             $sql = "SELECT *
                       FROM {equella}
                      WHERE version $insql
                            AND uuid = ?
                   ORDER BY timecreated DESC";
-            $params[] = $uuid;
-            $equella_items = $DB->get_recordset_sql($sql, $params);
+            $inparams[] = $uuid;
+            $equella_items = $DB->get_recordset_sql($sql, $inparams);
         }
         else
         {
