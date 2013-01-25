@@ -61,7 +61,7 @@ function equella_add_instance($equella) {
         if (!empty($CFG->equellaopeninnewwindow)) {
             $equella->windowpopup = 1;
         }
-	$eqeulla = equella_postprocess($equella);
+	$equella = equella_postprocess($equella);
 	return $DB->insert_record("equella", $equella);
 }
 
