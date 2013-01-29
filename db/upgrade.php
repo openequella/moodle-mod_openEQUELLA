@@ -105,7 +105,20 @@ function xmldb_equella_upgrade($oldversion) {
     	upgrade_mod_savepoint(true, 2012010901, 'equella');
     }
 
+    if ($oldversion < 2012082806)
+    {
+        require_once($CFG->dirroot . '/mod/equella/lib.php');
+        $records = $DB->get_recordset('equella');
+        foreach ($records as $record)
+        {
+            var_dump($record);
+            $record = equella_postprocess($record);
+            var_dump($record);
+            $DB->update_record('equella', $record);
+        }
+
+        upgrade_mod_savepoint(true, 2012082806, 'equella');
+    }
+
     return true;
 }
-
-
