@@ -99,9 +99,15 @@ class equella_rest_api {
         return $info;
     }
 
-    public static function contribute_file($filename, $fp) {
+    public static function contribute_file($filename, $fp, $params = array()) {
         global $CFG;
         $endpoint = self::get_end_point() . 'api/item/quick/' . urlencode($filename);
+        $pairs = array();
+        foreach ($params as $name=>$value) {
+            $pairs[] = (urlencode($name) . '=' . urlencode($value));
+        }
+        $endpoint .= ('?' . implode('&', $pairs));
+
         $curl = new equella_curl();
         $curl->setHeader(array(
             'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
