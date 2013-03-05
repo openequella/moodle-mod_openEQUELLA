@@ -121,7 +121,9 @@ class equella_rest_api {
                 throw new moodle_exception(html_to_text($result));
             }
             if (!empty($resultjson->error_description)) {
-                throw new equella_exception($resultjson->error_description);
+                throw new equella_exception('EQUELLA: ' . $resultjson->error_description);
+            } else if (!empty($resultjson->error)) {
+                throw new equella_exception('EQUELLA: ' . $resultjson->error);
             } else {
                 if (debugging()) {
                     throw new moodle_exception($resultjson);
