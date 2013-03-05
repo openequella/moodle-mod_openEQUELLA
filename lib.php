@@ -278,15 +278,24 @@ function equella_replace_contents_with_references($file, $info) {
 }
 
 function equella_module_event_handler($event) {
-    global $CFG;
+    global $CFG, $DB;
     if (empty($CFG->equella_intercept_files)) {
         return;
     }
+    $course = $DB->get_record('course', array('id'=>$event->courseid));
+    $params = array();
+    $params['moodlemoduletype'] = $event->modulename;
+    $params['moodlemodulename'] = $event->name;
+    $params['moodlemoduleid']   = $event->cmid;
+    $params['moodlecoursefullname']  = $course->fullname;
+    $params['moodlecourseshortname'] = $course->shortname;
+    $params['moodlecourseid']        = $course->id;
+    $params['moodlecoruseidnumber']  = $course->idnumber;
     $files = equella_capture_files($event);
     foreach ($files as $file) {
         $handle = $file->get_content_file_handle();
         // pushing files to equella
-        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         // replace contents
         equella_replace_contents_with_references($file, $info);
     }
@@ -340,7 +349,12 @@ function equella_dndupload_handle($uploadinfo) {
     foreach ($draftfiles as $file) {
         $handle = $file->get_content_file_handle();
         // pushing files to equella
-        $info = equella_rest_api::contribute_file($file->get_filename(), $handle);
+        $params = array();
+        $params['moodlecoursefullname'] = $uploadinfo->course->fullname;
+        $params['moodlecourseshortname'] = $uploadinfo->course->shortname;
+        $params['moodlecourseid'] = $uploadinfo->course->id;
+        $params['moodlecoruseidnumber'] = $uploadinfo->course->idnumber;
+        $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
         }
