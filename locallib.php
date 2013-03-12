@@ -18,6 +18,117 @@
  * Library of functions for EQUELLA internal
  */
 
+function equella_get_course_contents($courseid, $sectionid) {
+    global $DB, $CFG;
+
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+    if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
+        throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null, get_string('courseformatnotfound', 'error', '', $course->format));
+    } else {
+        require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
+    }
+
+    $context = context_course::instance($course->id, IGNORE_MISSING);
+
+    $coursecontents = new stdClass;
+    $coursecontents->id = $course->id;
+    $coursecontents->code = $course->idnumber;
+    $coursecontents->name = $course->fullname;
+    $coursecontents->folders = array();
+
+    if ($course->visible or has_capability('moodle/course:viewhiddencourses', $context)) {
+
+        //retrieve sections
+        $modinfo = get_fast_modinfo($course);
+        $sections = $modinfo->get_section_info_all();
+
+        //for each sections (first displayed to last displayed)
+        foreach ($sections as $key => $section) {
+
+            if (!$section->uservisible) {
+                continue;
+            }
+
+            $sectionvalues = new stdClass;
+
+            if ((int)$section->id == (int)$sectionid) {
+                $sectionvalues->selected = true;
+            }
+            $sectionvalues->id = $section->section;
+            $sectionvalues->name = get_section_name($course, $section);
+            $sectionvalues->folders = array();
+            $sectioncontents = array();
+
+            if (!isset($modinfo->sections[$section->section])) {
+                $modinfo->sections[$section->section] = array();
+            }
+            //foreach ($modinfo->sections[$section->section] as $cmid) {
+                //$cm = $modinfo->cms[$cmid];
+
+                //if (!$cm->uservisible) {
+                    //continue;
+                //}
+
+                //$module = array();
+
+                //$module['id'] = $cm->id;
+                //$module['name'] = format_string($cm->name, true);
+                //$sectioncontents[] = $module;
+            //}
+            //$sectionvalues->folders = $sectioncontents;
+
+            $coursecontents->folders[] = $sectionvalues;
+        }
+    }
+    return $coursecontents;
+}
+
+/**
+ * Returns general link or file embedding html.
+ * @param string $fullurl
+ * @param string $clicktoopen
+ * @param string $mimetype
+ * @return string html
+ */
+function equella_embed_form($courseid, $sectionid, $equellaurl) {
+    global $CFG, $PAGE;
+
+    $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
+
+    $iframe = false;
+    // IE can not embed stuff properly, that is why we use iframe instead.
+    // Unfortunately this tag does not validate in xhtml strict mode,
+    // but in any case it is undeprecated in HTML 5 - we will use it everywhere soon!
+    if (check_browser_version('MSIE', 5)) {
+        $iframe = true;
+    }
+
+    if ($iframe) {
+        $code = <<<EOT
+<div class="resourcecontent resourcegeneral">
+  <iframe id="resourceobject" src="$redirecturl">
+  </iframe>
+</div>
+EOT;
+    } else {
+        $param = '<param name="src" value="'.$redirecturl.'" />';
+
+        $code = <<<EOT
+<div class="resourcecontent resourcegeneral">
+  <object id="resourceobject" data="$redirecturl" width="800" height="600" type="text/html">
+    $param
+  </object>
+</div>
+EOT;
+    }
+
+    // the size is hardcoded in the object above intentionally because it is adjusted by the following function on-the-fly
+    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+
+    return $code;
+}
+
 /**
  * Returns general link or file embedding html.
  * @param string $fullurl
