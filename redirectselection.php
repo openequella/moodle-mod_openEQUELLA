@@ -22,7 +22,7 @@ header('Content-Type:text/html;charset=UTF-8');
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 require_once($CFG->dirroot.'/mod/equella/locallib.php');
-$equellaurl = required_param('equellaurl', PARAM_URL);
+$equellaurl = required_param('equellaurl', PARAM_RAW);
 $courseid = required_param('courseid', PARAM_INT);
 $sectionid = required_param('sectionid', PARAM_INT);
 
