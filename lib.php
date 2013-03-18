@@ -28,154 +28,152 @@ define('EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY', 'attachmentonly');
 
 function equella_supports($feature) {
     switch($feature) {
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+    case FEATURE_MOD_INTRO:               return true;
+    case FEATURE_BACKUP_MOODLE2:          return true;
+    case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
+    case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
 
-        default: return null;
+    default: return null;
     }
 }
 
 function equella_get_window_options() {
-	return array('width', 'height', 'resizable', 'scrollbars', 'directories', 'location', 'menubar', 'toolbar', 'status');
+    return array('width', 'height', 'resizable', 'scrollbars', 'directories', 'location', 'menubar', 'toolbar', 'status');
 }
 
 function equella_get_courseId($courseid) {
-	global $DB;
-	$record = $DB->get_record("course", array('id' => $courseid));
-	return $record->idnumber;
+    global $DB;
+    $record = $DB->get_record("course", array('id' => $courseid));
+    return $record->idnumber;
 }
 
 function equella_get_types()
 {
-	global $CFG;
+    global $CFG;
 
-	$type = new object();
-	$type->modclass = $CFG->equella_location == EQUELLA_CONFIG_LOCATION_RESOURCE ? MOD_CLASS_RESOURCE : MOD_CLASS_ACTIVITY;
-	$type->name = "equella";
-	$type->type = "equella";
-	$type->typestr = get_string("modulename", "equella");
+    $type = new object();
+    $type->modclass = $CFG->equella_location == EQUELLA_CONFIG_LOCATION_RESOURCE ? MOD_CLASS_RESOURCE : MOD_CLASS_ACTIVITY;
+    $type->name = "equella";
+    $type->type = "equella";
+    $type->typestr = get_string("modulename", "equella");
 
-	$types = array();
-	$types[] = $type;
-	return $types;
+    $types = array();
+    $types[] = $type;
+    return $types;
 }
 
 function equella_add_instance($equella) {
-	// Given an object containing all the necessary data,
-	// (defined by the form in mod.html) this function
-	// will create a new instance and return the id number
-	// of the new instance.
-	global $DB, $USER;
-	$equella->timecreated = time();
-	$equella->timemodified = time();
-	equella_postprocess($equella);
-	return $DB->insert_record("equella", $equella);
+    // Given an object containing all the necessary data,
+    // (defined by the form in mod.html) this function
+    // will create a new instance and return the id number
+    // of the new instance.
+    global $DB, $USER;
+    $equella->timecreated = time();
+    $equella->timemodified = time();
+    equella_postprocess($equella);
+    return $DB->insert_record("equella", $equella);
 }
 
 function equella_postprocess(&$resource) {
-	if( isset($resource->windowpopup) && $resource->windowpopup ) {
-		$optionlist = array();
-		foreach( equella_get_window_options() as $option ) {
-			if (isset($resource->$option))
-			{
-				$optionlist[] = $option."=".$resource->$option;
-				unset($resource->$option);
-			}
-		}
-		$resource->popup = implode(',', $optionlist);
-		unset($resource->windowpopup);
-	} else {
-		$resource->popup = '';
-	}
+    if( isset($resource->windowpopup) && $resource->windowpopup ) {
+        $optionlist = array();
+        foreach( equella_get_window_options() as $option ) {
+            if (isset($resource->$option))
+            {
+                $optionlist[] = $option."=".$resource->$option;
+                unset($resource->$option);
+            }
+        }
+        $resource->popup = implode(',', $optionlist);
+        unset($resource->windowpopup);
+    } else {
+        $resource->popup = '';
+    }
 
-	$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
+    $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-	$url = $resource->url;
-	preg_match($pattern, $url, $matches);
-	$resource->uuid = $matches['uuid'];
-	$resource->version=$matches['version'];
-	$resource->path=$matches['path'];
+    $url = $resource->url;
+    preg_match($pattern, $url, $matches);
+    $resource->uuid = $matches['uuid'];
+    $resource->version=$matches['version'];
+    $resource->path=$matches['path'];
 }
 
 function equella_update_instance($equella) {
-	// Given an object containing all the necessary data,
-	// will update an existing instance with new data.
+    // Given an object containing all the necessary data,
+    // will update an existing instance with new data.
 
-	$equella->timemodified = time();
-	$equella->id = $equella->instance;
-	equella_postprocess($equella);
+    $equella->timemodified = time();
+    $equella->id = $equella->instance;
+    equella_postprocess($equella);
 
-	global $DB;
-	return $DB->update_record("equella", $equella);
+    global $DB;
+    return $DB->update_record("equella", $equella);
 }
 
 
 function equella_delete_instance($id) {
-	global $DB, $CFG;
-	// Given an ID of an instance of this module,
-	// this function will permanently delete the instance
-	// and any data that depends on it.
+    global $DB, $CFG;
+    // Given an ID of an instance of this module,
+    // this function will permanently delete the instance
+    // and any data that depends on it.
 
-	if (! $equella = $DB->get_record("equella", array("id" => $id))) {
-		return false;
-	}
+    if (! $equella = $DB->get_record("equella", array("id" => $id))) {
+        return false;
+    }
 
-	if ($equella->activation)
-	{
-		$url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
-		$url = equella_appendtoken($url, 'write')."&activationUuid=".urlencode($equella->activation);
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$res = curl_exec($curl);
-		curl_close($curl);
-	}
-	$result = true;
+    if ($equella->activation)
+    {
+        $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
+        $url = equella_appendtoken($url, 'write')."&activationUuid=".urlencode($equella->activation);
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $res = curl_exec($curl);
+        curl_close($curl);
+    }
+    $result = true;
 
 
-	if (! $DB->delete_records("equella", array("id" => $equella->id))) {
-		$result = false;
-	}
+    if (! $DB->delete_records("equella", array("id" => $equella->id))) {
+        $result = false;
+    }
 
-	return $result;
+    return $result;
 }
 
 function equella_user_outline($course, $user, $mod, $equella) {
-	$result = NULL;
-	return $result;
+    $result = NULL;
+    return $result;
 }
 
 function equella_user_complete($course, $user, $mod, $equella) {
-	print_string("notsubmittedyet", "equella");
+    print_string("notsubmittedyet", "equella");
 }
 
 function equella_get_coursemodule_info($coursemodule) {
-	global $DB, $CFG;
+    global $DB, $CFG;
 
-	$info = new stdClass;
+    $info = new stdClass;
 
-	if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
-		require_once($CFG->libdir.'/filelib.php');
+    if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
+        require_once($CFG->libdir.'/filelib.php');
 
-		$url = $resource->url;
-		if( $ind = strrpos($url, '?') ) {
-			$url = substr($url, 0, $ind);
-		}
+        $url = $resource->url;
+        if( $ind = strrpos($url, '?') ) {
+            $url = substr($url, 0, $ind);
+        }
 
-		$icon = mimeinfo("icon", $url);
-		if( strpos($icon, 'unknown') === false  ) {
-			$info->icon ="f/$icon";
-		} else {
-			$info->icon ="f/web";
-		}
-		
-		if( !empty($resource->popup) ) {
-           $info->extra = "onclick=\"window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;\"";
-		}
-	}
+        $icon = mimeinfo("icon", $url);
+        if( strpos($icon, 'unknown') === false  ) {
+            $info->icon ="f/$icon";
+        } else {
+            $info->icon ="f/web";
+        }
 
-	return $info;
+        if( !empty($resource->popup) ) {
+            $info->extra = "onclick=\"window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;\"";
+        }
+    }
+
+    return $info;
 }
-
-?>
