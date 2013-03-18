@@ -57,7 +57,8 @@ foreach ($links as $link)
 
 	$modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
-	if (! $sectionid = add_mod_to_section($mod) ) {
+	if (! $sectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section) ) {
+
 		print_error('cannotaddcoursemoduletosection');
 	}
 
