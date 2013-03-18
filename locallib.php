@@ -20,6 +20,7 @@
 
 function equella_get_course_contents($courseid, $sectionid) {
     global $DB, $CFG;
+    require_once($CFG->dirroot . '/course/lib.php');
 
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
@@ -40,8 +41,7 @@ function equella_get_course_contents($courseid, $sectionid) {
     if ($course->visible or has_capability('moodle/course:viewhiddencourses', $context)) {
 
         //retrieve sections
-        $modinfo = get_fast_modinfo($course);
-        $sections = $modinfo->get_section_info_all();
+        $sections = get_all_sections($course->id);
 
         //for each sections (first displayed to last displayed)
         foreach ($sections as $key => $section) {
