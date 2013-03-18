@@ -20,5 +20,3 @@ require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 
 $url = equella_appendtoken(required_param('url', PARAM_URL));
 header("Location: $url");
-
-?>
