@@ -20,8 +20,6 @@ require_once('lib.php');
 require_once('locallib.php');
 require_once($CFG->libdir . '/resourcelib.php');
 
-global $DB, $PAGE, $OUTPUT;
-
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // newmodule ID
 
@@ -40,7 +38,7 @@ $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/equella:view', $context);
 
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-	notice(get_string("activityiscurrentlyhidden"));
+    notice(get_string("activityiscurrentlyhidden"));
 }
 
 add_to_log($course->id, "equella", "view", "view.php?id=$cm->id", $equella->id, $cm->id);
@@ -50,7 +48,7 @@ $PAGE->set_url('/mod/equella/view.php', array('id' => $cm->id));
 $url = equella_appendtoken($equella->url);
 if (optional_param('inpopup', 0, PARAM_BOOL))
 {
-	redirect($url);
+    redirect($url);
 }
 
 $PAGE->set_title($course->shortname . ': ' . $equella->name);
@@ -59,9 +57,9 @@ $PAGE->set_cm($cm);
 echo $OUTPUT->header();
 
 if( trim(strip_tags($equella->intro)) ) {
-	echo $OUTPUT->box_start('mod_introbox', 'equellaintro');
-	echo format_module_intro('equella', $equella, $cm->id);
-	echo $OUTPUT->box_end();
+    echo $OUTPUT->box_start('mod_introbox', 'equellaintro');
+    echo format_module_intro('equella', $equella, $cm->id);
+    echo $OUTPUT->box_end();
 }
 
 $mimetype = resourcelib_guess_url_mimetype($equella->url);
