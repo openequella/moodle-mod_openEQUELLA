@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+function equella_process_courseid($courseid) {
+    return 'C' . $courseid;
+}
+
 /**
  * Library of functions for EQUELLA internal
  */
@@ -33,7 +37,7 @@ function equella_get_course_contents($courseid, $sectionid) {
     $context = context_course::instance($course->id, IGNORE_MISSING);
 
     $coursecontents = new stdClass;
-    $coursecontents->id = $course->id;
+    $coursecontents->id = equella_process_courseid($course->id);
     $coursecontents->code = $course->idnumber;
     $coursecontents->name = $course->fullname;
     $coursecontents->folders = array();
