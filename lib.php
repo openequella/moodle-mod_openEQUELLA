@@ -163,7 +163,7 @@ function equella_get_coursemodule_info($coursemodule) {
 		if( $ind = strrpos($url, '?') ) {
 			$url = substr($url, 0, $ind);
 		}
-		$info->icon = equella_guess_icon($url);
+		$info->icon = equella_guess_icon($url, 24);
 
 		if( !empty($resource->popup) ) {
            $info->extra = "onclick=\"window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;\"";
@@ -179,19 +179,23 @@ function equella_get_coursemodule_info($coursemodule) {
  * @param $fullurl
  * @return string mimetype
  */
-function equella_guess_icon($fullurl) {
+function equella_guess_icon($fullurl, $size = null) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
 
     if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
-        // most probably default directory - index.php, index.html, etc.
-        return file_extension_icon('.htm');
+        // Most probably default directory - index.php, index.html, etc. Return null because
+        // we want to use the default module icon instead of the HTML file icon.
+        return null;
     }
 
-    $icon = file_extension_icon($fullurl);
+    $icon = file_extension_icon($fullurl, $size);
+    $htmlicon = file_extension_icon('.htm', $size);
+    $unknownicon = file_extension_icon('', $size);
 
-    if ($icon === file_extension_icon('')) {
-        return file_extension_icon('.htm');
+    // We do not want to return those icon types, the module icon is more appropriate.
+    if ($icon === $unknownicon || $icon === $htmlicon) {
+        return null;
     }
 
     return $icon;
