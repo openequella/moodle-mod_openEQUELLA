@@ -4,7 +4,7 @@ Moodle module for EQUELLA integration
 Requirements
 ------------
 
-This module requires EQUELLA 4.1 QA3 or higher.  The master branch works with the Moodle 2.3 and up.  For earlier version of Moodle, choose the appropriate Git branch.
+This module requires EQUELLA 4.1 QA3 or higher.  The master branch works with the Moodle 2.4 and up.  For Moodle earlier versions, choose the appropriate Git branch.
 
 Support
 -------
