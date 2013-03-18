@@ -46,13 +46,9 @@ function equella_get_course_contents($courseid, $sectionid) {
         //for each sections (first displayed to last displayed)
         foreach ($sections as $key => $section) {
 
-            if (!$section->uservisible) {
-                continue;
-            }
-
             $sectionvalues = new stdClass;
 
-            if ((int)$section->id == (int)$sectionid) {
+            if ((int)$section->section == (int)$sectionid) {
                 $sectionvalues->selected = true;
             }
             $sectionvalues->id = $section->section;
