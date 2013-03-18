@@ -20,8 +20,6 @@ require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);   // course
 
-global $DB;
-
 if (! $course = $DB->get_record("course", array("id" => $id))) {
     print_error('invalidcourseid', '', '', $id);
 }
@@ -102,4 +100,3 @@ echo "<br />";
 
 echo html_writer::table($table);
 echo $OUTPUT->footer();
-?>
