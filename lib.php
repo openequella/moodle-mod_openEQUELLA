@@ -26,6 +26,13 @@ define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY', 'attachmentonly');
 
+define('EQUELLA_CONFIG_INTERCEPT_NONE', 0);
+define('EQUELLA_CONFIG_INTERCEPT_ASK',  1);
+define('EQUELLA_CONFIG_INTERCEPT_FULL', 2);
+
+define('EQUELLA_ACTION_SELECTORADD', 'selectOrAdd');
+define('EQUELLA_ACTION_STRUCTURED', 'structured');
+
 function equella_supports($feature) {
     switch($feature) {
     case FEATURE_MOD_INTRO:               return true;

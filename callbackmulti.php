@@ -38,6 +38,11 @@ foreach ($links as $link)
 	$mod->introformat = FORMAT_HTML;
 	$mod->attachmentuuid = $link['attachmentUuid'];
 	$mod->url = $link['url'];
+        // if equella returns section id, overwrite moodle section parameter
+        if (isset($link['folder'])) {
+            $mod->section = $link['folder'];
+        }
+
 	if (isset($link['activationUuid']))
 	{
 		$mod->activation = $link['activationUuid'];

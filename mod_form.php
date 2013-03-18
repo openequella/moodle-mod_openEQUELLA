@@ -120,7 +120,11 @@ class mod_equella_mod_form extends moodleform_mod {
 				$url .= '&'.$CFG->equella_select_restriction.'=true';
 			}
 
-                        echo equella_embed_general($url, $url, 'text/html');
+                        if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
+                            echo equella_embed_form($form->course, $form->section, $url);
+                        } else {
+                            echo equella_embed_general($url, $url, 'text/html');
+                        }
 		}
 		else
 		{
