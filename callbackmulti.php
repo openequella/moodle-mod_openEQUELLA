@@ -32,41 +32,41 @@ $mod->section = required_param('section', PARAM_INT);
 $mod->modulename = 'equella';
 foreach ($links as $link)
 {
-	$mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
-	$mod->intro = $link['description'];
-	$mod->introformat = FORMAT_HTML;
-	$mod->attachmentuuid = $link['attachmentUuid'];
-	$mod->url = $link['url'];
-        // if equella returns section id, overwrite moodle section parameter
-        if (isset($link['folder'])) {
-            $mod->section = $link['folder'];
-        }
-	if (isset($link['activationUuid']))
-	{
-		$mod->activation = $link['activationUuid'];
-	}
-	$return = equella_add_instance($mod);
+    $mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
+    $mod->intro = $link['description'];
+    $mod->introformat = FORMAT_HTML;
+    $mod->attachmentuuid = $link['attachmentUuid'];
+    $mod->url = $link['url'];
+    // if equella returns section id, overwrite moodle section parameter
+    if (isset($link['folder'])) {
+        $mod->section = $link['folder'];
+    }
+    if (isset($link['activationUuid']))
+    {
+        $mod->activation = $link['activationUuid'];
+    }
+    $return = equella_add_instance($mod);
 
-	$mod->instance = $return;
+    $mod->instance = $return;
 
-	// course_modules and course_sections each contain a reference
-	// to each other, so we have to update one of them twice.
-	if (! $mod->coursemodule = add_course_module($mod) ) {
-		print_error('cannotaddcoursemodule');
-	}
+    // course_modules and course_sections each contain a reference
+    // to each other, so we have to update one of them twice.
+    if (! $mod->coursemodule = add_course_module($mod) ) {
+        print_error('cannotaddcoursemodule');
+    }
 
-	$modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
+    $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
-	if (! $sectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section) ) {
+    if (! $sectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section) ) {
 
-		print_error('cannotaddcoursemoduletosection');
-	}
+        print_error('cannotaddcoursemoduletosection');
+    }
 
-	if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule))) {
-		print_error('Could not update the course module with the correct section');
-	}
+    if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule))) {
+        print_error('Could not update the course module with the correct section');
+    }
 
-	set_coursemodule_visible($mod->coursemodule, true);
+    set_coursemodule_visible($mod->coursemodule, true);
 
     $eventdata = new stdClass();
     $eventdata->modulename = $mod->modulename;
@@ -77,23 +77,21 @@ foreach ($links as $link)
     events_trigger('mod_created', $eventdata);
 
     add_to_log($mod->course, 'course', 'add mod',
-               "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-               "$mod->modulename $mod->instance");
+        "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
+        "$mod->modulename $mod->instance");
     add_to_log($mod->course, $mod->modulename, 'add',
-               "view.php?id=$mod->coursemodule",
-               "$mod->instance", $mod->coursemodule);
+        "view.php?id=$mod->coursemodule",
+        "$mod->instance", $mod->coursemodule);
 }
 
 rebuild_course_cache($mod->course);
 ?>
-
 <html>
-<head>
-<title>Adding item...</title>
-<script>
-window.parent.document.location = '<?php print "$CFG->wwwroot/course/view.php?id=$mod->course" ?>';
-</script>
-</head>
-<body>
-</body>
+    <head>
+        <title>Adding item...</title>
+        <script>
+        window.parent.document.location = '<?php print "$CFG->wwwroot/course/view.php?id=$mod->course" ?>';
+        </script>
+    </head>
+    <body></body>
 </html>
