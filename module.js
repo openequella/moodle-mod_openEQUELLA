@@ -9,6 +9,8 @@ M.mod_equella.submitform = function(Y, formid) {
 };
 
 M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, title, redirecturl) {
+    var bodyNode = Y.one('body');
+    bodyNode.addClass('equella-page');
     var generate_html = function(append) {
         var iframe = '';
         if (Y.UA.ie > 0) {
