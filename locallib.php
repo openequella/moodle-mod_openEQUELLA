@@ -194,10 +194,12 @@ function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
     $equellatitle = get_string('chooseeqeullaresources', 'mod_equella');
     $equellacontainer = 'equellacontainer';
     $cancel = get_string('cancel');
+    $cancelurl = new moodle_url('/course/view.php', array('id'=>$courseid));
+    $link = html_writer::link($cancelurl, $cancel);
     $html = <<<EOF
 <div>
     <button id="openequellachooser">$equellatitle</button>
-    <a href="">$cancel</a>
+    $link
 </div>
 EOF;
     $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 1040, 600, $equellatitle, $redirecturl->out()), true);
