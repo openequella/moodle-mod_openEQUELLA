@@ -178,3 +178,30 @@ EOT;
 
     return $code;
 }
+
+/**
+ * Returns general link or file embedding html.
+ * @param string $fullurl
+ * @param string $clicktoopen
+ * @param string $mimetype
+ * @return string html
+ */
+function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
+    global $CFG, $PAGE;
+
+    $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
+
+    $equellatitle = get_string('chooseeqeullaresources', 'mod_equella');
+    $equellacontainer = 'equellacontainer';
+    $cancel = get_string('cancel');
+    $html = <<<EOF
+<div>
+    <button id="openequellachooser">$equellatitle</button>
+    <a href="">$cancel</a>
+</div>
+EOF;
+    $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 1040, 600, $equellatitle, $redirecturl->out()), true);
+
+    return $html;
+    //return $code;
+}
