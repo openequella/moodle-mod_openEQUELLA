@@ -22,6 +22,8 @@ $string['modulename_help'] = 'The EQUELLA module enables a teacher to link to co
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['description'] = 'Content';
 
+$string['chooseeqeullaresources'] = 'Choose EQUELLA resources';
+
 $string['noinstances'] = 'There are no EQUELLA Resources in this course';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
