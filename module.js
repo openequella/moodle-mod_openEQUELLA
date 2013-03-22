@@ -27,59 +27,52 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         }
         return html;
     }
+    var get_htmlelement_size = function(el, prop) {
+        if (Y.Lang.isString(el)) {
+            el = Y.one('#' + el);
+        }
+        // Ensure element exists.
+        if (el) {
+            var val = el.getStyle(prop);
+            if (val == 'auto') {
+                val = el.getComputedStyle(prop);
+            }
+            return parseInt(val);
+        } else {
+            return 0;
+        }
+    };
+
     var resize_embeded = function(id, parentContainer, initialize) {
         var obj = Y.one('#'+id);
         if (!obj) {
             return;
         }
 
-        var get_htmlelement_size = function(el, prop) {
-            if (Y.Lang.isString(el)) {
-                el = Y.one('#' + el);
-            }
-            // Ensure element exists.
-            if (el) {
-                var val = el.getStyle(prop);
-                if (val == 'auto') {
-                    val = el.getComputedStyle(prop);
-                }
-                return parseInt(val);
-            } else {
-                return 0;
-            }
-        };
+        obj.setStyle('width', '0px');
+        obj.setStyle('height', '0px');
+        var newwidth = get_htmlelement_size(parentContainer, 'width') - 40;
 
-        var resize_object = function() {
-            obj.setStyle('width', '0px');
-            obj.setStyle('height', '0px');
-            var newwidth = get_htmlelement_size(parentContainer, 'width') - 35;
+        if (newwidth > 500) {
+            obj.setStyle('width', newwidth  + 'px');
+        } else {
+            obj.setStyle('width', '500px');
+        }
 
-            if (newwidth > 500) {
-                obj.setStyle('width', newwidth  + 'px');
-            } else {
-                obj.setStyle('width', '500px');
+        var headerheight = get_htmlelement_size('page-header', 'height');
+        var footerheight = get_htmlelement_size('page-footer', 'height');
+        var newheight;
+        if (initialize) {
+            newheight = Y.one('body').get('winHeight') - 100;
+            if (newheight < minheight) {
+                newheight = minheight;
             }
+        } else {
+            newheight = get_htmlelement_size(parentContainer, 'height');
+        }
+        newheight = newheight - 40;
+        obj.setStyle('height', newheight+'px');
 
-            var headerheight = get_htmlelement_size('page-header', 'height');
-            var footerheight = get_htmlelement_size('page-footer', 'height');
-            var newheight;
-            if (initialize) {
-                newheight = Y.one('body').get('winHeight') - 100;
-                if (newheight < minheight) {
-                    newheight = minheight;
-                }
-            } else {
-                newheight = get_htmlelement_size(parentContainer, 'height');
-            }
-            newheight = newheight - 45;
-            obj.setStyle('height', newheight+'px');
-        };
-
-        resize_object();
-        // fix layout if window resized too
-        window.onresize = function() {
-            resize_object();
-        };
     };
     Y.use("panel", "dd-plugin", 'resize', 'resize-plugin', 'event', function (Y) {
         var body = Y.one('body');
@@ -102,7 +95,8 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
             visible      : true,
             render       : true,
             hideOn: [{
-                    eventName: 'clickoutside'
+                    // because IE doesn' like this, so comment this out
+                    //eventName: 'clickoutside'
                 },
             ],
             plugins      : [Y.Plugin.Drag],
@@ -112,6 +106,10 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         panel.resize.on('resize:resize', function(e) {
             resize_embeded('resourceobject', equellaContainer, false);
         });
+        // fix layout if window resized too
+        window.onresize = function() {
+            resize_embeded('resourceobject', equellaContainer, false);
+        };
         resize_embeded('resourceobject', equellaContainer, true);
         var button  = Y.one('#openequellachooser');
         button.on('click', function (e) {
