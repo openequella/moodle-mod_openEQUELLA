@@ -151,26 +151,33 @@ function equella_user_complete($course, $user, $mod, $equella) {
 	print_string("notsubmittedyet", "equella");
 }
 
+/**
+ * Given a coursemodule object, this function returns the extra
+ * information needed to print this activity in various places.
+ *
+ * @param cm_info $coursemodule
+ * @return cached_cm_info info
+ */
 function equella_get_coursemodule_info($coursemodule) {
-	global $DB, $CFG;
+    global $DB, $CFG;
 
-	$info = new stdClass;
+    $info = new cached_cm_info();
 
-	if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
-		require_once($CFG->libdir.'/filelib.php');
+    if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
+        require_once($CFG->libdir.'/filelib.php');
 
-		$url = $resource->url;
-		if( $ind = strrpos($url, '?') ) {
-			$url = substr($url, 0, $ind);
-		}
-		$info->icon = equella_guess_icon($url, 24);
+        $url = $resource->url;
+        if( $ind = strrpos($url, '?') ) {
+            $url = substr($url, 0, $ind);
+        }
+        $info->icon = equella_guess_icon($url, 24);
 
-		if( !empty($resource->popup) ) {
-           $info->extra = "onclick=\"window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;\"";
-		}
-	}
+        if( !empty($resource->popup) ) {
+            $info->onclick = "window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;";
+        }
+    }
 
-	return $info;
+    return $info;
 }
 
 /**
