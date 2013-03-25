@@ -173,7 +173,7 @@ function equella_get_coursemodule_info($coursemodule) {
         $info->icon = equella_guess_icon($url, 24);
 
         if( !empty($resource->popup) ) {
-            $info->onclick = "window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;";
+            $info->onclick = "window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&id={$coursemodule->id}', '','{$resource->popup}'); return false;";
         }
     }
 
