@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function equella_process_courseid($courseid) {
-    return 'C' . $courseid;
-}
-
 /**
  * Library of functions for EQUELLA internal
  */
@@ -37,7 +33,7 @@ function equella_get_course_contents($courseid, $sectionid) {
     $context = context_course::instance($course->id, IGNORE_MISSING);
 
     $coursecontents = new stdClass;
-    $coursecontents->id = equella_process_courseid($course->id);
+    $coursecontents->id = $course->id;
     $coursecontents->code = $course->idnumber;
     $coursecontents->name = $course->fullname;
     $coursecontents->folders = array();
@@ -189,7 +185,12 @@ EOT;
 function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
     global $CFG, $PAGE;
 
-    $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
+    if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
+        $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
+        $objecturl = $redirecturl->out();
+    } else {
+        $objecturl = $equellaurl;
+    }
 
     $equellatitle = get_string('chooseeqeullaresources', 'mod_equella');
     $equellacontainer = 'equellacontainer';
@@ -202,7 +203,7 @@ function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
     $link
 </div>
 EOF;
-    $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 1040, 600, $equellatitle, $redirecturl->out()), true);
+    $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 1040, 600, $equellatitle, $objecturl), true);
 
     return $html;
     //return $code;

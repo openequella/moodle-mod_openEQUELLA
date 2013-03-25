@@ -40,7 +40,7 @@ foreach ($links as $link)
 	$mod->url = $link['url'];
         // if equella returns section id, overwrite moodle section parameter
         if (isset($link['folder'])) {
-            $mod->section = $link['folder'];
+            $mod->section = clean_param($link['folder'], PARAM_INT);
         }
 
 	if (isset($link['activationUuid']))
