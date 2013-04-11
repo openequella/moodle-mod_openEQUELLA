@@ -203,7 +203,7 @@ function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
     $link
 </div>
 EOF;
-    $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 1040, 600, $equellatitle, $objecturl), true);
+    $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 880, 600, $equellatitle, $objecturl), true);
 
     return $html;
     //return $code;
