@@ -63,7 +63,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         var footerheight = get_htmlelement_size('page-footer', 'height');
         var newheight;
         if (initialize) {
-            newheight = Y.one('body').get('winHeight') - 100;
+            newheight = Y.one('body').get('winHeight') * 0.9;
             if (newheight < minheight) {
                 newheight = minheight;
             }
