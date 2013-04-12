@@ -293,7 +293,7 @@ function equella_module_event_handler($event) {
     $params['moodlecoursefullname']  = $course->fullname;
     $params['moodlecourseshortname'] = $course->shortname;
     $params['moodlecourseid']        = $course->id;
-    $params['moodlecoruseidnumber']  = $course->idnumber;
+    $params['moodlecourseidnumber']  = $course->idnumber;
     $files = equella_capture_files($event);
     foreach ($files as $file) {
         $handle = $file->get_content_file_handle();
