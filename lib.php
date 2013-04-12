@@ -304,7 +304,7 @@ function equella_module_event_handler($event) {
     $params['moodlecoursefullname']  = $course->fullname;
     $params['moodlecourseshortname'] = $course->shortname;
     $params['moodlecourseid']        = $course->id;
-    $params['moodlecoruseidnumber']  = $course->idnumber;
+    $params['moodlecourseidnumber']  = $course->idnumber;
     $files = equella_capture_files($event);
     foreach ($files as $file) {
         $handle = $file->get_content_file_handle();
@@ -367,7 +367,7 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecoursefullname'] = $uploadinfo->course->fullname;
         $params['moodlecourseshortname'] = $uploadinfo->course->shortname;
         $params['moodlecourseid'] = $uploadinfo->course->id;
-        $params['moodlecoruseidnumber'] = $uploadinfo->course->idnumber;
+        $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
         $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
