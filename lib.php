@@ -356,7 +356,7 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecoursefullname'] = $uploadinfo->course->fullname;
         $params['moodlecourseshortname'] = $uploadinfo->course->shortname;
         $params['moodlecourseid'] = $uploadinfo->course->id;
-        $params['moodlecoruseidnumber'] = $uploadinfo->course->idnumber;
+        $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
         $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
