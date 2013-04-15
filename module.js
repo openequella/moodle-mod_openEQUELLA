@@ -74,7 +74,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         obj.setStyle('height', newheight+'px');
 
     };
-    Y.use("panel", "dd-plugin", 'resize', 'resize-plugin', 'event', function (Y) {
+    Y.use('panel', 'dd-plugin', 'resize-plugin', 'event', function (Y) {
         var body = Y.one('body');
         var bodywidth = body.getStyle('width');
         if (bodywidth == 'auto') {
@@ -94,14 +94,8 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
             modal        : true,
             visible      : true,
             render       : true,
-            hideOn: [{
-                    // because IE doesn' like this, so comment this out
-                    //eventName: 'clickoutside'
-                },
-            ],
-            plugins      : [Y.Plugin.Drag],
+            plugins      : [Y.Plugin.Drag, Y.Plugin.Resize]
         });
-        panel.plug(Y.Plugin.Resize);
         panel.show();
         panel.resize.on('resize:resize', function(e) {
             resize_embeded('resourceobject', equellaContainer, false);
