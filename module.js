@@ -94,6 +94,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
             modal        : true,
             visible      : true,
             render       : true,
+            buttons      : [],
             plugins      : [Y.Plugin.Drag, Y.Plugin.Resize]
         });
         panel.show();
