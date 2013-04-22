@@ -27,7 +27,7 @@ $courseid = required_param('courseid', PARAM_INT);
 $sectionid = required_param('sectionid', PARAM_INT);
 
 require_login();
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context(get_system_context());
 $PAGE->set_pagelayout('embedded');
 $PAGE->requires->js('/mod/equella/module.js', true);
 $params = array('courseid'=>$courseid, 'equellaurl'=>$equellaurl);

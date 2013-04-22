@@ -30,7 +30,7 @@ function equella_get_course_contents($courseid, $sectionid) {
         require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
     }
 
-    $context = context_course::instance($course->id, IGNORE_MISSING);
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     $coursecontents = new stdClass;
     $coursecontents->id = $course->id;
