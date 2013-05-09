@@ -21,59 +21,59 @@ require_once('adminsettings.class.php');
 
 // Horrible hack to avoid errors displaying error pages
 if( !function_exists('ecs') ) {
-	function ecs($configoption, $params = null) {
-		return get_string('config.'.$configoption, 'equella', $params);
-	}
+    function ecs($configoption, $params = null) {
+        return get_string('config.'.$configoption, 'equella', $params);
+    }
 }
 
 if( $ADMIN->fulltree ) {
-	require_once($CFG->dirroot.'/mod/equella/lib.php');
+    require_once($CFG->dirroot.'/mod/equella/lib.php');
 
-	/////////////////////////////////////////////////////////////////////////////////
-	// GENERAL SETTINGS
-	//
-	$settings->add(new admin_setting_heading('equella_dummy_general', ecs('general.heading'), ''));
+    /////////////////////////////////////////////////////////////////////////////////
+    // GENERAL SETTINGS
+    //
+    $settings->add(new admin_setting_heading('equella_dummy_general', ecs('general.heading'), ''));
 
-	$settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
-	$settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'selectOrAdd'));
+    $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
+    $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'structured'));
 
-	$restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
-					 EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
-					 EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));	
-	$settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));    
-	
-	$settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));    
+    $restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
+        EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
+        EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));
+    $settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
-	$options = array(EQUELLA_CONFIG_LOCATION_RESOURCE => trim(ecs('location.option.resource')),
-					 EQUELLA_CONFIG_LOCATION_ACTIVITY => trim(ecs('location.option.activity')));
-	$settings->add(new admin_setting_configselect('equella_location', ecs('location.title'), ecs('location.desc'), EQUELLA_CONFIG_LOCATION_RESOURCE, $options));
+    $settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
-	$settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));    
+    $options = array(EQUELLA_CONFIG_LOCATION_RESOURCE => trim(ecs('location.option.resource')),
+        EQUELLA_CONFIG_LOCATION_ACTIVITY => trim(ecs('location.option.activity')));
+    $settings->add(new admin_setting_configselect('equella_location', ecs('location.title'), ecs('location.desc'), EQUELLA_CONFIG_LOCATION_RESOURCE, $options));
 
-	/////////////////////////////////////////////////////////////////////////////////
-	//
-	// SHARED SECRETS
-	//
-	$settings->add(new admin_setting_heading('equella_dummy_sharedsecrets', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
-	  
-	  
-  	$settings->add(new equella_setting_left_heading('equella_dummy_default', ecs('group', ecs('group.default')), ''));                    
-	$settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
-	$settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
-		
-	$defaultsharedsecret = '';
-	if( isset($CFG->equella_sharedsecret) ) {
-		$defaultsharedsecret = $CFG->equella_sharedsecret;
-	}
+    $settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
 
-	foreach( get_all_editing_roles() as $role ) {
-		$defaultsecretvalue = '';
-		if( $defaultsharedsecret == '' || $defaultsharedsecret == '0' ) {
-			$defaultsecretvalue = $role->shortname . $defaultsharedsecret;
-		}
+    /////////////////////////////////////////////////////////////////////////////////
+    //
+    // SHARED SECRETS
+    //
+    $settings->add(new admin_setting_heading('equella_dummy_sharedsecrets', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
 
-		$settings->add(new equella_setting_left_heading('equella_dummy_'.$role->shortname, ecs('group', format_string($role->name)), ''));
-		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
-		$settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
-	}	
+
+    $settings->add(new equella_setting_left_heading('equella_dummy_default', ecs('group', ecs('group.default')), ''));
+    $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
+    $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
+
+    $defaultsharedsecret = '';
+    if( isset($CFG->equella_sharedsecret) ) {
+        $defaultsharedsecret = $CFG->equella_sharedsecret;
+    }
+
+    foreach( get_all_editing_roles() as $role ) {
+        $defaultsecretvalue = '';
+        if( $defaultsharedsecret == '' || $defaultsharedsecret == '0' ) {
+            $defaultsecretvalue = $role->shortname . $defaultsharedsecret;
+        }
+
+        $settings->add(new equella_setting_left_heading('equella_dummy_'.$role->shortname, ecs('group', format_string($role->name)), ''));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
+    }
 }
