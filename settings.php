@@ -35,7 +35,7 @@ if( $ADMIN->fulltree ) {
     $settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
 
     $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
-    $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'selectOrAdd'));
+    $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), 'structured'));
 
     $restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
         EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
