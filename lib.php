@@ -334,7 +334,7 @@ function equella_handle_mod_updated($event) {
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-if ((int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_ASK) {
+if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_ASK) {
     function equella_dndupload_register() {
         return array('files' => array(
             array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
