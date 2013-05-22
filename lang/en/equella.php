@@ -43,6 +43,7 @@ $string['restapinolocation'] = 'No location returned';
 ////////////////////////////////////////////////////////
 // OPTIONS
 
+$string['option.pagewindow.header'] = 'Display options';
 $string['option.pagewindow'] = 'Display';
 $string['option.pagewindow.same'] = 'Same window';
 $string['option.pagewindow.new'] = 'New window';
