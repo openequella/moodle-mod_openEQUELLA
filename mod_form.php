@@ -40,7 +40,7 @@ class mod_equella_mod_form extends moodleform_mod {
 
         $mform->addElement('hidden', 'activation', '');
 
-        $mform->addElement('header', 'optionssection', get_string('optionsheader', 'url'));
+        $mform->addElement('header', 'optionssection', get_string('option.pagewindow.header', 'equella'));
 
         $woptions = array(0 => get_string('option.pagewindow.same', 'equella'), 1 => get_string('option.pagewindow.new', 'equella'));
         $mform->addElement('select', 'windowpopup', get_string('option.pagewindow', 'equella'), $woptions);
