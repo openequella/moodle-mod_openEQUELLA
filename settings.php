@@ -37,10 +37,14 @@ if( $ADMIN->fulltree ) {
     $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
     $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), ''));
 
-    $restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
+    $restrictionOptions = array(
+        EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),
         EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),
-        EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')));
-    $settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
+        EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')),
+        EQUELLA_CONFIG_SELECT_RESTRICT_PACKAGES_ONLY => trim(ecs('restriction.packagesonly'))
+    );
+
+    $settings->add(new admin_setting_radiobuttons('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
     $settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
@@ -101,5 +105,7 @@ if( $ADMIN->fulltree ) {
         $choices[EQUELLA_CONFIG_INTERCEPT_FULL] = get_string('interceptauto', 'equella');
     }
     $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
+
     $settings->add($intercepttype);
+
 }
