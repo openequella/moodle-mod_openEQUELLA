@@ -21,8 +21,10 @@ require_once($CFG->dirroot.'/course/lib.php');
 require_once(dirname(__FILE__) . '/equella_rest_api.php');
 
 define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
+
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY', 'attachmentonly');
+define('EQUELLA_CONFIG_SELECT_RESTRICT_PACKAGES_ONLY', 'packageonly');
 
 define('EQUELLA_CONFIG_INTERCEPT_NONE', 0);
 define('EQUELLA_CONFIG_INTERCEPT_ASK',  1);
