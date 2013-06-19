@@ -17,6 +17,61 @@
 
 require_once($CFG->libdir.'/adminlib.php');
 
+
+class admin_setting_radiobuttons extends admin_setting {
+
+    public $text;
+    private $options;
+    public function __construct($name, $visiblename, $description, $defaultsetting, $options) {
+        parent::__construct($name, $visiblename, $description, $defaultsetting);
+        $this->options = $options;
+    }
+
+    public function write_setting($data) {
+        return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
+    }
+
+    public function get_setting() {
+        return $this->config_read($this->name);
+    }
+
+    public function output_select_html($data, $current, $default, $extraname = '') {
+
+        $warning = '';
+        $output = '';
+
+        if (empty($current)) {
+            $current = $default;
+        }
+
+        foreach ($this->options as $value=>$label) {
+
+            $attributes = array();
+            $attributes['id'] = html_writer::random_id('checkbox_');
+            $attributes['type']    = 'radio';
+            $attributes['value']   = $value;
+            $attributes['name']    = $this->get_full_name();
+            if ($current == $value) {
+                $attributes['checked'] = 'checked';
+            }
+
+            $output .= html_writer::empty_tag('input', $attributes);
+            $output .= html_writer::tag('label', $label, array('for'=>$attributes['id']));
+            $output .= html_writer::empty_tag('br');
+        }
+
+        return array($output, $warning);
+    }
+
+    public function output_html($data, $query='') {
+        global $CFG;
+        $default = $this->get_defaultsetting();
+        $current = $this->get_setting();
+        list($selecthtml, $warning) = $this->output_select_html($data, $current, $default);
+        return format_admin_setting($this, $this->visiblename, $selecthtml, $this->description, true);
+    }
+}
+
 /**
  * Provides some custom settings classes for the manage_users global settings
  * page
