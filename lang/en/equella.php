@@ -58,7 +58,7 @@ $string['config.action.desc'] = 'The action string for EQUELLA. Please note:
    2. There should not be a ? or a & at the start or end of the string.';
 
 $string['config.restriction.title'] = 'Restrict selections';
-$string['config.restriction.desc'] = 'Choose whether course editors should only be able to select items, attachments, packages or anything.';
+$string['config.restriction.desc'] = 'Choose whether course editors should only be able to select items, attachments, packages or anything. Please note that the restrictions only working for EQUELLA 6.0 and higher.';
 $string['config.restriction.none'] = 'No restrictions';
 
 $string['config.restriction.itemsonly'] = 'Items only';
