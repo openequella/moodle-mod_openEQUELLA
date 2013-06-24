@@ -51,6 +51,7 @@ class admin_setting_radiobuttons extends admin_setting {
             $attributes['type']    = 'radio';
             $attributes['value']   = $value;
             $attributes['name']    = $this->get_full_name();
+            $attributes['class']   = 'form-checkbox';
             if ($current == $value) {
                 $attributes['checked'] = 'checked';
             }
