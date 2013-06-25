@@ -364,7 +364,17 @@ function equella_dndupload_handle($uploadinfo) {
             throw new equella_exception($info->error_description);
         }
         $data = new stdClass;
-        $data->name = $info->name;
+        $modulename = '';
+        if (!empty($info->name)) {
+            $modulename = $info->name;
+        } else {
+            if (!empty($info->description)) {
+                $modulename = $info->description;
+            } else {
+                $modulename = $info->uuid;
+            }
+        }
+        $data->name = $modulename;
         $data->intro = $info->description;
         $data->introformat = FORMAT_HTML;
         $item = array_pop($info->attachments);
