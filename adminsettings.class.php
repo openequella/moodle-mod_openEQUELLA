@@ -56,8 +56,10 @@ class admin_setting_radiobuttons extends admin_setting {
                 $attributes['checked'] = 'checked';
             }
 
-            $output .= html_writer::empty_tag('input', $attributes);
-            $output .= html_writer::tag('label', $label, array('for'=>$attributes['id']));
+            $radiohtml = html_writer::empty_tag('input', $attributes);
+            $labelhtml = html_writer::tag('label', ' ' . $label, array('for'=>$attributes['id']));
+            $output .= $radiohtml;
+            $output .= $labelhtml;
             $output .= html_writer::empty_tag('br');
         }
 
