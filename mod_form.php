@@ -109,7 +109,7 @@ class mod_equella_mod_form extends moodleform_mod {
                 . '&returnurl='.urlencode ($callback)
                 . '&returnprefix=tle'
                 . '&template=standard'
-                . '&token='.urlencode(equella_getssotoken('write'))
+                . '&token='.urlencode(equella_getssotoken())
                 . '&cancelurl='.urlencode($cancelurl)
                 . '&courseId='.urlencode(equella_get_courseId($form->course))
                 . '&action='.urlencode($CFG->equella_action)
