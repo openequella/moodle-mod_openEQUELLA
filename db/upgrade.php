@@ -109,12 +109,22 @@ function xmldb_equella_upgrade($oldversion) {
     {
         require_once($CFG->dirroot . '/mod/equella/lib.php');
         $records = $DB->get_recordset('equella');
-        foreach ($records as $record)
+        $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
+
+        foreach ($records as $resource)
         {
-            var_dump($record);
-            $record = equella_postprocess($record);
-            var_dump($record);
-            $DB->update_record('equella', $record);
+            preg_match($pattern, $resource->url, $matches);
+            if (empty($resource->uuid)) {
+                $resource->uuid = $matches['uuid'];
+            }
+            if (empty($resource->version)) {
+                $resource->version = $matches['version'];
+            }
+            if (empty($resource->path)) {
+                $resource->path = $matches['path'];
+            }
+
+            $DB->update_record('equella', $resource);
         }
 
         upgrade_mod_savepoint(true, 2012082806, 'equella');
