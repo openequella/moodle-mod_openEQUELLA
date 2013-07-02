@@ -71,7 +71,7 @@ echo '<style>.ok {color: green;} .bad {color: red;}</style><ul>';
 
 foreach( $DB->get_records('equella') as $resource ) {
 
-	curl_setopt($ch, CURLOPT_URL, equella_append_with_token($resource->url, equella_getssotoken_api()));
+	curl_setopt($ch, CURLOPT_URL, equella_appendtoken($resource->url, equella_getssotoken_api()));
 
 	echo '<li>Checking <a href="'.$resource->url.'">'.$resource->url.'</a><br>';
 	if( curl_exec($ch) ) {
@@ -110,7 +110,7 @@ foreach( $DB->get_records('equella') as $resource ) {
 				WHERE m.name = :modname
 				AND cm.course = :course
 				AND cm.instance = :resource",
-				array(			
+				array(
 					'modname' => 'equella',
 					'course' => $resource->course,
 					'resource' => $resource->id
