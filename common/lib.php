@@ -22,75 +22,109 @@
 
 function get_block_configdata($blockname) {
     global $DB, $PAGE;
-    $blockinstance = $DB->get_record_sql(
-        "SELECT * FROM {block_instances} bi
-        WHERE bi.blockname = :name and bi.parentcontextid = :parentcontextid",
-        array(
-            'name' => $blockname,
-            'parentcontextid' => $PAGE->context->id
-        )
+    $sql = "SELECT *
+              FROM {block_instances} bi
+             WHERE bi.blockname = :name AND bi.parentcontextid = :parentcontextid";
+    $params =  array(
+        'name' => $blockname,
+        'parentcontextid' => $PAGE->context->id
     );
+    $blockinstance = $DB->get_record_sql($sql, $params);
     return unserialize(base64_decode($blockinstance->configdata));
 }
-
-function equella_soap_endpoint() {
-    return equella_full_url('services/SoapService41');
-}
-
+/**
+ * Create EQUELLA full url
+ *
+ * @return string
+ */
 function equella_full_url($urlpart) {
     global $CFG;
     return str_ireplace('signon.do', $urlpart, $CFG->equella_url);
 }
 
-function equella_getssotoken($readwrite = 'read') {
+/**
+ * Return EQUELLA SOAP endpoing
+ *
+ * @return string
+ */
+function equella_soap_endpoint() {
+    return equella_full_url('services/SoapService41');
+}
+
+/**
+ * Create EQUELLA single sign on token for current user
+ *
+ * @return string
+ */
+function equella_getssotoken() {
     global $USER, $CFG, $COURSE;
 
-    if( $readwrite == 'write' ) {
-        $context_sys = get_context_instance(CONTEXT_SYSTEM, 0);
-        $context_cc = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
-        $context_c = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+    $context_sys = get_context_instance(CONTEXT_SYSTEM, 0);
+    $context_cc  = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
+    $context_c   = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
-        foreach( get_all_editing_roles() as $role ) {
-            //does user have this role?
-            if( user_has_role_assignment($USER->id,$role->id,$context_sys->id) ||
-                user_has_role_assignment($USER->id,$role->id,$context_cc->id) ||
-                user_has_role_assignment($USER->id,$role->id,$context_c->id)
-            ) {
-                //see if the user has a role that is linked to an equella role
-                $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
-                if( !empty($shareid) ) {
-                    return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
-                }
+    // roles are ordered by shortname
+    $editingroles = get_all_editing_roles();
+    foreach($editingroles as $role) {
+        $hassystemrole = user_has_role_assignment($USER->id,  $role->id,$context_sys->id);
+        $hascategoryrole = user_has_role_assignment($USER->id,$role->id,$context_cc->id);
+        $hascourserole = user_has_role_assignment($USER->id,  $role->id,$context_c->id);
+
+        if( $hassystemrole || $hascategoryrole || $hascourserole) {
+            //see if the user has a role that is linked to an equella role
+            $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
+            if( !empty($shareid) ) {
+                return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
             }
         }
     }
-    //if we are only reading, use the unadorned shareid and secret
+
+    // no roles found, use the default shareid and secret
     $shareid = $CFG->equella_shareid;
     if( !empty($shareid) ){
-        return  equella_getssotoken_raw($USER->username, $shareid, $CFG->equella_sharedsecret);
+        return equella_getssotoken_raw($USER->username, $shareid, $CFG->equella_sharedsecret);
     }
 }
 
+/**
+ * Create token by providing shared secret
+ *
+ * @internal this method should only be used inside this file
+ *
+ * @param string $username
+ * @param string $shareid
+ * @param string $sharedsecret
+ *
+ * @return string
+ */
 function equella_getssotoken_raw($username, $shareid, $sharedsecret) {
     $time = time() . '000';
-    return urlencode($username)
-        . ':'
-        . $shareid
-        . ':'
-        . $time
-        . ':'
-        . base64_encode(pack('H*', md5($username . $shareid . $time . $sharedsecret)));
+    $hash = md5($username . $shareid . $time . $sharedsecret);
+    $params = array();
+    $params[] = urlencode($username);
+    $params[] = $shareid;
+    $params[] = $time;
+    $params[] = base64_encode(pack('H*', $hash));
+    $token = implode(':', $params);
+
+    return $token;
 }
 
-function equella_appendtoken($url, $readwrite = null) {
-    return equella_append_with_token($url, equella_getssotoken($readwrite));
-}
-
-function equella_append_with_token($url, $token) {
-    return $url
-        . (strpos($url, '?') != false ? '&' : '?')
-        . 'token='
-        . urlencode($token);
+/**
+ * Append token to existing url
+ *
+ * @param string $url
+ * @param string $token
+ *
+ * @return string
+ */
+function equella_appendtoken($url, $token = null) {
+    if ($token === null) {
+        $token = equella_getssotoken();
+    }
+    $url .= (strpos($url, '?') != false) ? '&' : '?';
+    $url .= 'token=' . urlencode($token);
+    return $url;
 }
 
 function equella_getssotoken_api() {
@@ -98,16 +132,17 @@ function equella_getssotoken_api() {
     return equella_getssotoken_raw($CFG->equella_admin_username, $CFG->equella_shareid, $CFG->equella_sharedsecret);
 }
 
+/**
+ * Get all existing editing roles
+ *
+ * @return array
+ */
 function get_all_editing_roles(){
     global $DB;
-    return $DB->get_records_sql(
-        "SELECT r.* FROM {role_capabilities} rc
+    $sql = "SELECT r.* FROM {role_capabilities} rc
         INNER JOIN {role} r ON rc.roleid = r.id
-        WHERE capability = :capability
-        AND permission = 1
-        ORDER BY r.shortname",
-        array(
-            'capability' => 'moodle/course:manageactivities'
-        )
-    );
+             WHERE capability = :capability
+               AND permission = 1
+          ORDER BY r.shortname";
+    return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
 }
