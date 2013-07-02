@@ -72,7 +72,14 @@ if( $ADMIN->fulltree ) {
             $defaultsecretvalue = $role->shortname . $defaultsharedsecret;
         }
 
-        $settings->add(new equella_setting_left_heading('equella_' . $role->shortname . 'role_group', ecs('group', format_string($role->name)), ''));
+        $sectionname = 'equella_' . $role->shortname . 'role_group';
+        if (!empty($role->name)) {
+            $heading = ecs('group', format_string($role->name));
+        } else {
+            $heading = ecs('group.noname', format_string($role->shortname));
+        }
+        $settings->add(new equella_setting_left_heading($sectionname, $heading, ''));
+
         $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
         $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
     }

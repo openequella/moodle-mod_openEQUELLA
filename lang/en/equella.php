@@ -92,6 +92,7 @@ $string['config.sharedsecrets.heading'] = 'Shared Secret Settings';
 $string['config.sharedsecrets.help'] =  '<p>Below you can set a default EQUELLA shared secret for single signing-on users.  You can configure different shared secrets for general (read) usage, and a specialised role based shared secret for each <em>write</em> role in your Moodle site.  If a shared secret ID is not configured for a role then the default shared secret ID and shared secret are used.</p><p>All shared secret IDs and shared secrets must also be configured within EQUELLA and the shared secret module enabled.  This configuration is found in the EQUELLA Administration Console under User Management > Shared Secrets.</p>';
 $string['config.group'] = '{$a} role settings';
 $string['config.group.default'] = 'Default';
+$string['config.group.noname'] = 'Role "{$a}" settings';
 $string['config.sharedid.title'] = 'Shared secret ID';
 $string['config.sharedsecret.title'] = 'Shared secret';
 
