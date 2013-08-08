@@ -19,7 +19,8 @@
         <FIELD NAME="uuid" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="item uuid" PREVIOUS="activation" NEXT="version"/>
         <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="item version" PREVIOUS="uuid" NEXT="path" />
         <FIELD NAME="path" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Attachment path" PREVIOUS="version" NEXT="attachmentuuid" />
-        <FIELD NAME="attachmentuuid" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Attachment UUID" PREVIOUS="path" />
+        <FIELD NAME="attachmentuuid" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" COMMENT="Attachment UUID" PREVIOUS="path" NEXT="ltisalt" />
+        <FIELD NAME="ltisalt" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" PREVIOUS="attachmentuuid" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

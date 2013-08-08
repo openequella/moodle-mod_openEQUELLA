@@ -158,19 +158,25 @@ function equella_get_coursemodule_info($coursemodule) {
 
 	$info = new stdClass;
 
-	if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
-		require_once($CFG->libdir.'/filelib.php');
+        if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
+            require_once($CFG->libdir.'/filelib.php');
 
-		$url = $resource->url;
-		if( $ind = strrpos($url, '?') ) {
-			$url = substr($url, 0, $ind);
-		}
-		$info->icon = equella_guess_icon($url);
+            $url = $resource->url;
+            if( $ind = strrpos($url, '?') ) {
+                $url = substr($url, 0, $ind);
+            }
+            $info->icon = equella_guess_icon($url);
 
-		if( !empty($resource->popup) ) {
-           $info->extra = "onclick=\"window.open('$CFG->wwwroot/mod/equella/view.php?inpopup=true&amp;id={$coursemodule->id}', '','{$resource->popup}'); return false;\"";
-		}
-	}
+            if( !empty($resource->popup) ) {
+                if ($CFG->equella_enable_lti) {
+                    $url = new moodle_url('/mod/equella/ltilaunch.php', array('cmid'=>$coursemodule->id));
+                } else {
+                    $url = new moodle_url('/mod/equella/view.php', array('inpopup'=>true, 'id'=>$coursemodule->id));
+                }
+                $url = $url->out();
+                $info->extra = "onclick=\"window.open('$url', '','{$resource->popup}'); return false;\"";
+            }
+        }
 
 	return $info;
 }
