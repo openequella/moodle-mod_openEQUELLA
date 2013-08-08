@@ -15,6 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$module->version   = 2013031800;
+$module->version   = 2013080800;
 $module->requires  = 2012120300;    // Requires this Moodle version
 $module->component = 'mod_equella'; // Full name of the plugin (used for diagnostics)
