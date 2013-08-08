@@ -130,5 +130,25 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012082806, 'equella');
     }
 
+    if ($oldversion < 2013080800) {
+
+        // Define field ltisalt to be added to equella.
+        $table = new xmldb_table('equella');
+        $field = new xmldb_field('ltisalt', XMLDB_TYPE_CHAR, '40', null, null, null, null, 'attachmentuuid');
+
+        // Conditionally launch add field ltisalt.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $records = $DB->get_records('equella');
+        foreach ($records as $eq) {
+            $eq->ltisalt = uniqid('', true);
+            $DB->update_record("equella", $eq);
+        }
+
+        upgrade_mod_savepoint(true, 2013080800, 'equella');
+    }
+
     return true;
 }
