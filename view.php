@@ -31,6 +31,8 @@ if( $id ) {  // Two ways to specify the module
     $cm = get_coursemodule_from_instance('url', $equella->id, $equella->course, false, MUST_EXIST);
 }
 
+$equella->cmid = $cm->id;
+
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
@@ -62,10 +64,6 @@ if( trim(strip_tags($equella->intro)) ) {
     echo $OUTPUT->box_end();
 }
 
-$mimetype = resourcelib_guess_url_mimetype($equella->url);
-$link = html_writer::tag('a', $equella->name, array('href'=>str_replace('&amp;', '&', $url)));
-$clicktoopen = get_string('clicktoopen', 'equella', $link);
-
-echo equella_embed_general($url, $clicktoopen, $mimetype);
+echo equella_embed_general($equella);
 
 echo $OUTPUT->footer($course);
