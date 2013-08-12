@@ -98,9 +98,15 @@ function equella_postprocess($resource) {
 
     $url = $resource->url;
     preg_match($pattern, $url, $matches);
-    $resource->uuid = $matches['uuid'];
-    $resource->version = $matches['version'];
-    $resource->path = $matches['path'];
+    if (!empty($matches['uuid'])) {
+        $resource->uuid = $matches['uuid'];
+    }
+    if (!empty($matches['version'])) {
+        $resource->version = $matches['version'];
+    }
+    if (!empty($matches['path'])) {
+        $resource->path = $matches['path'];
+    }
     return $resource;
 }
 
