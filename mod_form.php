@@ -90,34 +90,15 @@ class mod_equella_mod_form extends moodleform_mod {
         global $CFG, $USER;
         $form = $this->form;
         if (isset($form->add)) {
-            $callback = $CFG->wwwroot.'/mod/equella/callbackmulti.php'
-                . '?sesskey='.urlencode($USER->sesskey)
-                . '&course='.urlencode($form->course)
-                . '&coursemodule='.urlencode($form->coursemodule)
-                . '&section='.urlencode($form->section)
-                . '&module='.urlencode($form->module)
-                . '&modulename='.urlencode($form->modulename)
-                . '&instance='.urlencode($form->instance);
+            $args = new stdClass;
+            $args->course = $form->course;
+            $args->section = $form->section;
+            $args->cmid = $form->coursemodule;
+            $args->module = $form->module;
+            $args->modulename = $form->modulename;
+            $args->instance = $form->instance;
 
-            $cancelurl = $CFG->wwwroot.'/mod/equella/cancel.php?course='.urlencode($form->course);
-
-            $url = $CFG->equella_url
-                . '?method=lms'
-                . '&returnurl='.urlencode ($callback)
-                . '&returnprefix=tle'
-                . '&template=standard'
-                . '&token='.urlencode(equella_getssotoken())
-                . '&cancelurl='.urlencode($cancelurl)
-                . '&courseId='.urlencode(equella_get_courseId($form->course))
-                . '&action='.urlencode($CFG->equella_action)
-                . '&options='.urlencode($CFG->equella_options)
-                . '&selectMultiple=true';
-
-            if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
-                $url .= '&'.$CFG->equella_select_restriction.'=true';
-            }
-
-            echo equella_modal_dialog($form->course, $form->section, $url);
+            echo equella_select_dialog($args);
         } else {
             parent::display();
         }

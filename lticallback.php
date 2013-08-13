@@ -4,6 +4,7 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot . '/mod/equella/locallib.php');
 
+
 $httpbody = file_get_contents("php://input");
 
 if (equella_lti_oauth::verify_message($httpbody)) {
