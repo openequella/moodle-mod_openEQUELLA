@@ -94,55 +94,10 @@ function equella_get_course_contents($courseid, $sectionid) {
  * @param string $mimetype
  * @return string html
  */
-function equella_embed_form($courseid, $sectionid, $equellaurl) {
-    global $CFG, $PAGE;
-
-    $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
-
-    $iframe = false;
-    // IE can not embed stuff properly, that is why we use iframe instead.
-    // Unfortunately this tag does not validate in xhtml strict mode,
-    // but in any case it is undeprecated in HTML 5 - we will use it everywhere soon!
-    if (check_browser_version('MSIE', 5)) {
-        $iframe = true;
-    }
-
-    if ($iframe) {
-        $code = <<<EOT
-<div class="resourcecontent resourcegeneral">
-  <iframe id="resourceobject" src="$redirecturl">
-  </iframe>
-</div>
-EOT;
-    } else {
-        $param = '<param name="src" value="'.$redirecturl.'" />';
-
-        $code = <<<EOT
-<div class="resourcecontent resourcegeneral">
-  <object id="resourceobject" data="$redirecturl" width="800" height="600" type="text/html">
-    $param
-  </object>
-</div>
-EOT;
-    }
-
-    // the size is hardcoded in the object above intentionally because it is adjusted by the following function on-the-fly
-    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
-
-    return $code;
-}
-
-/**
- * Returns general link or file embedding html.
- * @param string $fullurl
- * @param string $clicktoopen
- * @param string $mimetype
- * @return string html
- */
 function equella_embed_general($equella) {
     global $CFG, $PAGE;
     if ($CFG->equella_enable_lti) {
-        $launchurl = new moodle_url('/mod/equella/ltilaunch.php', array('cmid'=>$equella->cmid));
+        $launchurl = new moodle_url('/mod/equella/ltilaunch.php', array('cmid'=>$equella->cmid, 'action'=>'view'));
         $url = $launchurl->out();
     } else {
         $url = equella_appendtoken($equella->url);
@@ -193,20 +148,28 @@ EOT;
  * @param string $mimetype
  * @return string html
  */
-function equella_modal_dialog($courseid, $sectionid, $equellaurl) {
+function equella_select_dialog($args) {
     global $CFG, $PAGE;
 
-    if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
-        $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equellaurl, 'courseid'=>$courseid, 'sectionid'=>$sectionid));
-        $objecturl = $redirecturl->out();
+    $equrl = equella_build_integration_url($args);
+
+    if ($CFG->equella_enable_lti) {
+        $args->action = 'select';
+        $launchurl = new moodle_url('/mod/equella/ltilaunch.php', (array)$args);
+        $objecturl = $launchurl->out();
     } else {
-        $objecturl = $equellaurl;
+        if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
+            $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl'=>$equrl->out(false), 'courseid'=>$args->course, 'sectionid'=>$args->section));
+            $objecturl = $redirecturl->out(false);
+        } else {
+            $objecturl = $equrl->out();
+        }
     }
 
     $equellatitle = get_string('chooseeqeullaresources', 'mod_equella');
     $equellacontainer = 'equellacontainer';
     $cancel = get_string('cancel');
-    $cancelurl = new moodle_url('/course/view.php', array('id'=>$courseid));
+    $cancelurl = new moodle_url('/course/view.php', array('id'=>$args->course));
     $link = html_writer::link($cancelurl, $cancel);
     $html = <<<EOF
 <div>
@@ -217,10 +180,9 @@ EOF;
     $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer, 880, 600, $equellatitle, $objecturl), true);
 
     return $html;
-    //return $code;
 }
 
-function equella_launch_form($endpoint, $params) {
+function equella_lti_launch_form($endpoint, $params) {
     $attributes = array(
         'method'=>'post',
         'action'=>$endpoint,
@@ -243,13 +205,71 @@ function equella_launch_form($endpoint, $params) {
     return $html;
 }
 
-function equella_lti_params($equella, $course) {
-    global $USER, $CFG;
+function equella_build_integration_url($args, $appendtoken = true) {
+    global $USER, $CFG, $DB;
 
-    $params = array();
+    $callbackurlparams = array(
+        'sesskey' => $USER->sesskey,
+        'course' => $args->course,
+        'section' => $args->section,
+    );
+
+    if (!empty($args->cmid)) {
+        $callbackurlparams['coursemodule'] = $args->cmid;
+    }
+
+    if (!empty($args->module)) {
+        $callbackurlparams['module'] = $args->module;
+    }
+
+    if (!empty($args->instance)) {
+        $callbackurlparams['instance'] = $args->instance;
+    }
+
+    if (!empty($args->module)) {
+        $callbackurlparams['modulename'] = $args->modulename;
+    } else {
+        $callbackurlparams['modulename'] = 'equella';
+    }
+
+    $callbackurl = new moodle_url('/mod/equella/callbackmulti.php', $callbackurlparams);
+    $cancelurl = new moodle_url('/mod/equella/cancel.php', array('course'=>$args->course));
+
+    $equrlparams = array(
+        'method'=>'lms',
+        'returnprefix'=>'tle',
+        'template'=>'standard',
+        'courseId'=>equella_get_courseId($args->course),
+        'action'=>$CFG->equella_action,
+        'selectMultiple'=>'true',
+        'returnurl'=>$callbackurl->out(false),
+        'cancelurl'=>$cancelurl->out(false),
+    );
+    if ($appendtoken) {
+        $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
+        $equrlparams['token'] = equella_getssotoken($course);
+    }
+    if (!empty($CFG->equella_options)) {
+        $equrlparams['options'] = $CFG->equella_options;
+    }
+    if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
+        $equrlparams[$CFG->equella_select_restriction] = true;
+    }
+
+    return new moodle_url($CFG->equella_url, $equrlparams);
+}
+
+function equella_lti_params($equella, $course, $extra = array()) {
+    global $USER, $CFG;
 
     if (empty($equella->cmid)) {
         $equella->cmid = 0;
+    }
+    if (empty($equella->intro)) {
+        $equella->intro = '';
+    }
+    if (empty($equella->name)) {
+        $equella->name = '';
     }
 
     $role = equella_lti_roles($USER, $equella->cmid, $equella->course);
@@ -265,6 +285,7 @@ function equella_lti_params($equella, $course) {
         'context_title' => $course->fullname,
         'launch_presentation_locale' => current_language()
     );
+    $requestparams = array_merge($requestparams, $extra);
 
     $requestparams['lis_person_name_given'] =  $USER->firstname;
     $requestparams['lis_person_name_family'] =  $USER->lastname;
@@ -276,18 +297,23 @@ function equella_lti_params($equella, $course) {
     $requestparams['oauth_callback'] = 'about:blank';
     $requestparams['lti_version'] = 'LTI-1p0';
     $requestparams['lti_message_type'] = 'basic-lti-launch-request';
-    $returnurlparams = array('courseid' => $course->id, 'instanceid' => $equella->id);
-    $url = new moodle_url('/mod/equella/ltireturn.php', $returnurlparams);
-    $returnurl = $url->out(false);
-    $requestparams['launch_presentation_return_url'] = $returnurl;
 
-    $sourcedid = json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null));
-    $requestparams['lis_result_sourcedid'] = $sourcedid;
+    if (!empty($equella->id)) {
+        $sourcedid = json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null));
+        $requestparams['lis_result_sourcedid'] = $sourcedid;
 
-    $serviceurl = new moodle_url('/mod/equella/lticallback.php');
-    $serviceurl = $serviceurl->out();
-
-    $requestparams['lis_outcome_service_url'] = $serviceurl;
+        $returnurlparams = array('courseid' => $course->id, 'instanceid' => $equella->id);
+        $url = new moodle_url('/mod/equella/ltireturn.php', $returnurlparams);
+        $returnurl = $url->out(false);
+        $requestparams['launch_presentation_return_url'] = $returnurl;
+        if (!empty($CFG->equella_lti_lis_callback)) {
+            $requestparams['lis_outcome_service_url'] = $CFG->equella_lti_lis_callback;
+        } else {
+            $serviceurl = new moodle_url('/mod/equella/lticallback.php');
+            $serviceurl = $serviceurl->out();
+            $requestparams['lis_outcome_service_url'] = $serviceurl;
+        }
+    }
 
     $params = equella_lti_oauth::sign_params($equella->url, $requestparams, 'POST');
 

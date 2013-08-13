@@ -93,6 +93,7 @@ $string['config.lti_oauth_heading'] = 'LTI OAuth client settings';
 $string['config.lti.help'] =  '';
 $string['config.lti.key.title'] = 'Client ID';
 $string['config.lti.secret.title'] = 'Client secret';
+$string['config.lti.liscallback.title'] = 'Outcome callback URL';
 
 ////////////////////////////////////////////////////////
 // CONFIGURATION: Shared Secrets
