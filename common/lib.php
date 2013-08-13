@@ -56,12 +56,16 @@ function equella_soap_endpoint() {
  *
  * @return string
  */
-function equella_getssotoken() {
+function equella_getssotoken($course = null) {
     global $USER, $CFG, $COURSE;
 
+    if (empty($course)) {
+        $course = $COURSE;
+    }
+
     $context_sys = get_context_instance(CONTEXT_SYSTEM, 0);
-    $context_cc  = get_context_instance(CONTEXT_COURSECAT, $COURSE->category);
-    $context_c   = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+    $context_cc  = get_context_instance(CONTEXT_COURSECAT, $course->category);
+    $context_c   = get_context_instance(CONTEXT_COURSE, $course->id);
 
     // roles are ordered by shortname
     $editingroles = get_all_editing_roles();
