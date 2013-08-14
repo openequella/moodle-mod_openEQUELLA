@@ -187,15 +187,13 @@ function equella_lti_launch_form($endpoint, $params) {
         'method'=>'post',
         'action'=>$endpoint,
         'id'=>'eqLaunchForm',
-        'name'=>'eqLaunchForm',
-        'enctype'=>'application/x-www-form-urlencoded');
+        'enctype'=>'application/x-www-form-urlencoded',
+        'name'=>'eqLaunchForm');
     $html = html_writer::start_tag('form', $attributes);
 
     foreach ($params as $key => $value) {
-        $key = htmlspecialchars($key);
-        $value = htmlspecialchars($value);
-
         $field = array('name'=>$key, 'value'=>$value, 'type'=>'hidden');
+        // moodle will encode speical characters
         $html .= html_writer::empty_tag('input', $field);
     }
 
@@ -209,7 +207,6 @@ function equella_build_integration_url($args, $appendtoken = true) {
     global $USER, $CFG, $DB;
 
     $callbackurlparams = array(
-        'sesskey' => $USER->sesskey,
         'course' => $args->course,
         'section' => $args->section,
     );
@@ -299,7 +296,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     $requestparams['lti_message_type'] = 'basic-lti-launch-request';
 
     if (!empty($equella->id)) {
-        $sourcedid = json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null));
+        $sourcedid = htmlentities(json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null)));
         $requestparams['lis_result_sourcedid'] = $sourcedid;
 
         $returnurlparams = array('courseid' => $course->id, 'instanceid' => $equella->id);
