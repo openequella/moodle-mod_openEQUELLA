@@ -21,14 +21,14 @@ require_once('locallib.php');
 require_once($CFG->libdir . '/resourcelib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // newmodule ID
+$a  = optional_param('a', 0, PARAM_INT);  // EQUELLA instance ID
 
 if( $id ) {  // Two ways to specify the module
     $cm = get_coursemodule_from_id('equella', $id, 0, false, MUST_EXIST);
     $equella = $DB->get_record('equella', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
-    $equella = $DB->get_record('url', array('id' => $a), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('url', $equella->id, $equella->course, false, MUST_EXIST);
+    $equella = $DB->get_record('equella', array('id' => $a), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('equella', $equella->id, $equella->course, false, MUST_EXIST);
 }
 
 $equella->cmid = $cm->id;
