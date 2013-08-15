@@ -306,9 +306,13 @@ function equella_lti_params($equella, $course, $extra = array()) {
         if (!empty($CFG->equella_lti_lis_callback)) {
             $requestparams['lis_outcome_service_url'] = $CFG->equella_lti_lis_callback;
         } else {
-            $serviceurl = new moodle_url('/mod/equella/lticallback.php');
-            $serviceurl = $serviceurl->out();
-            $requestparams['lis_outcome_service_url'] = $serviceurl;
+            $ltilisparams = array(
+                'courseid'=>$course->id,
+                'cmid'=>$equella->cmid,
+            );
+            $ltilisurl = new moodle_url('/mod/equella/ltilis.php', $ltilisparams);
+            $ltilisurl = $ltilisurl->out();
+            $requestparams['lis_outcome_service_url'] = $ltilisurl;
         }
     }
 

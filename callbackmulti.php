@@ -22,16 +22,21 @@ require_once("lib.php");
 require_login();
 
 $links = required_param('tlelinks', PARAM_RAW);
-$links = json_decode($links, true);
+$courseid = required_param('course', PARAM_INT);
+$sectionid = optional_param('section', 0, PARAM_INT);
 
+$coursecontext = context_course::instance($courseid);
+require_capability('moodle/course:manageactivities', $coursecontext);
+
+$links = json_decode($links, true);
 $mod = new stdClass;
-$mod->course = required_param('course', PARAM_INT);
-$mod->module = required_param('module', PARAM_INT);
-$mod->coursemodule = required_param('coursemodule', PARAM_INT);
-$mod->section = required_param('section', PARAM_INT);
+$mod->course = $courseid;
 $mod->modulename = 'equella';
-foreach ($links as $link)
-{
+$module = $DB->get_record('modules', array('name'=>$mod->modulename));
+$mod->module = $module->id;
+
+foreach ($links as $link) {
+
     $mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
     $mod->intro = $link['description'];
     $mod->introformat = FORMAT_HTML;
@@ -40,14 +45,16 @@ foreach ($links as $link)
     // if equella returns section id, overwrite moodle section parameter
     if (isset($link['folder'])) {
         $mod->section = clean_param($link['folder'], PARAM_INT);
+    } else {
+        $mod->section = $sectionid;
     }
     if (isset($link['activationUuid']))
     {
-            $mod->activation = $link['activationUuid'];
+        $mod->activation = $link['activationUuid'];
     }
-    $return = equella_add_instance($mod);
+    $equellaid = equella_add_instance($mod);
 
-    $mod->instance = $return;
+    $mod->instance = $equellaid;
 
     // course_modules and course_sections each contain a reference
     // to each other, so we have to update one of them twice.
@@ -75,22 +82,13 @@ foreach ($links as $link)
     $eventdata->userid     = $USER->id;
     events_trigger('mod_created', $eventdata);
 
-    add_to_log($mod->course, 'course', 'add mod',
-        "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-        "$mod->modulename $mod->instance");
-    add_to_log($mod->course, $mod->modulename, 'add',
-        "view.php?id=$mod->coursemodule",
-        "$mod->instance", $mod->coursemodule);
+    $url = "view.php?id={$mod->coursemodule}";
+    add_to_log($mod->course, $mod->modulename, 'add resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
+$courseurl = new moodle_url('/course/view.php', array('id'=>$mod->course));
+$courseurl = $courseurl->out(false);
 rebuild_course_cache($mod->course);
-?>
-<html>
-    <head>
-        <title>Adding item...</title>
-        <script>
-        window.parent.document.location = '<?php print "$CFG->wwwroot/course/view.php?id=$mod->course" ?>';
-        </script>
-    </head>
-    <body></body>
-</html>
+echo '<html><body>';
+echo html_writer::script("window.parent.document.location='$courseurl';");
+echo '</body></html>';
