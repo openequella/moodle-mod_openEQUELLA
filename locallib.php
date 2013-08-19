@@ -306,7 +306,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     $requestparams['lti_message_type'] = 'basic-lti-launch-request';
 
     if (!empty($equella->id)) {
-        $sourcedid = htmlentities(json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null)));
+        $sourcedid = json_encode(equella_lti_build_sourcedid($equella->id, $USER->id, null));
         $requestparams['lis_result_sourcedid'] = $sourcedid;
 
         $returnurlparams = array('courseid' => $course->id, 'instanceid' => $equella->id);
@@ -321,7 +321,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
                 'cmid'=>$equella->cmid,
             );
             $ltilisurl = new moodle_url('/mod/equella/ltilis.php', $ltilisparams);
-            $ltilisurl = $ltilisurl->out();
+            $ltilisurl = $ltilisurl->out(false);
             $requestparams['lis_outcome_service_url'] = $ltilisurl;
         }
     }
@@ -421,10 +421,11 @@ class equella_lti_oauth extends oauth_helper {
         // Remove query from URL to build basestring
         $baseurl = strtok($url, '?');
         $parts = parse_url($url);
-        $query = $parts['query'];
-        $urlparams = equella_parse_query($query);
-
-        $params = array_merge($params, $urlparams);
+        if (!empty($parts['query'])) {
+            $query = $parts['query'];
+            $urlparams = equella_parse_query($query);
+            $params = array_merge($params, $urlparams);
+        }
 
         $parts = array(
             strtoupper($http_method),
