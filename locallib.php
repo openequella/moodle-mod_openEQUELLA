@@ -203,6 +203,16 @@ function equella_lti_launch_form($endpoint, $params) {
     return $html;
 }
 
+function equella_parse_query($str) {
+    $op = array();
+    $pairs = explode("&", $str);
+    foreach ($pairs as $pair) {
+        list($k, $v) = array_map("urldecode", explode("=", $pair));
+        $op[$k] = $v;
+    }
+    return $op;
+}
+
 function equella_build_integration_url($args, $appendtoken = true) {
     global $USER, $CFG, $DB;
 
@@ -410,9 +420,11 @@ class equella_lti_oauth extends oauth_helper {
     public function sign($http_method, $url, $params, $secret) {
         // Remove query from URL to build basestring
         $baseurl = strtok($url, '?');
-        // Add query parameters
-        $url = new moodle_url($url);
-        $params = array_merge($params, $url->params());
+        $parts = parse_url($url);
+        $query = $parts['query'];
+        $urlparams = equella_parse_query($query);
+
+        $params = array_merge($params, $urlparams);
 
         $parts = array(
             strtoupper($http_method),
