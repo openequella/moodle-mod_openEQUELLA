@@ -51,13 +51,19 @@ if ($action == 'view') {
     require_capability('moodle/course:manageactivities', $context);
 
     $url = equella_build_integration_url($args, false);
-    $query = $url->params();
+    $extraparams = $url->params();
+    if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
+        $contents = equella_get_course_contents($course->id, $args->section);
+        $json = json_encode($contents);
+        $extraparams['structure'] = $json;
+    }
 
     $equella = new stdClass;
     $equella->id = 0;
     $equella->course = $args->course;
     $equella->url = $CFG->equella_url;
-    $params = equella_lti_params($equella, $course, $query);
+    $params = equella_lti_params($equella, $course, $extraparams);
+
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
