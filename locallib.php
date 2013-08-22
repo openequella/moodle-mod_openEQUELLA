@@ -36,6 +36,7 @@ function equella_get_course_contents($courseid, $sectionid) {
     $coursecontents->id = $course->id;
     $coursecontents->code = $course->idnumber;
     $coursecontents->name = $course->fullname;
+    $coursecontents->targetable = false;
     $coursecontents->folders = array();
 
     if ($course->visible or has_capability('moodle/course:viewhiddencourses', $context)) {
