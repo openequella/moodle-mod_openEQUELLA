@@ -244,6 +244,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
 
     $equrlparams = array(
         'method'=>'lms',
+        'attachmentUuidUrls'=>'true',
         'returnprefix'=>'tle',
         'template'=>'standard',
         'courseId'=>equella_get_courseId($args->course),
