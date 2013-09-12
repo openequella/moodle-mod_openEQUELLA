@@ -106,6 +106,7 @@ class mod_equella_mod_form extends moodleform_mod {
 
             $url = $CFG->equella_url
                 . '?method=lms'
+                . '&attachmentUuidUrls=true'
                 . '&returnurl='.urlencode ($callback)
                 . '&returnprefix=tle'
                 . '&template=standard'
