@@ -37,13 +37,13 @@ class mod_equella_mod_form extends moodleform_mod {
 
     	$mform->addElement('text', 'url', get_string('location'), array('size'=>'80'));
     	$mform->addElement('hidden', 'activation', '');
-    	
+
 		$mform->addElement('header', 'displaysettings', get_string('display', 'resource') );
 
 		$woptions = array(0 => get_string('pagewindow', 'resource'), 1 => get_string('newwindow', 'resource'));
 		$mform->addElement('select', 'windowpopup', get_string('display', 'resource'), $woptions);
 		$mform->setDefault('windowpopup', !empty($CFG->resource_popup));
-		
+
 		foreach( equella_get_window_options() as $option ) {
 			if ($option == 'height' or $option == 'width') {
 				$mform->addElement('text', $option, get_string('new'.$option, 'resource'), array('size'=>'4'));
@@ -102,6 +102,7 @@ class mod_equella_mod_form extends moodleform_mod {
 
 			$url = $CFG->equella_url
 				. '?method=lms'
+                                . '&attachmentUuidUrls=true'
 				. '&returnurl='.urlencode ($callback)
 				. '&returnprefix=tle'
 				. '&template=standard'
