@@ -56,11 +56,11 @@ function xmldb_equella_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field2)) {
             $dbman->add_field($table, $field2);
         }
-	
+
 		$equella_items = $DB->get_records('equella');
 		$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)/";
-	
-		foreach ($equella_items as $item) 
+
+		foreach ($equella_items as $item)
 		{
 			$url = $item->url;
 			preg_match($pattern, $url, $matches);
@@ -81,8 +81,8 @@ function xmldb_equella_upgrade($oldversion) {
 
 		$equella_items = $DB->get_records('equella');
 		$pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
-	
-		foreach ($equella_items as $item) 
+
+		foreach ($equella_items as $item)
 		{
 			$url = $item->url;
 			preg_match($pattern, $url, $matches);
@@ -92,20 +92,38 @@ function xmldb_equella_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2011080500, 'equella');
     }
-    
+
     if ($oldversion < 2012010901)
     {
     	$table = new xmldb_table('equella');
     	$field = new xmldb_field('attachmentuuid', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'path');
-    	if (!$dbman->field_exists($table, $field)) 
+    	if (!$dbman->field_exists($table, $field))
     	{
     		$dbman->add_field($table, $field);
     	}
-    	
+
     	upgrade_mod_savepoint(true, 2012010901, 'equella');
+    }
+
+    if ($oldversion < 2012062701) {
+
+        $records = $DB->get_records('equella');
+        foreach ($records as $eq) {
+            // check if attachmentuuid field exists
+            if (preg_match('/[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/', $eq->attachmentuuid)) {
+                // not using attachment.uuid, fixing it up
+                if (!strpos($eq->url, 'attachment.uuid')) {
+                    $pattern = "#(.*)/([\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/([0-9]*)\/(.*)#";
+                    $replacement = '${1}/${2}/${3}/?attachment.uuid=' . $eq->attachmentuuid;
+                    $attachementurl = preg_replace($pattern, $replacement, $eq->url);
+                    $eq->url = $attachementurl;
+                    $DB->update_record('equella', $eq);
+                }
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2012062701, 'equella');
     }
 
     return true;
 }
-
-
