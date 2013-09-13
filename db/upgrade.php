@@ -150,5 +150,25 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013080800, 'equella');
     }
 
+    if ($oldversion < 2013080801) {
+
+        $records = $DB->get_records('equella');
+        foreach ($records as $eq) {
+            // check if attachmentuuid field exists
+            if (preg_match('/[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/', $eq->attachmentuuid)) {
+                // not using attachment.uuid, fixing it up
+                if (!strpos($eq->url, 'attachment.uuid')) {
+                    $pattern = "#(.*)/([\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/([0-9]*)\/(.*)#";
+                    $replacement = '${1}/${2}/${3}/?attachment.uuid=' . $eq->attachmentuuid;
+                    $attachementurl = preg_replace($pattern, $replacement, $eq->url);
+                    $eq->url = $attachementurl;
+                    $DB->update_record('equella', $eq);
+                }
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2013080801, 'equella');
+    }
+
     return true;
 }
