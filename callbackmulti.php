@@ -43,7 +43,7 @@ foreach ($links as $link) {
     $mod->attachmentuuid = $link['attachmentUuid'];
     $mod->url = $link['url'];
     // if equella returns section id, overwrite moodle section parameter
-    if (isset($link['folder'])) {
+    if (isset($link['folder']) && $link['folder'] != null) {
         $mod->section = clean_param($link['folder'], PARAM_INT);
     } else {
         $mod->section = $sectionid;
@@ -64,11 +64,11 @@ foreach ($links as $link) {
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
-    if (! $sectionid = add_mod_to_section($mod) ) {
+    if (! $addedsectionid = add_mod_to_section($mod) ) {
             print_error('cannotaddcoursemoduletosection');
     }
 
-    if (! $DB->set_field('course_modules', 'section', $sectionid, array('id' => $mod->coursemodule))) {
+    if (! $DB->set_field('course_modules', 'section', $addedsectionid, array('id' => $mod->coursemodule))) {
             print_error('Could not update the course module with the correct section');
     }
 
