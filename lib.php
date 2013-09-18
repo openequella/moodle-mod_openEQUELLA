@@ -25,6 +25,8 @@ define('EQUELLA_CONFIG_LOCATION_ACTIVITY', 'activity');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY', 'attachmentonly');
+define('EQUELLA_CONFIG_SELECT_RESTRICT_PACKAGES_ONLY', 'packageonly');
+
 
 function equella_supports($feature) {
     switch($feature) {
