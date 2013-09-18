@@ -31,6 +31,7 @@ $string['equella:view'] = 'View EQUELLA resource';
 // OPTIONS
 
 $string['option.pagewindow'] = 'Display';
+$string['option.pagewindow.header'] = 'Display options';
 $string['option.pagewindow.same'] = 'Same window';
 $string['option.pagewindow.new'] = 'New window';
 $string['option.popup.width'] = 'Default window width (in pixels)';
