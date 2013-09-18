@@ -104,17 +104,18 @@ class mod_equella_mod_form extends moodleform_mod {
 
 			$cancelurl = $CFG->wwwroot.'/mod/equella/cancel.php?course='.urlencode($form->course);
 
-			$url = $CFG->equella_url
-				. '?method=lms'
-				. '&returnurl='.urlencode ($callback)
-				. '&returnprefix=tle'
-				. '&template=standard'
-				. '&token='.urlencode(equella_getssotoken())
-				. '&cancelurl='.urlencode($cancelurl)
-				. '&courseId='.urlencode(equella_get_courseId($form->course))
-				. '&action='.urlencode($CFG->equella_action)
-				. '&options='.urlencode($CFG->equella_options)
-				. '&selectMultiple=true';
+                        $url = $CFG->equella_url
+                            . '?method=lms'
+                            . '&attachmentUuidUrls=true'
+                            . '&returnurl='.urlencode ($callback)
+                            . '&returnprefix=tle'
+                            . '&template=standard'
+                            . '&token='.urlencode(equella_getssotoken())
+                            . '&cancelurl='.urlencode($cancelurl)
+                            . '&courseId='.urlencode(equella_get_courseId($form->course))
+                            . '&action='.urlencode($CFG->equella_action)
+                            . '&options='.urlencode($CFG->equella_options)
+                            . '&selectMultiple=true';
 
 			if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
 				$url .= '&'.$CFG->equella_select_restriction.'=true';
