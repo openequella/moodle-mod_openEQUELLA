@@ -44,11 +44,12 @@ foreach ($links as $link) {
     $mod->url = $link['url'];
     // if equella returns section id, overwrite moodle section parameter
     if (isset($link['folder']) && $link['folder'] != null) {
-        $mod->section = clean_param($link['folder'], PARAM_INT);
+        $sectionid = $DB->get_field('course_sections', 'id', array('course' => $courseid, 'section' => clean_param($link['folder'], PARAM_INT)));
     } else {
-        $sectionid = $DB->get_field('course_sections', 'section', array('course' => $courseid, 'section' => $sectionnum));
-        $mod->section = $sectionid;
+        $sectionid = $DB->get_field('course_sections', 'id', array('course' => $courseid, 'section' => $sectionnum));
     }
+    // $mod->section is `course_sections`.`id`
+    $mod->section = $sectionid;
     if (isset($link['activationUuid'])) {
         $mod->activation = $link['activationUuid'];
     }
