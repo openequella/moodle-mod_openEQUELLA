@@ -23,7 +23,7 @@ require_login();
 
 $links = required_param('tlelinks', PARAM_RAW);
 $courseid = required_param('course', PARAM_INT);
-$sectionid = optional_param('section', 0, PARAM_INT);
+$sectionnum = optional_param('section', 0, PARAM_INT);
 
 $coursecontext = context_course::instance($courseid);
 require_capability('moodle/course:manageactivities', $coursecontext);
@@ -46,6 +46,7 @@ foreach ($links as $link) {
     if (isset($link['folder']) && $link['folder'] != null) {
         $mod->section = clean_param($link['folder'], PARAM_INT);
     } else {
+        $sectionid = $DB->get_field('course_sections', 'section', array('course' => $courseid, 'section' => $sectionnum));
         $mod->section = $sectionid;
     }
     if (isset($link['activationUuid'])) {
@@ -63,7 +64,7 @@ foreach ($links as $link) {
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
-    if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $mod->section) ) {
+    if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $sectionnum) ) {
         print_error('cannotaddcoursemoduletosection');
     }
 
