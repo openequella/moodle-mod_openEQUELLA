@@ -467,6 +467,7 @@ class equella_lti_grading {
     private $xml;
     private $messagetype;
     private $messageid;
+    const LTI_LIS_GRADE_FACTOR = 100;
     public function __construct($xml) {
         $this->xml = new SimpleXMLElement($xml);
     }
@@ -597,6 +598,15 @@ XML;
         echo $responsexml->asXML();
     }
 
+    /**
+     * Transfrom LTI grade to moodle grade
+     *
+     * @return int moodle grade
+     */
+    private function transform_grade($rawgrade) {
+        return $rawgrade * self::LTI_LIS_GRADE_FACTOR;
+    }
+
     private function update_grade($equella, $data) {
         global $CFG, $DB;
         require_once($CFG->libdir . '/gradelib.php');
@@ -606,7 +616,7 @@ XML;
 
         $grade = new stdClass();
         $grade->userid   = $data->userid;
-        $grade->rawgrade = $data->rawgrade;
+        $grade->rawgrade = $this->transform_grade($data->rawgrade);
 
         $status = grade_update(EQUELLA_SOURCE, $equella->course, EQUELLA_ITEM_TYPE, EQUELLA_ITEM_MODULE, $equella->id, 0, $grade, $item);
 
