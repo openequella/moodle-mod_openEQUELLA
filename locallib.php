@@ -293,6 +293,11 @@ function equella_lti_params($equella, $course, $extra = array()) {
         'context_title' => $course->fullname,
         'launch_presentation_locale' => current_language()
     );
+    if( !empty($equella->popup) ) {
+        $requestparams['launch_presentation_document_target'] = 'window';
+    } else {
+        $requestparams['launch_presentation_document_target'] = 'iframe';
+    }
     $requestparams = array_merge($requestparams, $extra);
 
     $requestparams['lis_person_name_given'] =  $USER->firstname;
