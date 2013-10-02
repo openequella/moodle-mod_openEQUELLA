@@ -84,6 +84,8 @@ $string['config.options.desc'] = 'The options string for EQUELLA (e.g. allPowerS
 $string['config.adminuser.title'] = 'EQUELLA administrator username';
 $string['config.adminuser.desc'] = 'The username of an administrative account in EQUELLA.  This account is used by high-level admin functions such as the Backup Course To EQUELLA block, and also for background tasks that don\'t have a user session such as EQUELLA Resource Checker.  When an activity requires an session with this user, they will be logged in using the Default shared secret values configured below.';
 $string['config.open.newwindow'] = 'Open EQUELLA resource in new window';
+$string['config.window.width'] = 'Default window width';
+$string['config.window.height'] = 'Default window height';
 $string['config.enablelti'] = 'Enable LTI';
 $string['config.enablelti.desc'] = 'This will disable shared secret when view EQUELLA resources';
 ////////////////////////////////////////////////////////

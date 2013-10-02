@@ -170,5 +170,17 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013080801, 'equella');
     }
 
+    if ($oldversion < 2013100100) {
+        $records = $DB->get_records('equella');
+        foreach ($records as $eq) {
+            if (!empty($eq->popup) && !strpos($eq->popup, 'resizable')) {
+                $eq->popup .= ',resizable=1';
+                $DB->update_record('equella', $eq);
+                rebuild_course_cache($eq->course);
+            }
+        }
+        upgrade_mod_savepoint(true, 2013100100, 'equella');
+    }
+
     return true;
 }
