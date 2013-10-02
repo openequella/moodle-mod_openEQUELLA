@@ -33,6 +33,10 @@ define('EQUELLA_CONFIG_INTERCEPT_FULL', 2);
 define('EQUELLA_ACTION_SELECTORADD', 'selectOrAdd');
 define('EQUELLA_ACTION_STRUCTURED', 'structured');
 
+// The default width is the size of equella resource page
+define('EQUELLA_DEFAULT_WINDOW_WIDTH', 860);
+define('EQUELLA_DEFAULT_WINDOW_HEIGHT', 450);
+
 function equella_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_INTRO:               return true;
@@ -45,7 +49,18 @@ function equella_supports($feature) {
 }
 
 function equella_get_window_options() {
-	return array('width' => 620, 'height' => 450, 'resizable' => 1, 'scrollbars' => 1, 'directories' => 0, 'location' => 0, 'menubar' => 0, 'toolbar' => 0, 'status' => 0);
+    global $CFG;
+    $width = EQUELLA_DEFAULT_WINDOW_WIDTH;
+    if (!empty($CFG->equella_default_window_width)) {
+        $width = $CFG->equella_default_window_width;
+    }
+
+    $height = EQUELLA_DEFAULT_WINDOW_HEIGHT;
+    if (!empty($CFG->equella_default_window_height)) {
+        $height = $CFG->equella_default_window_height;
+    }
+
+    return array('width' => $width, 'height' => $height, 'resizable' => 1, 'scrollbars' => 1, 'directories' => 0, 'location' => 0, 'menubar' => 0, 'toolbar' => 0, 'status' => 0);
 }
 
 function equella_get_courseId($courseid) {
@@ -86,6 +101,8 @@ function equella_postprocess($resource) {
             if (isset($resource->$option)) {
                 $optionlist[] = ($option . "=" . $resource->$option);
                 unset($resource->$option);
+            } else {
+                $optionlist[] = ($option . "=" . $value);
             }
         }
         $resource->popup = implode(',', $optionlist);
