@@ -261,7 +261,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
         $equrlparams['options'] = $CFG->equella_options;
     }
     if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
-        $equrlparams[$CFG->equella_select_restriction] = true;
+        $equrlparams[$CFG->equella_select_restriction] = 'true';
     }
 
     return new moodle_url($CFG->equella_url, $equrlparams);
