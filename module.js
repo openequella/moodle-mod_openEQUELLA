@@ -13,12 +13,12 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
     bodyNode.addClass('equella-page');
     var generate_html = function(append) {
         var iframe = '';
-        if (Y.UA.ie > 0) {
+        //if (Y.UA.ie > 0) {
             iframe = '<div class="resourcecontent resourcegeneral"><iframe id="resourceobject" src="'+redirecturl+'"></iframe></div>';
-        } else {
-            var param = '<param name="src" value="'+redirecturl+'" />';
-            iframe = ' <div class="resourcecontent resourcegeneral"><object id="resourceobject" data="'+redirecturl+'" type="text/html">'+param+'</object></div>';
-        }
+        //} else {
+            //var param = '<param name="src" value="'+redirecturl+'" />';
+            //iframe = ' <div class="resourcecontent resourcegeneral"><object id="resourceobject" data="'+redirecturl+'" type="text/html">'+param+'</object></div>';
+        //}
 
         var html = Y.Node.create('<div id="'+equellaContainer+'"><div class="yui3-widget-hd">'+title+'</div><div class="yui3-widget-bd">'+iframe+'</div></div>'); 
         var bodyNode = Y.one(document.body);
@@ -43,7 +43,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         }
     };
 
-    var resize_embeded = function(id, parentContainer, initialize) {
+    var resize_embedded = function(id, parentContainer, initialize) {
         var obj = Y.one('#'+id);
         if (!obj) {
             return;
@@ -51,7 +51,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
 
         obj.setStyle('width', '0px');
         obj.setStyle('height', '0px');
-        var newwidth = get_htmlelement_size(parentContainer, 'width') - 40;
+        var newwidth = get_htmlelement_size(parentContainer, 'width') - 25;
 
         if (newwidth > 500) {
             obj.setStyle('width', newwidth  + 'px');
@@ -70,7 +70,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
         } else {
             newheight = get_htmlelement_size(parentContainer, 'height');
         }
-        newheight = newheight - 40;
+        newheight = newheight - 50;
         obj.setStyle('height', newheight+'px');
 
     };
@@ -94,18 +94,18 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight, 
             modal        : true,
             visible      : true,
             render       : true,
-            buttons      : [],
+            //buttons      : [],
             plugins      : [Y.Plugin.Drag, Y.Plugin.Resize]
         });
         panel.show();
         panel.resize.on('resize:resize', function(e) {
-            resize_embeded('resourceobject', equellaContainer, false);
+            resize_embedded('resourceobject', equellaContainer, false);
         });
         // fix layout if window resized too
         window.onresize = function() {
-            resize_embeded('resourceobject', equellaContainer, false);
+            resize_embedded('resourceobject', equellaContainer, false);
         };
-        resize_embeded('resourceobject', equellaContainer, true);
+        resize_embedded('resourceobject', equellaContainer, true);
         var button  = Y.one('#openequellachooser');
         button.on('click', function (e) {
             panel.show();
