@@ -328,6 +328,7 @@ function equella_module_event_handler($event) {
     $files = equella_capture_files($event);
     foreach ($files as $file) {
         $handle = $file->get_content_file_handle();
+        $params['filesize'] = $file->get_filesize();
         // pushing files to equella
         $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         // replace contents
@@ -388,6 +389,7 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecourseshortname'] = $uploadinfo->course->shortname;
         $params['moodlecourseid'] = $uploadinfo->course->id;
         $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
+        $params['filesize'] = $file->get_filesize();
         $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
