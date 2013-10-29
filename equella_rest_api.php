@@ -39,6 +39,8 @@ class equella_curl extends curl {
         $fp = $params['filehandle'];
         $options['CURLOPT_PUT']    = 1;
         $options['CURLOPT_INFILE'] = $fp;
+        // load balancers and reverse prixies require filesize
+        $options['CURLOPT_INFILESIZE'] = $params['filesize'];
         $ret = $this->request($url, $options);
         return $ret;
     }
@@ -112,7 +114,7 @@ class equella_rest_api {
         $curl->setHeader(array(
             'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
         ));
-        $result = $curl->put($endpoint, array('filehandle'=>$fp));
+        $result = $curl->put($endpoint, array('filehandle'=>$fp, 'filesize'=>$params['filesize']));
         fclose($fp);
 
         if (!empty($result)) {
