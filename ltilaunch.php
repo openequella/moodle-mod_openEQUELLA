@@ -34,6 +34,7 @@ if ($action == 'view') {
     require_capability('mod/equella:view', $context);
 
     $equella->cmid = $cmid;
+    $equella->course = $course->id;
     $params = equella_lti_params($equella, $course);
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
