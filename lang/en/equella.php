@@ -87,7 +87,7 @@ $string['config.open.newwindow'] = 'Open EQUELLA resource in new window';
 $string['config.window.width'] = 'Default window width';
 $string['config.window.height'] = 'Default window height';
 $string['config.enablelti'] = 'Enable LTI';
-$string['config.enablelti.desc'] = 'This will disable shared secret when view EQUELLA resources';
+$string['config.enablelti.desc'] = 'Please fill in OAuth Client ID and secret after saving this option, this will disable shared secret when view EQUELLA resources.';
 ////////////////////////////////////////////////////////
 // CONFIGURATION: LTI
 $string['config.lti.heading'] = 'LTI Settings';
