@@ -62,12 +62,10 @@ if( $ADMIN->fulltree ) {
     //
     // LTI
     //
-    if (!empty($CFG->equella_enable_lti)) {
-        $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
-        $settings->add(new equella_setting_left_heading('equella_lti_oauth', ecs('lti_oauth_heading'), ''));
-        $settings->add(new admin_setting_configtext('equella_lti_oauth_key', ecs('lti.key.title'), '', ''));
-        $settings->add(new admin_setting_configtext('equella_lti_oauth_secret', ecs('lti.secret.title'), '', ''));
-    }
+    $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
+    $settings->add(new equella_setting_left_heading('equella_lti_oauth', ecs('lti_oauth_heading'), ''));
+    $settings->add(new admin_setting_configtext('equella_lti_oauth_key', ecs('lti.key.title'), ecs('lti.key.help'), ''));
+    $settings->add(new admin_setting_configtext('equella_lti_oauth_secret', ecs('lti.secret.title'), ecs('lti.secret.help'), ''));
 
     /////////////////////////////////////////////////////////////////////////////////
     //
