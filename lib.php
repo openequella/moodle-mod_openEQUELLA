@@ -191,11 +191,7 @@ function equella_get_coursemodule_info($coursemodule) {
             $info->icon = equella_guess_icon($url);
 
             if( !empty($resource->popup) ) {
-                if ($CFG->equella_enable_lti) {
-                    $url = new moodle_url('/mod/equella/ltilaunch.php', array('cmid'=>$coursemodule->id));
-                } else {
-                    $url = new moodle_url('/mod/equella/view.php', array('inpopup'=>true, 'id'=>$coursemodule->id));
-                }
+                $url = new moodle_url('/mod/equella/popup.php', array('cmid'=>$coursemodule->id));
                 $url = $url->out();
                 $info->extra = "onclick=\"window.open('$url', '','{$resource->popup}'); return false;\"";
             }
