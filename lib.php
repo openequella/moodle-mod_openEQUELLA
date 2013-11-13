@@ -118,7 +118,8 @@ function equella_postprocess($resource) {
     if (!empty($matches['uuid'])) {
         $resource->uuid = $matches['uuid'];
     }
-    if (!empty($matches['version'])) {
+    // version could be 0, so don't test it with !empty()
+    if (isset($matches['version'])) {
         $resource->version = $matches['version'];
     }
     if (!empty($matches['path'])) {
