@@ -448,6 +448,9 @@ class equella_lti_oauth extends oauth_helper {
         global $CFG;
         $key = $CFG->equella_lti_oauth_key;
         $secret = $CFG->equella_lti_oauth_secret;
+        if (empty($key) || empty($secret)) {
+            return $params;
+        }
         return self::get_instance($key, $secret)->prepare_oauth_parameters($url, $params, $method);
     }
 
