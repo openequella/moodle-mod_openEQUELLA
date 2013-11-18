@@ -63,9 +63,6 @@ function equella_get_course_contents($courseid, $sectionid) {
             $sectionvalues->folders = array();
             $sectioncontents = array();
 
-            if (!isset($modinfo->sections[$section->section])) {
-                $modinfo->sections[$section->section] = array();
-            }
             //foreach ($modinfo->sections[$section->section] as $cmid) {
                 //$cm = $modinfo->cms[$cmid];
 
