@@ -49,6 +49,6 @@ if (!empty($ltierrormsg) || !empty($ltimsg)) {
     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
     $url = $courseurl->out();
     echo '<html><head>';
-    echo html_writer::script("if(window != top){ top.location.href = '{$url}' };");
+    echo html_writer::script("if(window != top){ top.location.href = '{$url}' } else {close();};");
     echo '</head><body></body></html>';
 }
