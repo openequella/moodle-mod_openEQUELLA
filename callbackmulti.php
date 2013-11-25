@@ -48,8 +48,15 @@ foreach ($links as $link) {
     } else {
         $mod->section = $sectionid;
     }
-    if (isset($link['activationUuid']))
-    {
+
+    if (isset($link['mimetype'])) {
+        $mod->mimetype = $link['mimetype'];
+    } else {
+        $mod->mimetype = mimeinfo('type', $mod->url);
+    }
+    // $mod->section is `course_sections`.`id`
+    $mod->section = $sectionid;
+    if (isset($link['activationUuid'])) {
         $mod->activation = $link['activationUuid'];
     }
     $equellaid = equella_add_instance($mod);

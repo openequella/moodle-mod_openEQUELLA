@@ -185,11 +185,12 @@ function equella_get_coursemodule_info($coursemodule) {
         if( $resource = $DB->get_record("equella", array("id" => $coursemodule->instance)) ) {
             require_once($CFG->libdir.'/filelib.php');
 
-            $url = $resource->url;
-            if( $ind = strrpos($url, '?') ) {
-                $url = substr($url, 0, $ind);
-            }
-            $info->icon = equella_guess_icon($url);
+            //$url = $resource->url;
+            //if( $ind = strrpos($url, '?') ) {
+                //$url = substr($url, 0, $ind);
+            //}
+            //$info->icon = equella_guess_icon($url, 24);
+            $info->icon = file_mimetype_icon($resource->mimetype, 24);
 
             if( !empty($resource->popup) ) {
                 $url = new moodle_url('/mod/equella/popup.php', array('cmid'=>$coursemodule->id));
