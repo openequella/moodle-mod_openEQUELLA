@@ -48,6 +48,12 @@ foreach ($links as $link) {
     } else {
         $sectionid = $DB->get_field('course_sections', 'id', array('course' => $courseid, 'section' => $sectionnum));
     }
+
+    if (isset($link['mimetype'])) {
+        $mod->mimetype = $link['mimetype'];
+    } else {
+        $mod->mimetype = mimeinfo('type', $mod->url);
+    }
     // $mod->section is `course_sections`.`id`
     $mod->section = $sectionid;
     if (isset($link['activationUuid'])) {
