@@ -14,7 +14,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="introformat" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="url"/>
         <FIELD NAME="url" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" COMMENT="The Equella url" PREVIOUS="timemodified" NEXT="popup"/>
-        <FIELD NAME="popup" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Popup options" PREVIOUS="url" NEXT="activation"/>
+        <FIELD NAME="mimetype" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="url" NEXT="popup"/>
+        <FIELD NAME="popup" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="Popup options" PREVIOUS="mimetype" NEXT="activation"/>
         <FIELD NAME="activation" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Activation UUID" PREVIOUS="popup" NEXT="uuid"/>
         <FIELD NAME="uuid" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="item uuid" PREVIOUS="activation" NEXT="version"/>
         <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="item version" PREVIOUS="uuid" NEXT="path" />

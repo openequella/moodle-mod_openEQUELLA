@@ -182,5 +182,28 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013100100, 'equella');
     }
 
+    if ($oldversion < 2013112501) {
+        require_once("$CFG->libdir/filelib.php");
+
+        // Define field mimetype to be added to equella.
+        $table = new xmldb_table('equella');
+        $field = new xmldb_field('mimetype', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'url');
+
+        // Conditionally launch add field mimetype.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $records = $DB->get_records('equella');
+        foreach ($records as $eq) {
+            $mimetype = mimeinfo('type', $eq->url);
+            $eq->mimetype = $mimetype;
+            $DB->update_record('equella', $eq);
+            rebuild_course_cache($eq->course);
+        }
+        // Newmodule savepoint reached.
+        upgrade_mod_savepoint(true, 2013112501, 'equella');
+    }
+
     return true;
 }
