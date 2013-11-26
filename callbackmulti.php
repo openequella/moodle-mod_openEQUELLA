@@ -42,11 +42,10 @@ foreach ($links as $link) {
     $mod->introformat = FORMAT_HTML;
     $mod->attachmentuuid = $link['attachmentUuid'];
     $mod->url = $link['url'];
+    $targetsection = $sectionnum;
     // if equella returns section id, overwrite moodle section parameter
     if (isset($link['folder']) && $link['folder'] != null) {
-        $sectionid = $DB->get_field('course_sections', 'id', array('course' => $courseid, 'section' => clean_param($link['folder'], PARAM_INT)));
-    } else {
-        $sectionid = $DB->get_field('course_sections', 'id', array('course' => $courseid, 'section' => $sectionnum));
+        $targetsection = clean_param($link['folder'], PARAM_INT);
     }
 
     if (isset($link['mimetype'])) {
@@ -54,8 +53,6 @@ foreach ($links as $link) {
     } else {
         $mod->mimetype = mimeinfo('type', $mod->url);
     }
-    // $mod->section is `course_sections`.`id`
-    $mod->section = $sectionid;
     if (isset($link['activationUuid'])) {
         $mod->activation = $link['activationUuid'];
     }
@@ -71,7 +68,7 @@ foreach ($links as $link) {
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
-    if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $sectionnum) ) {
+    if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $targetsection) ) {
         print_error('cannotaddcoursemoduletosection');
     }
 
@@ -93,9 +90,9 @@ foreach ($links as $link) {
     add_to_log($mod->course, $mod->modulename, 'add resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
-$courseurl = new moodle_url('/course/view.php', array('id'=>$mod->course));
+$courseurl = new moodle_url('/course/view.php', array('id'=>$courseid));
 $courseurl = $courseurl->out(false);
-rebuild_course_cache($mod->course);
+rebuild_course_cache($courseid);
 echo '<html><body>';
 echo html_writer::script("window.parent.document.location='$courseurl';");
 echo '</body></html>';
