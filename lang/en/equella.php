@@ -94,9 +94,9 @@ $string['config.lti.heading'] = 'LTI Settings';
 $string['config.lti_oauth_heading'] = 'LTI OAuth client settings';
 $string['config.lti.help'] =  '';
 $string['config.lti.key.title'] = 'Client ID';
-$string['config.lti.key.help'] = 'Client ID shouldn\'t be empty';
+$string['config.lti.key.help'] = 'Client ID is required if LTI is enabled.';
 $string['config.lti.secret.title'] = 'Client secret';
-$string['config.lti.secret.help'] = 'Client secret shouldn\'t be empty';
+$string['config.lti.secret.help'] = 'Client secret is required if LTI is enabled.';
 $string['config.lti.liscallback.title'] = 'Outcome callback URL';
 
 ////////////////////////////////////////////////////////

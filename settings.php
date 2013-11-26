@@ -56,14 +56,12 @@ if( $ADMIN->fulltree ) {
 
     $settings->add(new admin_setting_configtext('equella_default_window_height', ecs('window.height'), '', EQUELLA_DEFAULT_WINDOW_HEIGHT));
 
-    $settings->add(new admin_setting_configcheckbox('equella_enable_lti', ecs('enablelti'), ecs('enablelti.desc'), 0));
-
     /////////////////////////////////////////////////////////////////////////////////
     //
     // LTI
     //
     $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
-    $settings->add(new equella_setting_left_heading('equella_lti_oauth', ecs('lti_oauth_heading'), ''));
+    $settings->add(new admin_setting_configcheckbox('equella_enable_lti', ecs('enablelti'), ecs('enablelti.desc'), 0));
     $settings->add(new admin_setting_configtext('equella_lti_oauth_key', ecs('lti.key.title'), ecs('lti.key.help'), ''));
     $settings->add(new admin_setting_configtext('equella_lti_oauth_secret', ecs('lti.secret.title'), ecs('lti.secret.help'), ''));
 
