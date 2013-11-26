@@ -23,7 +23,7 @@ require_login();
 
 $links = required_param('tlelinks', PARAM_RAW);
 $courseid = required_param('course', PARAM_INT);
-$sectionid = optional_param('section', 0, PARAM_INT);
+$sectionnum = optional_param('section', 0, PARAM_INT);
 
 $coursecontext = context_course::instance($courseid);
 require_capability('moodle/course:manageactivities', $coursecontext);
@@ -46,16 +46,16 @@ foreach ($links as $link) {
     if (isset($link['folder']) && $link['folder'] != null) {
         $mod->section = clean_param($link['folder'], PARAM_INT);
     } else {
-        $mod->section = $sectionid;
+        $mod->section = $sectionnum;;
     }
+
 
     if (isset($link['mimetype'])) {
         $mod->mimetype = $link['mimetype'];
     } else {
         $mod->mimetype = mimeinfo('type', $mod->url);
     }
-    // $mod->section is `course_sections`.`id`
-    $mod->section = $sectionid;
+
     if (isset($link['activationUuid'])) {
         $mod->activation = $link['activationUuid'];
     }
@@ -66,17 +66,17 @@ foreach ($links as $link) {
     // course_modules and course_sections each contain a reference
     // to each other, so we have to update one of them twice.
     if (! $mod->coursemodule = add_course_module($mod) ) {
-            print_error('cannotaddcoursemodule');
+        print_error('cannotaddcoursemodule');
     }
 
     $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
 
     if (! $addedsectionid = add_mod_to_section($mod) ) {
-            print_error('cannotaddcoursemoduletosection');
+        print_error('cannotaddcoursemoduletosection');
     }
 
     if (! $DB->set_field('course_modules', 'section', $addedsectionid, array('id' => $mod->coursemodule))) {
-            print_error('Could not update the course module with the correct section');
+        print_error('Could not update the course module with the correct section');
     }
 
     set_coursemodule_visible($mod->coursemodule, true);
@@ -93,9 +93,9 @@ foreach ($links as $link) {
     add_to_log($mod->course, $mod->modulename, 'add resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
-$courseurl = new moodle_url('/course/view.php', array('id'=>$mod->course));
+$courseurl = new moodle_url('/course/view.php', array('id'=>$courseid));
 $courseurl = $courseurl->out(false);
-rebuild_course_cache($mod->course);
+rebuild_course_cache($courseid);
 echo '<html><body>';
 echo html_writer::script("window.parent.document.location='$courseurl';");
 echo '</body></html>';
