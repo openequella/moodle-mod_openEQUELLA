@@ -66,8 +66,6 @@ foreach ($links as $link) {
         print_error('cannotaddcoursemodule');
     }
 
-    $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
-
     if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $targetsection) ) {
         print_error('cannotaddcoursemoduletosection');
     }
