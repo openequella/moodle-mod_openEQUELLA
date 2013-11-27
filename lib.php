@@ -64,25 +64,20 @@ function equella_get_window_options() {
 }
 
 function equella_get_courseId($courseid) {
-	global $DB;
-	$record = $DB->get_record("course", array('id' => $courseid));
-	return $record->idnumber;
+    global $DB;
+    $record = $DB->get_record("course", array('id' => $courseid));
+    return $record->idnumber;
 }
 
 function equella_add_instance($equella) {
-	global $DB, $USER, $CFG;
-	// Given an object containing all the necessary data,
-	// (defined by the form in mod.html) this function
-	// will create a new instance and return the id number
-	// of the new instance.
-	$equella->timecreated = time();
-	$equella->timemodified = time();
-        // Use popup by default
-        if (!empty($CFG->equellaopeninnewwindow)) {
-            $equella->windowpopup = 1;
-        }
-	$equella = equella_postprocess($equella);
-	return $DB->insert_record("equella", $equella);
+    global $DB, $USER, $CFG;
+    $equella->timecreated = time();
+    $equella->timemodified = time();
+    if (!empty($CFG->equellaopeninnewwindow)) {
+        $equella->windowpopup = 1;
+    }
+    $equella = equella_postprocess($equella);
+    return $DB->insert_record("equella", $equella);
 }
 
 /**
@@ -129,43 +124,37 @@ function equella_postprocess($resource) {
 }
 
 function equella_update_instance($equella) {
-	global $DB;
-	// Given an object containing all the necessary data,
-	// will update an existing instance with new data.
-	$equella->timemodified = time();
-	$equella->id = $equella->instance;
-	$equella = equella_postprocess($equella);
-	return $DB->update_record("equella", $equella);
+    global $DB;
+    // Given an object containing all the necessary data,
+    // will update an existing instance with new data.
+    $equella->timemodified = time();
+    $equella->id = $equella->instance;
+    $equella = equella_postprocess($equella);
+    return $DB->update_record("equella", $equella);
 }
 
-
 function equella_delete_instance($id) {
-	global $DB, $CFG;
-	// Given an ID of an instance of this module,
-	// this function will permanently delete the instance
-	// and any data that depends on it.
+    global $DB, $CFG;
+    if (! $equella = $DB->get_record("equella", array("id" => $id))) {
+        return false;
+    }
 
-	if (! $equella = $DB->get_record("equella", array("id" => $id))) {
-		return false;
-	}
+    if ($equella->activation)
+    {
+        $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
+        $url = equella_appendtoken($url)."&activationUuid=".urlencode($equella->activation);
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $res = curl_exec($curl);
+        curl_close($curl);
+    }
+    $result = true;
 
-	if ($equella->activation)
-	{
-		$url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
-		$url = equella_appendtoken($url)."&activationUuid=".urlencode($equella->activation);
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$res = curl_exec($curl);
-		curl_close($curl);
-	}
-	$result = true;
+    if (! $DB->delete_records("equella", array("id" => $equella->id))) {
+        $result = false;
+    }
 
-
-	if (! $DB->delete_records("equella", array("id" => $equella->id))) {
-		$result = false;
-	}
-
-	return $result;
+    return $result;
 }
 
 function equella_user_outline($course, $user, $mod, $equella) {
