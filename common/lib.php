@@ -70,9 +70,18 @@ function equella_getssotoken($course = null) {
     // roles are ordered by shortname
     $editingroles = get_all_editing_roles();
     foreach($editingroles as $role) {
-        $hassystemrole = user_has_role_assignment($USER->id,  $role->id,$context_sys->id);
-        $hascategoryrole = user_has_role_assignment($USER->id,$role->id,$context_cc->id);
-        $hascourserole = user_has_role_assignment($USER->id,  $role->id,$context_c->id);
+        $hassystemrole = false;
+        if (!empty($context_sys)) {
+            $hassystemrole = user_has_role_assignment($USER->id,  $role->id,$context_sys->id);
+        }
+        $hascategoryrole = false;
+        if (!empty($context_cc)) {
+            $hascategoryrole = user_has_role_assignment($USER->id,$role->id,$context_cc->id);
+        }
+        $hascourserole = false;
+        if (!empty($context_c)) {
+            $hascourserole = user_has_role_assignment($USER->id,  $role->id,$context_c->id);
+        }
 
         if( $hassystemrole || $hascategoryrole || $hascourserole) {
             //see if the user has a role that is linked to an equella role
