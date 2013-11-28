@@ -37,14 +37,28 @@ define('EQUELLA_ACTION_STRUCTURED', 'structured');
 define('EQUELLA_DEFAULT_WINDOW_WIDTH', 860);
 define('EQUELLA_DEFAULT_WINDOW_HEIGHT', 450);
 
+/**
+ * Returns the information if the module supports a feature
+ *
+ * @see plugin_supports() in lib/moodlelib.php
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed true if the feature is supported, null if unknown
+ */
 function equella_supports($feature) {
     switch($feature) {
+        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_GROUPS:                  return true;
+        case FEATURE_GROUPINGS:               return true;
+        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_SHOW_DESCRIPTION:        return true;
 
-        default: return null;
+        case FEATURE_GRADE_HAS_GRADE:         return false;
+        case FEATURE_GRADE_OUTCOMES:          return false;
+
+        default:                              return null;
     }
 }
 

@@ -19,12 +19,12 @@ require_once("../../config.php");
 require_once("../../course/lib.php");
 require_once("lib.php");
 
-require_login();
 
 $links = required_param('tlelinks', PARAM_RAW);
 $courseid = required_param('course', PARAM_INT);
 $sectionnum = optional_param('section', 0, PARAM_INT);
 
+require_login($courseid);
 $coursecontext = context_course::instance($courseid);
 require_capability('moodle/course:manageactivities', $coursecontext);
 
@@ -90,7 +90,7 @@ foreach ($links as $link) {
     events_trigger('mod_created', $eventdata);
 
     $url = "view.php?id={$mod->coursemodule}";
-    add_to_log($mod->course, $mod->modulename, 'add resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
+    add_to_log($mod->course, $mod->modulename, 'add EQUELLA', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
 $courseurl = new moodle_url('/course/view.php', array('id'=>$courseid));
