@@ -482,16 +482,17 @@ class equella_lti_grading {
         if (empty($description)) {
             $description = $this->messagetype;
         }
+        $codemajor = strtolower($codemajor);
         $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<imsx_POXEnvelopeResponse xmlns = "http://www.imsglobal.org/lis/oms1p0/pox">
+<imsx_POXEnvelopeResponse xmlns = "http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">
     <imsx_POXHeader>
         <imsx_POXResponseHeaderInfo>
             <imsx_version>V1.0</imsx_version>
             <imsx_messageIdentifier>{$messageid}</imsx_messageIdentifier>
             <imsx_statusInfo>
                 <imsx_codeMajor>{$codemajor}</imsx_codeMajor>
-                <imsx_severity>Status</imsx_severity>
+                <imsx_severity>status</imsx_severity>
                 <imsx_description>{$description}</imsx_description>
                 <imsx_messageRefIdentifier>{$this->messageid}</imsx_messageRefIdentifier>
             </imsx_statusInfo>
@@ -666,7 +667,7 @@ XML;
                     $data = $this->parse_replace_message();
                     $this->handle_replace_message($data);
                 } catch (Exception $ex) {
-                    $responsexml = $this->get_response_xml('Error', $ex->getMessage());
+                    $responsexml = $this->get_response_xml('error', $ex->getMessage());
                     echo $responsexml->asXML();
                 }
                 break;
@@ -675,7 +676,7 @@ XML;
                     $data = $this->parse_grade_message();
                     $this->handle_read_message($data);
                 } catch (Exception $ex) {
-                    $responsexml = $this->get_response_xml('Error', $ex->getMessage());
+                    $responsexml = $this->get_response_xml('error', $ex->getMessage());
                     echo $responsexml->asXML();
                 }
                 break;
@@ -687,7 +688,7 @@ XML;
                 }
                 break;
             default:
-                $responsexml = $this->get_response_xml('Unsupported', 'Unsupported request');
+                $responsexml = $this->get_response_xml('unsupported', 'Unsupported request');
                 echo $responsexml->asXML();
                 break;
         }
