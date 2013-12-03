@@ -20,6 +20,9 @@ require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once(dirname(__FILE__) . '/equella_rest_api.php');
 
+// This must be FALSE in released code
+define('EQUELLA_DEV_DEBUG_MODE', false);
+
 define('EQUELLA_CONFIG_SELECT_RESTRICT_NONE', 'none');
 
 define('EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY', 'itemonly');

@@ -1,5 +1,20 @@
 <?php
 
+// This file is part of the EQUELLA Moodle Integration - https://github.com/equella/moodle-module
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
@@ -8,60 +23,16 @@ require_once($CFG->libdir . '/accesslib.php');
 require_once($CFG->libdir . '/authlib.php');
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->dirroot . '/course/lib.php');
-require_once($CFG->dirroot . '/mod/equella/lib.php');
 require_once($CFG->dirroot . '/enrol/externallib.php');
 
-function equella_exception_handler($exception)
-{
-    global $CFG;
-    if (false) //DO-NOT-COMMI
-    {
-        $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
-        fwrite($fh, $exception->getMessage()."\r\n");
-        fflush($fh);
-        fclose($fh);
-    }
-}
-
-function equella_error_handler($errno, $errstr, $errfile, $errline)
-{
-    global $CFG;
-    if (!(error_reporting() & $errno)) {
-        // This error code is not included in error_reporting
-        return;
-    }
-
-    if (false) //DO-NOT-COMMI
-    {
-        $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
-        fwrite($fh, "Fatal error on line $errline in file $errfile : $errstr \r\n");
-        fflush($fh);
-        fclose($fh);
-    }
-
-    /* Don't execute PHP internal error handler */
-    return true;
-}
-
-
+require_once(dirname(__FILE__) . '/lib.php');
+require_once(dirname(__FILE__) . '/locallib.php');
 
 class equella_external extends external_api {
 
     const READ_PERMISSION = 'moodle/course:view';
     const WRITE_PERMISSION = 'moodle/course:manageactivities';
     const DEVMODE = 0; //DO-NOT-COMMI
-
-    public static function log($text)
-    {
-        global $CFG;
-        if (self::DEVMODE)
-        {
-            $fh = fopen($CFG->dataroot . '/equella_error.log', 'a');
-            fwrite($fh, $text."\r\n");
-            fflush($fh);
-            fclose($fh);
-        }
-    }
 
     public static function find_usage_for_item_parameters() {
         return new external_function_parameters(
@@ -387,7 +358,7 @@ class equella_external extends external_api {
                 'archived' => $archived,
             ));
 
-        self::log("list_courses_for_user($user, $modifiable, $archived)");
+        equella_debug_log("list_courses_for_user($user, $modifiable, $archived)");
 
         if ($modifiable)
         {
@@ -409,7 +380,7 @@ class equella_external extends external_api {
             //Ugh
             if ($userobj != null && !self::has_modify_permissions($userobj, $course->id))
             {
-                self::log("no modify permissions for course $course->fullname");
+                equella_debug_log("no modify permissions for course $course->fullname");
                 continue;
             }
 
@@ -465,7 +436,7 @@ class equella_external extends external_api {
                 'archived' => $archived,
                 'allVersion' => $allVersion
             ));
-        self::log("find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion)");
+        equella_debug_log("find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion)");
 
 
         if ($params['allVersion'])
@@ -527,8 +498,6 @@ class equella_external extends external_api {
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc)
     {
         global $DB, $CFG;
-        //set_exception_handler('equella_exception_handler');
-        //set_error_handler('equella_error_handler');
 
         $params = self::validate_parameters(self::find_all_usage_parameters(),
             array(
@@ -542,7 +511,7 @@ class equella_external extends external_api {
                 'sortcolumn' => $sortcolumn,
                 'sortasc' => $sortasc
             ));
-        self::log("find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count)");
+        equella_debug_log("find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count)");
 
         $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
 
@@ -625,12 +594,7 @@ class equella_external extends external_api {
 
             if ($index >= $offset && ($count == -1 || $index < $offset + $count))
             {
-                self::log('adding item');
                 $content[] = self::convert_item($item, $itemViews, $course, $courseModule, $params['archived'], $instructor, $enrollments);
-            }
-            else
-            {
-                self::log('index out of range');
             }
             $index = $index + 1;
         }
@@ -655,7 +619,6 @@ class equella_external extends external_api {
                 WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1
                 GROUP BY cm.id";
             $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
-            //self::log('itemViewInfo: '.print_r($itemViewInfo, true));
 
             $itemViews[$course->id] = $itemViewInfo;
         }
@@ -748,9 +711,6 @@ class equella_external extends external_api {
 
     public static function unfiltered_usage_count($user, $query, $archived)
     {
-        //set_exception_handler('equella_exception_handler');
-        //set_error_handler('equella_error_handler');
-
         global $DB;
         $params = self::validate_parameters(self::unfiltered_usage_count_parameters(),
             array(
@@ -758,7 +718,7 @@ class equella_external extends external_api {
                 'query' => $query,
                 'archived' => $archived
             ));
-        self::log("unfiltered_usage_count($user, $query, $archived)");
+        equella_debug_log("unfiltered_usage_count($user, $query, $archived)");
 
         $available = 0;
         $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
@@ -786,10 +746,6 @@ class equella_external extends external_api {
     {
         global $DB, $USER;
 
-        //set_exception_handler('equella_exception_handler'); //DO-NOT-COMMI
-        //set_error_handler('equella_error_handler'); //DO-NOT-COMMI
-
-        self::log('validating params');
         $params = self::validate_parameters(self::add_item_to_course_parameters(),
             array(
                 'user' => $user,
@@ -804,9 +760,7 @@ class equella_external extends external_api {
             )
         );
 
-        self::log('validated params!');
-
-        self::log("add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid)");
+        equella_debug_log("add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid)");
         self::check_modify_permissions($params['user'], $params['courseid']);
 
         $module = $DB->get_record('modules', array('name' => 'equella'));
@@ -1065,53 +1019,40 @@ class equella_external extends external_api {
     public static function get_user($username)
     {
         global $CFG;
-        self::log("get_user($username)");
 
         $user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id);
 
-        self::log('called get_complete_user_data');
-
         if ($user == null)
         {
-            self::log('user not found '.$username);
             throw new moodle_exception("UserNotFound/" . $username);
-        }
-        else
-        {
-            self::log('got user '.$user->id);
         }
         return $user;
     }
 
     public static function is_enrolled($user, $courseid)
     {
-        self::log("is_enrolled($user->id, $courseid)");
+        equella_debug_log("is_enrolled($user->id, $courseid)");
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
         return is_enrolled($coursecontext, $user->id);
     }
 
     public static function has_view_permissions($user, $courseid)
     {
-        self::log("has_view_permissions($user->id, $courseid)");
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
         return has_capability(self::READ_PERMISSION, $coursecontext, $user->id);
     }
 
     public static function has_modify_permissions($user, $courseid)
     {
-        self::log("has_view_permissions($user->id, $courseid)");
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
         return has_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
 
     public static function check_modify_permissions($username, $courseid)
     {
-        self::log("check_modify_permissions($username,$courseid)");
         $user = self::get_user($username);
         $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-        self::log('got course context');
 
         require_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
-        self::log('modify permission ok!');
     }
 }

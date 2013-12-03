@@ -399,6 +399,13 @@ function equella_lti_build_sourcedid($instanceid, $userid, $launchid = null) {
     return $container;
 }
 
+function equella_debug_log($data) {
+    global $CFG;
+    if (defined('EQUELLA_DEV_DEBUG_MODE') && EQUELLA_DEV_DEBUG_MODE == true) {
+        file_put_contents("{$CFG->dataroot}/equella_error.log", time() . " => " . var_export($data, true) . "\n", FILE_APPEND);
+    }
+}
+
 /**
  * Signing and verifying
  */
