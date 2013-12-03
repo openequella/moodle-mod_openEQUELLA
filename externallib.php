@@ -157,31 +157,6 @@ class equella_external extends external_api {
         );
     }
 
-        /*
-         $RESULTS_STRUCTURE = new external_multiple_structure(
-        new external_single_structure(
-        array(
-        'id' => new external_value(PARAM_RAW, 'id of content'),
-        'coursename' => new external_value(PARAM_RAW, 'name of course'),
-        'courseid' => new external_value(PARAM_RAW, 'id of the course'),
-        'section' => new external_value(PARAM_RAW, 'location of resource'),
-        'dateAdded' => new external_value(PARAM_FLOAT, 'Date the item was added'),
-        'dateModified' => new external_value(PARAM_FLOAT, 'Date the item details were modified in Moodle'),
-        'uuid' => new external_value(PARAM_RAW, 'The uuid of the item link to.'),
-        'version' => new external_value(PARAM_INT, 'The version of the item linked to.  Will be zero in the case of "Always latest"'),
-        'attachment' => new external_value(PARAM_RAW, 'The attachment name, if any, that is linked to.'),
-        'moodlename' => new external_value(PARAM_RAW, 'The name of the resource in Moodle'),
-        'moodledescription' => new external_value(PARAM_RAW, 'The description of the resource in Moodle'),
-        'attributes' => new external_multiple_structure(new external_single_structure(
-        array(
-        'key' => new external_value(PARAM_RAW, 'Attribute key'),
-        'value' => new external_value(PARAM_RAW, 'Attribute value')
-        )), '', false
-        )
-        )
-        )
-        );*/
-
     public static function find_usage_for_item_returns() {
         return new external_single_structure(
             array(
@@ -409,15 +384,17 @@ class equella_external extends external_api {
         //FIXME: can list_sections_for_course ever be called for non-write purposes?
         self::check_modify_permissions($params['user'], $params['courseid']);
 
-        $result = array();
-        $sections = $DB->get_records('course_sections', array('course' => $params['courseid']),
+        $courseid = $params['courseid'];
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $sections = $DB->get_records('course_sections', array('course' => $courseid),
             'section', 'section, id, course, name, summary, summaryformat, sequence, visible');
+
+        $result = array();
         foreach ($sections as $section)
         {
-            $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
-            $section_name = get_section_name($course, $section);
-            $result[] = array('sectionid' => $section->section,
-                'sectionname' => $section_name);
+            $sectionname = get_section_name($course, $section);
+            $result[] = array('sectionid' => $section->section, 'sectionname' => $sectionname);
         }
 
         return $result;
