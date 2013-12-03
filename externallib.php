@@ -2,13 +2,14 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir.'/externallib.php');
-require_once($CFG->libdir.'/enrollib.php');
-require_once($CFG->libdir.'/accesslib.php');
-require_once($CFG->libdir.'/authlib.php');
-require_once($CFG->libdir.'/moodlelib.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->dirroot.'/mod/equella/lib.php');
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->libdir . '/enrollib.php');
+require_once($CFG->libdir . '/accesslib.php');
+require_once($CFG->libdir . '/authlib.php');
+require_once($CFG->libdir . '/moodlelib.php');
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/mod/equella/lib.php');
+require_once($CFG->dirroot . '/enrol/externallib.php');
 
 function equella_exception_handler($exception)
 {
@@ -490,6 +491,7 @@ class equella_external extends external_api {
         $content = array();
         $itemViews = array();
         $coursecaches = array();
+        $enrollmentsMap = array();
         foreach ($equella_items as $item)
         {
             $cm = get_coursemodule_from_instance('equella', $item->id);
@@ -500,12 +502,20 @@ class equella_external extends external_api {
                 $coursecaches[$cm->course] = $course;
             }
 
+            if (!isset($enrollmentsMap[$item->course])) {
+                $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
+                $enrollmentsMap[$item->course] = count($enrolledusers);
+            }
+            $enrollments = $enrollmentsMap[$item->course];
+
+            $instructor = self::get_instructor($item->course, $instructorMap);
+
             if (!$params['archived'] && (!$course->visible || !$cm->visible))
             {
                 continue;
             }
 
-            $content[] = self::convert_item($item, $itemViews, $course, $cm, $params['archived']);
+            $content[] = self::convert_item($item, $itemViews, $course, $cm, $params['archived'], $instructor, $enrollments);
             // reset course
             $course = null;
         }
@@ -516,10 +526,10 @@ class equella_external extends external_api {
 
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc)
     {
+        global $DB, $CFG;
         //set_exception_handler('equella_exception_handler');
         //set_error_handler('equella_error_handler');
 
-        global $DB;
         $params = self::validate_parameters(self::find_all_usage_parameters(),
             array(
                 'user' => $user,
@@ -601,20 +611,11 @@ class equella_external extends external_api {
 
             $instructor = self::get_instructor($item->course, $instructorMap);
 
-            if (!array_key_exists($item->course, $enrollmentsMap))
-            {
-                $sql = 'SELECT COUNT(*) FROM (
-                    SELECT DISTINCT ue.userid
-                    FROM {user_enrolments} ue
-                    INNER JOIN {enrol} e ON ue.enrolid = e.id
-                    WHERE e.courseid = ?) as total';
-                $enrollments = $DB->count_records_sql($sql, array('id' => $item->course));
-                $enrollmentsMap[$item->course] = $enrollments;
+            if (!isset($enrollmentsMap[$item->course])) {
+                $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
+                $enrollmentsMap[$item->course] = count($enrolledusers);
             }
-            else
-            {
-                $enrollments = $enrollmentsMap[$item->course];
-            }
+            $enrollments = $enrollmentsMap[$item->course];
 
             $courseModule = $DB->get_record('course_modules', array('module' => $equella->id, 'instance' => $item->id), '*', MUST_EXIST);
             if (!$params['archived'] && (!$course->visible || !$courseModule->visible))
@@ -703,12 +704,10 @@ class equella_external extends external_api {
         );
     }
 
-    private static function get_instructor($courseid, &$instructorMap)
-    {
+    private static function get_instructor($courseid, &$instructorMap) {
         global $DB;
 
-        if (!array_key_exists($courseid, $instructorMap))
-        {
+        if (!isset($instructorMap[$courseid])) {
             //TODO: by default the teacher and editingteacher roles can only be assigned as high up
             //as CONTEXT_COURSE.  If they have edited these inbuilt roles then this query will break
                         /*
@@ -719,22 +718,22 @@ class equella_external extends external_api {
                         inner join mdl_user u on ra.userid = u.id
                         where (r.shortname = 'teacher' or r.shortname = 'editingteacher') and c.contextlevel <= 50
                          */
-            $sql = 'select c.instanceid, u.firstname, u.lastname
-                from {role_assignments} ra
-                inner join {context} c on ra.contextid = c.id
-                inner join {role} r on r.id = ra.roleid
-                inner join {user} u on ra.userid = u.id
-                where (r.shortname = ? or r.shortname = ?) and c.instanceid = ? and c.contextlevel <= ?';
+            $sql = 'SELECT c.instanceid, u.firstname, u.lastname
+                      FROM {role_assignments} ra
+                           INNER JOIN {context} c on ra.contextid = c.id
+                           INNER JOIN {role} r on r.id = ra.roleid
+                           INNER JOIN {user} u ON ra.userid = u.id
+                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
             $instructors = $DB->get_records_sql($sql, array('teacher', 'editingteacher', $courseid, CONTEXT_COURSE));
             $instructor = '';
             $first = true;
-            foreach ($instructors as $i)
+            foreach ($instructors as $user)
             {
                 if (!$first)
                 {
                     $instructor = $instructor.', ';
                 }
-                $instructor = $instructor.$i->firstname.' '.$i->lastname;
+                $instructor = $instructor . fullname($user);
                 $first = false;
             }
 
