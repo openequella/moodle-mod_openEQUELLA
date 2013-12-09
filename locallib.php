@@ -280,7 +280,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     $role = equella_lti_roles($USER, $equella->cmid, $equella->course);
 
     $requestparams = array(
-        'resource_link_id' => $equella->id,
+        'resource_link_id' => $CFG->siteidentifier . ':mod_equella:' . $equella->id,
         'resource_link_title' => $equella->name,
         'resource_link_description' => $equella->intro,
         'user_id' => $USER->id,
