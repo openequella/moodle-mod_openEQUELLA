@@ -512,14 +512,13 @@ class equella_external extends external_api {
         $sortord = $params['sortasc'] ? 'ASC' : 'DESC';
 
         $args = array($equella->id, '%'.$params['query'].'%');
-        $sql = 'SELECT
-            e.id AS id, c.id AS course, c.fullname AS coursename, e.name AS name,
-            e.timecreated AS timecreated, e.timemodified AS timemodified,
-            e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
-            FROM {equella} e
-            INNER JOIN {course} c ON e.course = c.id
-            INNER JOIN {course_modules} m ON m.instance = e.id and m.module = ?
-            WHERE LOWER(e.name) like LOWER(?)';
+        $sql = 'SELECT e.id AS id, c.id AS course, c.fullname AS coursename, e.name AS name,
+                       e.timecreated AS timecreated, e.timemodified AS timemodified,
+                       e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
+                  FROM {equella} e
+                       INNER JOIN {course} c ON e.course = c.id
+                       INNER JOIN {course_modules} m ON m.instance = e.id and m.module = ?
+                 WHERE LOWER(e.name) LIKE LOWER(?)';
         if (!empty($params['courseid']))
         {
             $sql = $sql . 'AND c.id = ?';
@@ -590,11 +589,10 @@ class equella_external extends external_api {
         if (!array_key_exists($course->id, $itemViews))
         {
             $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
-                FROM {course_modules} cm
-                JOIN {modules} m ON m.id = cm.module
-                JOIN {log} l     ON l.cmid = cm.id
-                WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1
-                GROUP BY cm.id";
+                      FROM {course_modules} cm
+                           JOIN {modules} m ON m.id = cm.module
+                           JOIN {log} l ON l.cmid = cm.id
+                     WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
             $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
 
             $itemViews[$course->id] = $itemViewInfo;
@@ -648,16 +646,6 @@ class equella_external extends external_api {
         global $DB;
 
         if (!isset($instructorMap[$courseid])) {
-            //TODO: by default the teacher and editingteacher roles can only be assigned as high up
-            //as CONTEXT_COURSE.  If they have edited these inbuilt roles then this query will break
-                        /*
-                         select ra.id as raid, ra.userid, c.id as contextid, c.contextlevel, c.instanceid, c.path, c.depth, r.id as roleid, r.name, u.firstname, u.lastname
-                        from mdl_role_assignments ra
-                        inner join mdl_context c on ra.contextid = c.id
-                        inner join mdl_role r on r.id = ra.roleid
-                        inner join mdl_user u on ra.userid = u.id
-                        where (r.shortname = 'teacher' or r.shortname = 'editingteacher') and c.contextlevel <= 50
-                         */
             $sql = 'SELECT c.instanceid, u.firstname, u.lastname
                       FROM {role_assignments} ra
                            INNER JOIN {context} c on ra.contextid = c.id
@@ -699,10 +687,8 @@ class equella_external extends external_api {
 
         $available = 0;
         $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
-        $items = $DB->get_records_sql('SELECT e.id, e.course AS course
-            FROM {equella} e
-            WHERE LOWER(e.name) like LOWER(?)'
-            , array('%'.$params['query'].'%'));
+        $sql = "SELECT e.id, e.course AS course FROM {equella} e WHERE LOWER(e.name) LIKE LOWER(?)";
+        $items = $DB->get_records_sql($sql, array('%'.$params['query'].'%'));
 
                 /*
                 foreach ($items as $item)
