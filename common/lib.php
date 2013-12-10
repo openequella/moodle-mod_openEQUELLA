@@ -156,6 +156,6 @@ function get_all_editing_roles(){
         INNER JOIN {role} r ON rc.roleid = r.id
              WHERE capability = :capability
                AND permission = 1
-          ORDER BY r.shortname";
+          ORDER BY r.sortorder";
     return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
 }
