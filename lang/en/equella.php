@@ -21,28 +21,22 @@ $string['modulename'] = 'EQUELLA Resource';
 $string['modulename_help'] = 'The EQUELLA module enables a teacher to link to content stored in an EQUELLA repository. Users are automatically authenticated to the EQUELLA repository when they choose a resource.';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['description'] = 'Content';
-
 $string['chooseeqeullaresources'] = 'Choose EQUELLA resources';
-
 $string['noinstances'] = 'There are no EQUELLA Resources in this course';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
-$string['solutionname'] = 'Name';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
+// Course page drag and drop dialog
+$string['dnduploadresource'] = 'Contribute to EQUELLA';
+
+////////////////////////////////////////////////////////
+// Permissions
 $string['equella:addinstance'] = 'Add a new EQUELLA resource';
 $string['equella:view'] = 'View EQUELLA resource';
-$string['dnduploadresource'] = 'Contribute to EQUELLA';
-$string['interceptfiles'] = 'Intercept drag and drop files';
-$string['interceptfilesintro'] = 'Select the action required when dragging and dropping files onto the course page';
-$string['interceptnone'] = 'Don\'t intercept files';
-$string['interceptauto'] = 'Auto contribute files in EQUELLA';
-$string['interceptask']  = 'Display file destination dialog';
-$string['obtainaccesstoken'] = 'Click the link to obtain access token';
-$string['restapinolocation'] = 'No location returned';
+$string['equella:manage'] = 'Manage EQUELLA resource';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
-
 $string['option.pagewindow.header'] = 'Display options';
 $string['option.pagewindow'] = 'Display';
 $string['option.pagewindow.same'] = 'Same window';
@@ -83,13 +77,15 @@ $string['config.options.desc'] = 'The options string for EQUELLA (e.g. allPowerS
 
 $string['config.adminuser.title'] = 'EQUELLA administrator username';
 $string['config.adminuser.desc'] = 'The username of an administrative account in EQUELLA.  This account is used by high-level admin functions such as the Backup Course To EQUELLA block, and also for background tasks that don\'t have a user session such as EQUELLA Resource Checker.  When an activity requires an session with this user, they will be logged in using the Default shared secret values configured below.';
+
 $string['config.open.newwindow'] = 'Open EQUELLA resource in new window';
 $string['config.window.width'] = 'Default window width';
 $string['config.window.height'] = 'Default window height';
-$string['config.enablelti'] = 'Enable LTI';
-$string['config.enablelti.desc'] = 'Please fill in OAuth Client ID and secret after saving this option, this will disable shared secret when viewing EQUELLA resources.';
+
 ////////////////////////////////////////////////////////
 // CONFIGURATION: LTI
+$string['config.enablelti'] = 'Enable LTI';
+$string['config.enablelti.desc'] = 'Please fill in OAuth Client ID and secret after saving this option, this will disable shared secret when viewing EQUELLA resources.';
 $string['config.lti.heading'] = 'LTI Settings';
 $string['config.lti_oauth_heading'] = 'LTI OAuth client settings';
 $string['config.lti.help'] =  '';
@@ -111,19 +107,15 @@ $string['config.sharedid.title'] = 'Shared secret ID';
 $string['config.sharedsecret.title'] = 'Shared secret';
 
 ////////////////////////////////////////////////////////
-// CONFIGURATION: OAuth
+// CONFIGURATION: Drag and drop
 //
-$string['config.oauth.heading'] = 'EQUELLA OAuth options';
-$string['config.oauth.help'] = 'EQUELLA OAuth options, this will enable EQUELLA REST API access';
-$string['config.oauth.clientid'] = 'OAuth client ID';
-$string['config.oauth.clientidhelp'] = 'Enter the OAuth Client ID (created in EQUELLA OAuth settings)';
-$string['config.oauth.url'] = 'OAuth URL';
-$string['config.oauth.urlhelp'] = 'Click this URL to authorize moodle access';
-$string['config.oauth.redirecturl'] = 'OAuth redirect URL';
-$string['config.oauth.redirecturlhelp'] = 'Add redirect URL to EQUELLA OAuth settings';
-$string['config.oauth.accesstoken'] = 'OAuth access token';
-$string['config.oauth.accesstokenhelp'] = 'Remove this value to re-authorise Moodle access';
-
+$string['config.dnd.heading'] = 'Drag and drop options';
+$string['config.dnd.help'] = '';
+$string['interceptfiles'] = 'Intercept drag and drop files';
+$string['interceptfilesintro'] = 'Select the action required when dragging and dropping files onto the course page';
+$string['interceptnone'] = 'Don\'t intercept files';
+$string['interceptauto'] = 'Auto contribute files in EQUELLA';
+$string['interceptask']  = 'Display file destination dialog';
 
 ////////////////////////////////////////////////////////
 // EQUELLA Resource Checker
@@ -136,6 +128,10 @@ Name: {$a->name}<br>
 Unit: <a href="{$a->courseurl}">{$a->coursename}</a><br>
 <br>
 You have received this email because you have sufficient permission to fix this.';
+
+////////////////////////////////////////////////////////
+// Errors and stuff
+$string['restapinolocation'] = 'No location returned';
 
 ////////////////////////////////////////////////////////
 // EQUELLA LMS PUSH

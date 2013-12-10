@@ -18,6 +18,7 @@
 require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+
 require_once(dirname(__FILE__) . '/equella_rest_api.php');
 
 // This must be FALSE in released code
@@ -345,7 +346,7 @@ function equella_module_event_handler($event) {
         $handle = $file->get_content_file_handle();
         $params['filesize'] = $file->get_filesize();
         // pushing files to equella
-        $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
+        $info = equella_rest_api::contribute_file_with_shared_secret($file->get_filename(), $handle, $params);
         // replace contents
         equella_replace_contents_with_references($file, $info);
     }
@@ -405,7 +406,7 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecourseid'] = $uploadinfo->course->id;
         $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
         $params['filesize'] = $file->get_filesize();
-        $info = equella_rest_api::contribute_file($file->get_filename(), $handle, $params);
+        $info = equella_rest_api::contribute_file_with_shared_secret($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
         }
@@ -426,7 +427,11 @@ function equella_dndupload_handle($uploadinfo) {
         $item = array_pop($info->attachments);
 	$data->attachmentuuid = $item->uuid;
 	$data->url = $item->links->view;
-        $moduleid = equella_add_instance($data, null);
+        try {
+            $moduleid = equella_add_instance($data, null);
+        } catch (Exception $ex) {
+            throw new equella_exception('Failed to create EQUELLA resource.');
+        }
     }
     return $moduleid;
 }
@@ -434,5 +439,7 @@ function equella_dndupload_handle($uploadinfo) {
 class equella_exception extends Exception {
     function __construct($message, $debuginfo=null) {
         parent::__construct($message, 0);
+        require_once(dirname(__FILE__) . '/locallib.php');
+        equella_debug_log($debuginfo);
     }
 }

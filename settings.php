@@ -99,32 +99,14 @@ if( $ADMIN->fulltree ) {
     }
     /////////////////////////////////////////////////////////////////////////////////
     //
-    // OAuth
+    // Drag and drop
     //
-    $settings->add(new admin_setting_heading('equella_oauth_settings', ecs('oauth.heading'), ecs('oauth.help')));
-
-    $settings->add(new admin_setting_configtext('equella_oauth_client_id', ecs('oauth.clientid'), ecs('oauth.clientidhelp'), null));
-
-    if (!empty($CFG->equella_oauth_client_id)
-        && !empty($CFG->equella_url) && empty($CFG->equella_oauth_access_token)) {
-
-        $redirect_url = equella_rest_api::get_redirect_url();
-        $settings->add(new admin_setting_statictext('equella_redirect_url', ecs('oauth.redirecturl'), ecs('oauth.redirecturlhelp'), $redirect_url));
-
-        $options = array('client_id'=>$CFG->equella_oauth_client_id, 'redirect_uri'=>$redirect_url->out(), 'endpoint'=>equella_rest_api::get_end_point(), 'response_type'=>'code');
-        $url = equella_rest_api::get_auth_code_url($options);
-        $settings->add(new admin_setting_openlink('equella_oauth_url', ecs('oauth.url'), ecs('oauth.urlhelp'), $url));
-    }
-
+    $settings->add(new admin_setting_heading('equella_dnd_settings', ecs('dnd.heading'), ecs('dnd.help')));
     $choices = array(
         EQUELLA_CONFIG_INTERCEPT_NONE => get_string('interceptnone', 'equella'),
+        EQUELLA_CONFIG_INTERCEPT_ASK  => get_string('interceptask', 'equella'),
+        EQUELLA_CONFIG_INTERCEPT_FULL => get_string('interceptauto', 'equella'),
     );
-    if (!empty($CFG->equella_oauth_access_token)) {
-        $accesstokenconfig = new admin_setting_configtext('equella_oauth_access_token', ecs('oauth.accesstoken'), ecs('oauth.accesstokenhelp'), '');
-        $settings->add($accesstokenconfig);
-        $choices[EQUELLA_CONFIG_INTERCEPT_ASK] = get_string('interceptask', 'equella');
-        $choices[EQUELLA_CONFIG_INTERCEPT_FULL] = get_string('interceptauto', 'equella');
-    }
     $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
 
     $settings->add($intercepttype);
