@@ -737,20 +737,27 @@ class equella_rest_api {
         return $info;
     }
 
-    public static function contribute_file($filename, $fp, $params = array()) {
+    public static function contribute_file_with_oauth($filename, $fp, $params = array()) {
+        return self::contribute_file($filename, $fp, $params, true);
+    }
+
+    public static function contribute_file_with_shared_secret($filename, $fp, $params = array()) {
+        $params['token'] = equella_getssotoken();
+        return self::contribute_file($filename, $fp, $params, false);
+    }
+
+    private static function contribute_file($filename, $fp, $params = array(), $useoauth = false) {
         global $CFG;
         $endpoint = self::get_end_point() . 'api/item/quick/' . urlencode($filename);
-        $pairs = array();
-        foreach ($params as $name=>$value) {
-            $pairs[] = (urlencode($name) . '=' . urlencode($value));
-        }
-        $endpoint .= ('?' . implode('&', $pairs));
+        $quickcontributeurl = new moodle_url($endpoint, $params);
 
         $curl = new equella_curl();
-        $curl->setHeader(array(
-            'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
-        ));
-        $result = $curl->put($endpoint, array('filehandle'=>$fp, 'filesize'=>$params['filesize']));
+        if ($useoauth) {
+            $curl->setHeader(array(
+                'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
+            ));
+        }
+        $result = $curl->put($quickcontributeurl->out(false), array('filehandle'=>$fp, 'filesize'=>$params['filesize']));
         fclose($fp);
 
         if (!empty($result)) {
@@ -775,7 +782,11 @@ class equella_rest_api {
         if (empty($resp['Location'])) {
             throw new moodle_exception('restapinolocation', 'equella');
         }
-        $json = $curl->get($resp['Location']);
+        $itemurl = $resp['Location'];
+        if (!$useoauth) {
+            $itemurl = equella_appendtoken($itemurl);
+        }
+        $json = $curl->get($itemurl);
         $info = json_decode($json);
         if (!empty($info)) {
             return $info;
