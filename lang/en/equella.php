@@ -85,7 +85,7 @@ $string['config.window.height'] = 'Default window height';
 ////////////////////////////////////////////////////////
 // CONFIGURATION: LTI
 $string['config.enablelti'] = 'Enable LTI';
-$string['config.enablelti.desc'] = 'Please fill in OAuth Client ID and secret after saving this option, this will disable shared secret when viewing EQUELLA resources.';
+$string['config.enablelti.desc'] = 'When LTI is enabled, Shared secrets are disabled for EQUELLA selection sessions. LTI must be enabled to store QTI quiz scores in the Moodle gradebook when QTI 2.1 quizzes linked to courses from EQUELLA are launched. If this functionality is not required, LTI doesn’t have to be enabled, and shared secrets can still be used. Shared secrets are stored regardless, as they are still used for the Moodle blocks and Drag and Drop functions.';
 $string['config.lti.heading'] = 'LTI Settings';
 $string['config.lti_oauth_heading'] = 'LTI OAuth client settings';
 $string['config.lti.help'] =  '';
