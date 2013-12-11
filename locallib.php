@@ -247,6 +247,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
         'courseId'=>equella_get_courseId($args->course),
         'action'=>$CFG->equella_action,
         'selectMultiple'=>'true',
+        'cancelDisabled'=>'true',
         'returnurl'=>$callbackurl->out(false),
         'cancelurl'=>$cancelurl->out(false),
     );
