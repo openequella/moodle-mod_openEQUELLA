@@ -15,6 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+define('CLI_SCRIPT', true);
+require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+require_once($CFG->dirroot.'/mod/equella/common/lib.php');
+require_once($CFG->dirroot.'/course/lib.php');
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
@@ -40,10 +45,6 @@ $notify = array('some.user');
 
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
-
-include '../../config.php';
-require_once($CFG->dirroot.'/mod/equella/common/lib.php');
-require_once($CFG->dirroot.'/course/lib.php');
 
 if( $password == '' ) {
 	echo 'EQUELLA link checking has not been configured.  Please see the source code for this page.';
