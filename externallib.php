@@ -512,29 +512,33 @@ class equella_external extends external_api {
         $sortord = $params['sortasc'] ? 'ASC' : 'DESC';
 
         $args = array($equella->id, '%'.$params['query'].'%');
-        $sql = 'SELECT e.id AS id, c.id AS course, c.fullname AS coursename, e.name AS name,
+
+        $sql = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,c.fullname AS coursename, e.name AS name,
+                       m.visible AS cmvisible, m.section as section,
                        e.timecreated AS timecreated, e.timemodified AS timemodified,
                        e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
                   FROM {equella} e
                        INNER JOIN {course} c ON e.course = c.id
-                       INNER JOIN {course_modules} m ON m.instance = e.id and m.module = ?
-                 WHERE LOWER(e.name) LIKE LOWER(?)';
+                       INNER JOIN {course_modules} m ON m.instance = e.id AND m.module = ? WHERE LOWER(e.name) LIKE LOWER(?) ';
         if (!empty($params['courseid']))
         {
-            $sql = $sql . 'AND c.id = ?';
-            $args[]=$params['courseid'];
+            $sql .= ' AND c.id = ? ';
+            $args[] = $params['courseid'];
         }
         if (!empty($params['sectionid']))
         {
-            $sql = $sql . 'AND m.section = ?';
-            $args[]=$params['sectionid'];
+            $sql .= ' AND m.section = ? ';
+            $args[] = $params['sectionid'];
         }
-        $sql = $sql . 'ORDER BY '.$sortcol.' '.$sortord;
+        if (empty($params['archived'])) {
+            $sql .= ' AND (c.visible = ? AND m.visible = ?) ';
+            $args[] = 1;
+            $args[] = 1;
+        }
+        $sql = $sql . ' ORDER BY '.$sortcol.' '.$sortord;
 
+        $equella_items = $DB->get_recordset_sql($sql, $args, $offset, $count);
 
-        $equella_items = $DB->get_records_sql($sql, $args);
-
-        $index = 0;
         $content = array();
 
         $itemViews = array();
@@ -542,8 +546,7 @@ class equella_external extends external_api {
         $instructorMap = array();
         $enrollmentsMap = array();
 
-        foreach ($equella_items as $item)
-        {
+        foreach ($equella_items as $item) {
             if (!array_key_exists($item->course, $courseMap))
             {
                 $course = $DB->get_record('course', array('id' => $item->course), '*', MUST_EXIST);
@@ -562,32 +565,32 @@ class equella_external extends external_api {
             }
             $enrollments = $enrollmentsMap[$item->course];
 
-            $courseModule = $DB->get_record('course_modules', array('module' => $equella->id, 'instance' => $item->id), '*', MUST_EXIST);
-            if (!$params['archived'] && (!$course->visible || !$courseModule->visible))
-            {
-                continue;
-            }
+            $courseModule = new stdClass;
+            $courseModule->course = $item->course;
+            $courseModule->section = $item->section;
 
-            if ($index >= $offset && ($count == -1 || $index < $offset + $count))
-            {
-                $content[] = self::convert_item($item, $itemViews, $course, $courseModule, $params['archived'], $instructor, $enrollments);
-            }
-            $index = $index + 1;
+            $content[] = self::convert_item($item, $itemViews, $course, $courseModule, $params['archived'], $instructor, $enrollments);
         }
 
 
-
-        return array('available' => $index, 'results' => $content);
+        return array('available' => count($content), 'results' => $content);
     }
 
     private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor='', $enrollments=0)
     {
         global $DB;
-        $section = $DB->get_record('course_sections', array('course' => $courseModule->course, 'id' => $courseModule->section), '*', MUST_EXIST);
-        $section_name = get_section_name($course, $section);
+        static $sectionsMap = array();
+        if (isset($sectionsMap[$courseModule->section])) {
+            $section = $sectionsMap[$section->id];
+            $section_name = $section->sectionname;
+        } else {
+            $section = $DB->get_record('course_sections', array('course' => $courseModule->course, 'id' => $courseModule->section), '*', MUST_EXIST);
+            $section_name = get_section_name($course, $section);
+            $section->sectionname = $section_name;
+            $sectionsMap[$section->id] = $section;
+        }
 
-        if (!array_key_exists($course->id, $itemViews))
-        {
+        if (!array_key_exists($course->id, $itemViews)) {
             $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
                       FROM {course_modules} cm
                            JOIN {modules} m ON m.id = cm.module
@@ -596,9 +599,7 @@ class equella_external extends external_api {
             $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
 
             $itemViews[$course->id] = $itemViewInfo;
-        }
-        else
-        {
+        } else {
             $itemViewInfo = $itemViews[$course->id];
         }
 
@@ -606,13 +607,10 @@ class equella_external extends external_api {
 
         $visible = ($course->visible && $courseModule->visible);
 
-        if (!array_key_exists($courseModule->id, $itemViewInfo))
-        {
+        if (!array_key_exists($courseModule->id, $itemViewInfo)) {
             $views = "0";
             $dateAccessed = null;
-        }
-        else
-        {
+        } else {
             $views = $itemViewInfo[$courseModule->id]->numviews;
             $dateAccessed = $itemViewInfo[$courseModule->id]->lasttime*1000;
         }
