@@ -39,8 +39,10 @@ $contents = equella_get_course_contents($courseid, $sectionid);
 $json = json_encode($contents);
 
 $formid = 'equellaselectionform';
-echo "<form action='$equellaurl' method='post' id='$formid'>";
-echo "<input type='hidden' name='structure' value='$json' />";
-echo "</form>";
+
+echo html_writer::start_tag('form', array('method'=>'post', 'id'=>$formid, 'action'=>$equellaurl));
+echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'structure', 'value'=>$json));
+echo html_writer::end_tag('form');
+
 $PAGE->requires->js_init_call('M.mod_equella.submitform', array($formid), true);
 echo $OUTPUT->footer();
