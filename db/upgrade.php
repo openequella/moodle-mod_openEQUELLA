@@ -171,12 +171,12 @@ function xmldb_equella_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013100100) {
-        $records = $DB->get_records('equella');
+        $records = $DB->get_recordset('equella');
         foreach ($records as $eq) {
             if (!empty($eq->popup) && !strpos($eq->popup, 'resizable')) {
                 $eq->popup .= ',resizable=1';
                 $DB->update_record('equella', $eq);
-                rebuild_course_cache($eq->course);
+                rebuild_course_cache($eq->course, true);
             }
         }
         upgrade_mod_savepoint(true, 2013100100, 'equella');
@@ -194,12 +194,12 @@ function xmldb_equella_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $records = $DB->get_records('equella');
+        $records = $DB->get_recordset('equella');
         foreach ($records as $eq) {
             $mimetype = mimeinfo('type', $eq->url);
             $eq->mimetype = $mimetype;
             $DB->update_record('equella', $eq);
-            rebuild_course_cache($eq->course);
+            rebuild_course_cache($eq->course, true);
         }
         // Newmodule savepoint reached.
         upgrade_mod_savepoint(true, 2013112501, 'equella');
