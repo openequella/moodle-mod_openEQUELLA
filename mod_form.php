@@ -37,8 +37,10 @@ class mod_equella_mod_form extends moodleform_mod {
         $this->add_intro_editor();
 
         $mform->addElement('text', 'url', get_string('location'), array('size'=>'80'));
+        $mform->setType('url', PARAM_URL);
 
         $mform->addElement('hidden', 'activation', '');
+        $mform->setType('activation', PARAM_TEXT);
 
         $mform->addElement('header', 'optionssection', get_string('option.pagewindow.header', 'equella'));
 
@@ -50,6 +52,7 @@ class mod_equella_mod_form extends moodleform_mod {
             $label = get_string('option.popup.'.$option, 'equella');
             if ($option == 'height' or $option == 'width') {
                 $mform->addElement('text', $option, $label, array('size'=>'4'));
+                $mform->setType($option, PARAM_INT);
             } else {
                 $mform->addElement('checkbox', $option, $label);
             }
