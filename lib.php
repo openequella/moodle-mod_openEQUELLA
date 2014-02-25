@@ -205,6 +205,9 @@ function equella_get_coursemodule_info($coursemodule) {
         //}
         //$info->icon = equella_guess_icon($url, 24);
         $info->icon = file_mimetype_icon($resource->mimetype, 24);
+        if ($coursemodule->showdescription) {
+            $info->content = format_module_intro('equella', $resource, $coursemodule->id, false);
+        }
 
         if( !empty($resource->popup) ) {
             $url = new moodle_url('/mod/equella/popup.php', array('cmid'=>$coursemodule->id));
