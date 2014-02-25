@@ -32,6 +32,7 @@ $string['dnduploadresource'] = 'Contribute to EQUELLA';
 ////////////////////////////////////////////////////////
 // Permissions
 $string['equella:addinstance'] = 'Add a new EQUELLA resource';
+$string['equella:manage'] = 'Manage an EQUELLA resource';
 $string['equella:view'] = 'View EQUELLA resource';
 $string['equella:manage'] = 'Manage EQUELLA resource';
 
