@@ -29,10 +29,12 @@ function equella_get_course_contents($courseid, $sectionid) {
 
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
-    if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-        throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null, get_string('courseformatnotfound', 'error', '', $course->format));
-    } else {
-        require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
+    if ($course->format != 'site') {
+        if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
+            throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null, get_string('courseformatnotfound', 'error', '', $course->format));
+        } else {
+            require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
+        }
     }
 
     $context = context_course::instance($course->id, IGNORE_MISSING);
