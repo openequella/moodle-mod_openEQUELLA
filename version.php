@@ -14,6 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+defined('MOODLE_INTERNAL') || die();
 
 $module->version   = 2013112501;
 $module->requires  = 2012120300;    // Requires this Moodle version

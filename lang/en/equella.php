@@ -28,6 +28,7 @@ $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
 // Course page drag and drop dialog
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
+$string['mustloggintoview'] = 'Please log in to view this page.';
 
 ////////////////////////////////////////////////////////
 // Permissions

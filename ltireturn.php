@@ -18,14 +18,14 @@ require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/equella/lib.php');
 require_once($CFG->dirroot.'/mod/equella/locallib.php');
 
+require_login();
+
 $courseid = required_param('courseid', PARAM_INT);
 $instanceid = required_param('instanceid', PARAM_INT);
 $ltierrormsg = optional_param('lti_errormsg', '', PARAM_RAW);
 $ltimsg = optional_param('lti_msg', '', PARAM_RAW);
 
 $course = $DB->get_record('course', array('id' => $courseid));
-
-require_login($course);
 
 if (!empty($ltierrormsg) || !empty($ltimsg)) {
     $message = '';
