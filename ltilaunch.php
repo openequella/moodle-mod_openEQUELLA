@@ -17,6 +17,7 @@
 require_once('../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
+require_login();
 
 $action = optional_param('action', 'view', PARAM_ACTION);
 
@@ -30,7 +31,6 @@ if ($action == 'view') {
     $PAGE->set_context($context);
     $PAGE->set_pagelayout('embedded');
 
-    require_course_login($course, true, $cm);
     require_capability('mod/equella:view', $context);
 
     $equella->cmid = $cmid;
@@ -48,7 +48,6 @@ if ($action == 'view') {
 
     $PAGE->set_context($context);
 
-    require_course_login($course, false);
     require_capability('moodle/course:manageactivities', $context);
 
     $url = equella_build_integration_url($args, false);

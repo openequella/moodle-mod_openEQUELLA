@@ -18,13 +18,14 @@
 require_once("../../config.php");
 require_once("lib.php");
 
+require_login();
+
 $id = required_param('id', PARAM_INT);   // course
 
 if (! $course = $DB->get_record("course", array("id" => $id))) {
     print_error('invalidcourseid', '', '', $id);
 }
 
-require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 add_to_log($course->id, "equella", "view all", "index.php?id=$course->id", "");
 

@@ -18,6 +18,7 @@
  * Library of functions for EQUELLA internal
  */
 
+defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir.'/oauthlib.php');
 
 define('EQUELLA_ITEM_TYPE', 'mod');

@@ -19,6 +19,7 @@ require_once('../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
 require_once($CFG->libdir . '/resourcelib.php');
+require_login();
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // EQUELLA instance ID
@@ -35,7 +36,6 @@ $equella->cmid = $cm->id;
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 require_capability('mod/equella:view', $context);
 

@@ -22,11 +22,12 @@ header('Content-Type:text/html;charset=UTF-8');
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/equella/common/lib.php');
 require_once($CFG->dirroot.'/mod/equella/locallib.php');
+require_login();
+
 $equellaurl = required_param('equellaurl', PARAM_RAW);
 $courseid = required_param('courseid', PARAM_INT);
 $sectionid = required_param('sectionid', PARAM_INT);
 
-require_login();
 $PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('embedded');
 $PAGE->requires->js('/mod/equella/module.js', true);

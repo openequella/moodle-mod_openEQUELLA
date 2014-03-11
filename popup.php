@@ -17,6 +17,8 @@
 
 require_once('../../config.php');
 
+require_login();
+
 $cmid = required_param('cmid', PARAM_INT);
 
 if ($CFG->equella_enable_lti) {
