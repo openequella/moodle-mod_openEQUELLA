@@ -748,7 +748,7 @@ class equella_rest_api {
 
     private static function contribute_file($filename, $fp, $params = array(), $useoauth = false) {
         global $CFG;
-        $endpoint = self::get_end_point() . 'api/item/quick/' . urlencode($filename);
+        $endpoint = self::get_end_point() . 'api/item/quick/' . rawurlencode($filename);
         $quickcontributeurl = new moodle_url($endpoint, $params);
 
         $curl = new equella_curl();
