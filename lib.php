@@ -160,7 +160,7 @@ function equella_delete_instance($id) {
     if ($equella->activation)
     {
         $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
-        $url = equella_appendtoken($url)."&activationUuid=".urlencode($equella->activation);
+        $url = equella_appendtoken($url)."&activationUuid=".rawurlencode($equella->activation);
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $res = curl_exec($curl);

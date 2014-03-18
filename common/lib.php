@@ -114,7 +114,7 @@ function equella_getssotoken_raw($username, $shareid, $sharedsecret) {
     $time = time() . '000';
     $hash = md5($username . $shareid . $time . $sharedsecret);
     $params = array();
-    $params[] = urlencode($username);
+    $params[] = rawurlencode($username);
     $params[] = $shareid;
     $params[] = $time;
     $params[] = base64_encode(pack('H*', $hash));
@@ -136,7 +136,7 @@ function equella_appendtoken($url, $token = null) {
         $token = equella_getssotoken();
     }
     $url .= (strpos($url, '?') != false) ? '&' : '?';
-    $url .= 'token=' . urlencode($token);
+    $url .= 'token=' . rawurlencode($token);
     return $url;
 }
 
