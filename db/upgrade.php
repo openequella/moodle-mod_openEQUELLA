@@ -114,13 +114,13 @@ function xmldb_equella_upgrade($oldversion) {
         foreach ($records as $resource)
         {
             preg_match($pattern, $resource->url, $matches);
-            if (empty($resource->uuid)) {
+            if (empty($resource->uuid) && !empty($matches['uuid'])) {
                 $resource->uuid = $matches['uuid'];
             }
-            if (empty($resource->version)) {
+            if (empty($resource->version) && !empty($matches['version'])) {
                 $resource->version = $matches['version'];
             }
-            if (empty($resource->path)) {
+            if (empty($resource->path) && !empty($matches['path'])) {
                 $resource->path = $matches['path'];
             }
 
@@ -141,7 +141,7 @@ function xmldb_equella_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        $records = $DB->get_records('equella');
+        $records = $DB->get_recordset('equella');
         foreach ($records as $eq) {
             $eq->ltisalt = uniqid('', true);
             $DB->update_record("equella", $eq);
@@ -152,7 +152,7 @@ function xmldb_equella_upgrade($oldversion) {
 
     if ($oldversion < 2013080801) {
 
-        $records = $DB->get_records('equella');
+        $records = $DB->get_recordset('equella');
         foreach ($records as $eq) {
             // check if attachmentuuid field exists
             if (preg_match('/[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/', $eq->attachmentuuid)) {
