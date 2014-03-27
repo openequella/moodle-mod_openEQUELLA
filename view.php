@@ -36,7 +36,7 @@ $equella->cmid = $cm->id;
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/equella:view', $context);
 
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
