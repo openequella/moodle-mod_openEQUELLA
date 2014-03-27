@@ -19,7 +19,7 @@ require_once('../../config.php');
 require_once('lib.php');
 require_once('locallib.php');
 require_once($CFG->libdir . '/resourcelib.php');
-require_login();
+
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // EQUELLA instance ID
@@ -32,11 +32,13 @@ if( $id ) {  // Two ways to specify the module
     $cm = get_coursemodule_from_instance('equella', $equella->id, $equella->course, false, MUST_EXIST);
 }
 
+require_login($cm->course);
+
 $equella->cmid = $cm->id;
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 require_capability('mod/equella:view', $context);
 
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {

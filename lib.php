@@ -252,6 +252,7 @@ function equella_guess_icon($fullurl, $size = null) {
  *
  * @param stdClass $event
  * @param array
+ * @return array
  */
 function equella_capture_files($event) {
     global $CFG, $DB;
@@ -261,7 +262,7 @@ function equella_capture_files($event) {
     }
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if ($event->modulename != 'folder' && $event->modulename != 'resource') {
         return array();
     }
