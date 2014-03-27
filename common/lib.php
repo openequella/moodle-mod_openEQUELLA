@@ -54,6 +54,7 @@ function equella_soap_endpoint() {
 /**
  * Create EQUELLA single sign on token for current user
  *
+ * @param null $course
  * @return string
  */
 function equella_getssotoken($course = null) {
