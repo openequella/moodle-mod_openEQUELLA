@@ -64,7 +64,7 @@ function equella_getssotoken($course = null) {
     }
 
     $context_sys = context_system::instance();
-    $context_cc  = content_coursecat::instance($course->category);
+    $context_cc  = context_coursecat::instance($course->category);
     $context_c   = context_course::instance($course->id);
 
     // roles are ordered by shortname
