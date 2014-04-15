@@ -775,7 +775,7 @@ class equella_external extends external_api {
         add_to_log($mod->course, "course", "add mod",
             "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
             "$mod->modulename $mod->instance");
-        add_to_log($mod->course, $mod->modulename, "add",
+        add_to_log($mod->course, $mod->modulename, "add equella resource",
             "view.php?id=$mod->coursemodule",
             "$mod->instance", $mod->coursemodule);
 
@@ -849,7 +849,7 @@ class equella_external extends external_api {
         add_to_log($item->course, "course", "update mod",
             "../mod/equella/view.php?id=$courseModule->id",
             "equella $item->instance");
-        add_to_log($item->course, "equella", "update",
+        add_to_log($item->course, "equella", "update equella resource",
             "view.php?id=$courseModule->id",
             "$item->instance", $courseModule->id);
 
@@ -917,7 +917,7 @@ class equella_external extends external_api {
             add_to_log($item->course, "course", "update mod",
                 "../mod/equella/view.php?id=$courseModule->id",
                 "equella $item->instance");
-            add_to_log($item->course, "equella", "update",
+            add_to_log($item->course, "equella", "update equella resource",
                 "view.php?id=$courseModule->id",
                 "$item->instance", $courseModule->id);
 

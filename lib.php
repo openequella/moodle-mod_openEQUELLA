@@ -446,3 +446,17 @@ class equella_exception extends Exception {
         equella_debug_log($debuginfo);
     }
 }
+
+/**
+ * @return array
+ */
+function equella_get_view_actions() {
+    return array('view all', 'view', 'view equella resource');
+}
+
+/**
+ * @return array
+ */
+function equella_get_post_actions() {
+    return array('add', 'update', 'delete', 'update equella resource', 'delete equella resource', 'add equella resource');
+}

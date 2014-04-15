@@ -84,7 +84,7 @@ foreach ($links as $link) {
     events_trigger('mod_created', $eventdata);
 
     $url = "view.php?id={$mod->coursemodule}";
-    add_to_log($mod->course, $mod->modulename, 'add EQUELLA', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
+    add_to_log($mod->course, $mod->modulename, 'add equella resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
 $courseurl = new moodle_url('/course/view.php', array('id'=>$courseid));
