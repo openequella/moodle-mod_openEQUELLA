@@ -37,13 +37,14 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_course_login($course, true, $cm);
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$PAGE->set_context($context);
 require_capability('mod/equella:view', $context);
 
 if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
     notice(get_string("activityiscurrentlyhidden"));
 }
 
-add_to_log($course->id, "equella", "view", "view.php?id=$cm->id", $equella->id, $cm->id);
+add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
 
 $PAGE->set_url('/mod/equella/view.php', array('id' => $cm->id));
 
