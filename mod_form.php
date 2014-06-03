@@ -49,7 +49,7 @@ class mod_equella_mod_form extends moodleform_mod {
         $mform->addElement('select', 'windowpopup', get_string('option.pagewindow', 'equella'), $woptions);
         $mform->setDefault('windowpopup', !empty($CFG->resource_popup));
 
-        foreach(equella_get_window_options() as $option => $value) {
+        foreach (equella_get_window_options() as $option => $value) {
             $label = get_string('option.popup.'.$option, 'equella');
             if ($option == 'height' or $option == 'width') {
                 $mform->addElement('text', $option, $label, array('size'=>'4'));

@@ -261,7 +261,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
     if (!empty($CFG->equella_options)) {
         $equrlparams['options'] = $CFG->equella_options;
     }
-    if( $CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE ) {
+    if ($CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE) {
         $equrlparams[$CFG->equella_select_restriction] = 'true';
     }
 
@@ -294,7 +294,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
         'context_title' => $course->fullname,
         'launch_presentation_locale' => current_language()
     );
-    if( !empty($equella->popup) ) {
+    if (!empty($equella->popup)) {
         $requestparams['launch_presentation_document_target'] = 'window';
     } else {
         $requestparams['launch_presentation_document_target'] = 'iframe';
@@ -596,6 +596,7 @@ XML;
         echo $responsexml->asXML();
 
     }
+
     private function handle_read_message($data) {
         global $DB, $PAGE;
         $equella = $DB->get_record('equella', array('id' => $data->instanceid));

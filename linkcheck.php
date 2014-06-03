@@ -46,13 +46,13 @@ $notify = array('some.user');
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-if( $password == '' ) {
+if ($password == '') {
     echo 'EQUELLA link checking has not been configured.  Please see the source code for this page.';
     exit;
 }
 
 $password_param = required_param('password', PARAM_RAW);
-if( $password_param != $password ) {
+if ($password_param != $password) {
     echo 'Password doesn\'t match.';
     exit;
 }
@@ -70,19 +70,19 @@ curl_setopt($ch, CURLOPT_COOKIEJAR, $temp);
 
 echo '<style>.ok {color: green;} .bad {color: red;}</style><ul>';
 
-foreach( $DB->get_records('equella') as $resource ) {
+foreach ($DB->get_records('equella') as $resource) {
 
     curl_setopt($ch, CURLOPT_URL, equella_appendtoken($resource->url, equella_getssotoken_api()));
 
     echo '<li>Checking <a href="'.$resource->url.'">'.$resource->url.'</a><br>';
-    if( curl_exec($ch) ) {
+    if (curl_exec($ch)) {
         echo '<span class="ok">OK</span>';
     } else {
         echo '<span class="bad">Could not find in EQUELLA</span><br>';
 
         //tell someone - get users with course edit perms for the course in question
         $recipients = $DB->get_records_list('user', 'username', $notify);
-        if( $recipients ) {
+        if ($recipients) {
             $from = get_admin();
             $subject = get_string('checker.subject', 'equella');
             $course = $DB->get_record('course', array('id' => $resource->course));
@@ -94,7 +94,7 @@ foreach( $DB->get_records('equella') as $resource ) {
             ));
 
             echo 'Emailing the following users:<ul>';
-            foreach( $recipients as $recipient ) {
+            foreach ($recipients as $recipient) {
                 $result = email_to_user($recipient, $from, $subject, $message, $message);
                 echo "<li>$recipient->username (result was $result)</li>";
             }
@@ -104,7 +104,7 @@ foreach( $DB->get_records('equella') as $resource ) {
         }
 
         //now mark the resource as hidden
-        if( $disable_links ) {
+        if ($disable_links) {
             $cms = $DB->get_records_sql(
                 "SELECT cm.* FROM {course_modules} cm
                 INNER JOIN {modules} m ON cm.module = m.id
@@ -118,7 +118,7 @@ foreach( $DB->get_records('equella') as $resource ) {
                 )
             );
 
-            foreach( $cms as $cm ) {
+            foreach ($cms as $cm) {
                 set_coursemodule_visible($cm->id, 0);
             }
             rebuild_course_cache($resource->course);
@@ -159,7 +159,7 @@ function get_course_editors($courseid) {
             'courseid' => $courseid,
         )
     );
-    if( $course_editors ) {
+    if ($course_editors) {
         return $course_editors;
     }
 
@@ -183,7 +183,7 @@ function get_course_editors($courseid) {
             'courseid' => $courseid,
         )
     );
-    if( $course_editors ) {
+    if ($course_editors) {
         return $course_editors;
     }
 
@@ -204,7 +204,7 @@ function get_course_editors($courseid) {
             'capability' => $capability,
         )
     );
-    if( $course_editors ) {
+    if ($course_editors) {
         return $course_editors;
     }
 
@@ -225,7 +225,7 @@ function get_course_editors($courseid) {
             'capability' => $capability,
         )
     );
-    if( $course_editors ) {
+    if ($course_editors) {
         return $course_editors;
     }
 

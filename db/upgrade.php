@@ -26,8 +26,7 @@ function xmldb_equella_upgrade($oldversion) {
         // Rename summary to intro
         $table = new xmldb_table('equella');
         $field = new xmldb_field('summary', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'name');
-        if ($dbman->field_exists($table, $field))
-        {
+        if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'intro');
             upgrade_mod_savepoint(true, 2011012700, 'equella');
         }
@@ -37,8 +36,7 @@ function xmldb_equella_upgrade($oldversion) {
         // Add field introformat
         $table = new xmldb_table('equella');
         $field = new xmldb_field('introformat', XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'intro');
-        if (!$dbman->field_exists($table, $field))
-        {
+        if (!$dbman->field_exists($table, $field)) {
             if (!$dbman->field_exists($table, $field)) {
                 $dbman->add_field($table, $field);
             }
@@ -60,8 +58,7 @@ function xmldb_equella_upgrade($oldversion) {
         $equella_items = $DB->get_records('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)/";
 
-        foreach ($equella_items as $item)
-        {
+        foreach ($equella_items as $item) {
             $url = $item->url;
             preg_match($pattern, $url, $matches);
             $item->uuid = $matches['uuid'];
@@ -82,8 +79,7 @@ function xmldb_equella_upgrade($oldversion) {
         $equella_items = $DB->get_records('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-        foreach ($equella_items as $item)
-        {
+        foreach ($equella_items as $item) {
             $url = $item->url;
             preg_match($pattern, $url, $matches);
             $item->path=$matches['path'];
@@ -93,26 +89,22 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011080500, 'equella');
     }
 
-    if ($oldversion < 2012010901)
-    {
+    if ($oldversion < 2012010901) {
         $table = new xmldb_table('equella');
         $field = new xmldb_field('attachmentuuid', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'path');
-        if (!$dbman->field_exists($table, $field))
-        {
+        if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
         upgrade_mod_savepoint(true, 2012010901, 'equella');
     }
 
-    if ($oldversion < 2012082806)
-    {
+    if ($oldversion < 2012082806) {
         require_once($CFG->dirroot . '/mod/equella/lib.php');
         $records = $DB->get_recordset('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-        foreach ($records as $resource)
-        {
+        foreach ($records as $resource) {
             preg_match($pattern, $resource->url, $matches);
             if (empty($resource->uuid) && !empty($matches['uuid'])) {
                 $resource->uuid = $matches['uuid'];

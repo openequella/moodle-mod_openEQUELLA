@@ -69,7 +69,7 @@ function equella_getssotoken($course = null) {
 
     // roles are ordered by shortname
     $editingroles = get_all_editing_roles();
-    foreach($editingroles as $role) {
+    foreach ($editingroles as $role) {
         $hassystemrole = false;
         if (!empty($context_sys)) {
             $hassystemrole = user_has_role_assignment($USER->id,  $role->id,$context_sys->id);
@@ -83,10 +83,10 @@ function equella_getssotoken($course = null) {
             $hascourserole = user_has_role_assignment($USER->id,  $role->id,$context_c->id);
         }
 
-        if( $hassystemrole || $hascategoryrole || $hascourserole) {
+        if ($hassystemrole || $hascategoryrole || $hascourserole) {
             //see if the user has a role that is linked to an equella role
             $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
-            if( !empty($shareid) ) {
+            if (!empty($shareid)) {
                 return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
             }
         }
@@ -94,7 +94,7 @@ function equella_getssotoken($course = null) {
 
     // no roles found, use the default shareid and secret
     $shareid = $CFG->equella_shareid;
-    if( !empty($shareid) ){
+    if (!empty($shareid)) {
         return equella_getssotoken_raw($USER->username, $shareid, $CFG->equella_sharedsecret);
     }
 }
@@ -150,12 +150,12 @@ function equella_getssotoken_api() {
  *
  * @return array
  */
-function get_all_editing_roles(){
+function get_all_editing_roles() {
     global $DB;
     $sql = "SELECT r.* FROM {role_capabilities} rc
-        INNER JOIN {role} r ON rc.roleid = r.id
-             WHERE capability = :capability
-               AND permission = 1
-          ORDER BY r.sortorder";
+            INNER JOIN {role} r ON rc.roleid = r.id
+            WHERE capability = :capability
+            AND permission = 1
+            ORDER BY r.sortorder";
     return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
 }

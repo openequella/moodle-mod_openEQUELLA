@@ -157,8 +157,7 @@ function equella_delete_instance($id) {
         return false;
     }
 
-    if ($equella->activation)
-    {
+    if ($equella->activation) {
         $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
         $url = equella_appendtoken($url)."&activationUuid=".rawurlencode($equella->activation);
         $curl = curl_init($url);
