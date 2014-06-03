@@ -36,7 +36,7 @@ $equella->cmid = $cm->id;
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 require_capability('mod/equella:view', $context);
 

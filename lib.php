@@ -260,7 +260,7 @@ function equella_capture_files($event) {
     }
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if ($event->modulename != 'folder' && $event->modulename != 'resource') {
         return array();
     }
@@ -395,7 +395,7 @@ function equella_dndupload_handle($uploadinfo) {
     $data->coursemodule = $uploadinfo->coursemodule;
     $data->files = $uploadinfo->draftitemid;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $uploadinfo->draftitemid, 'id', false);
 
     $moduleid = null;

@@ -61,11 +61,13 @@ function equella_getssotoken($course = null) {
 
     if (empty($course)) {
         $course = $COURSE;
+        // This needs to be 1 as setting it to $COURSE has a category of 0 which returns errors
+        $course->category = 1;
     }
 
-    $context_sys = get_context_instance(CONTEXT_SYSTEM, 0);
-    $context_cc  = get_context_instance(CONTEXT_COURSECAT, $course->category);
-    $context_c   = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context_sys = context_system::instance();
+    $context_cc  = context_coursecat::instance($course->category);
+    $context_c   = context_course::instance($course->id);
 
     // roles are ordered by shortname
     $editingroles = get_all_editing_roles();

@@ -704,7 +704,7 @@ class equella_external extends external_api {
             print_error('cannotaddcoursemodule');
             $success = false;
         }
-        $modcontext = get_context_instance(CONTEXT_MODULE, $mod->coursemodule);
+        $modcontext = context_module::instance($mod->coursemodule);
         if (! $sectionid = add_mod_to_section($mod) ) {
             print_error('cannotaddcoursemoduletosection');
             return null;
@@ -935,23 +935,23 @@ class equella_external extends external_api {
 
     public static function is_enrolled($user, $courseid) {
         equella_debug_log("is_enrolled($user->id, $courseid)");
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
         return is_enrolled($coursecontext, $user->id);
     }
 
     public static function has_view_permissions($user, $courseid) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
         return has_capability(self::READ_PERMISSION, $coursecontext, $user->id);
     }
 
     public static function has_modify_permissions($user, $courseid) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
         return has_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
 
     public static function check_modify_permissions($username, $courseid) {
         $user = self::get_user($username);
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
+        $coursecontext = context_course::instance($courseid);
 
         require_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
