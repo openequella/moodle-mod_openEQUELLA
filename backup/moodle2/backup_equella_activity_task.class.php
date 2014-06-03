@@ -29,18 +29,18 @@ class backup_equella_activity_task extends backup_activity_task {
     }
  
     static public function encode_content_links($content) {
-		global $CFG;
+        global $CFG;
 
-		$base = preg_quote($CFG->wwwroot.'/mod/equella','#');
+        $base = preg_quote($CFG->wwwroot.'/mod/equella','#');
 
-		$pattern = '#('.$base.'/index\.php\?id=)([0-9]+)#';
-		$replacement = '$@EQUELLAINDEX*$2@$';
-		$content = preg_replace($pattern, $replacement, $content);
+        $pattern = '#('.$base.'/index\.php\?id=)([0-9]+)#';
+        $replacement = '$@EQUELLAINDEX*$2@$';
+        $content = preg_replace($pattern, $replacement, $content);
 
-		$pattern = '#('.$base.'/view\.php\?id=)([0-9]+)#';
-		$replacement = '$@EQUELLAVIEWBYID*$2@$';
-		$content = preg_replace($pattern, $replacement, $content);
+        $pattern = '#('.$base.'/view\.php\?id=)([0-9]+)#';
+        $replacement = '$@EQUELLAVIEWBYID*$2@$';
+        $content = preg_replace($pattern, $replacement, $content);
 
-		return $content;
+        return $content;
     }
 }

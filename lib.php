@@ -176,12 +176,12 @@ function equella_delete_instance($id) {
 }
 
 function equella_user_outline($course, $user, $mod, $equella) {
-	$result = NULL;
-	return $result;
+    $result = NULL;
+    return $result;
 }
 
 function equella_user_complete($course, $user, $mod, $equella) {
-	print_string("notsubmittedyet", "equella");
+    print_string("notsubmittedyet", "equella");
 }
 
 /**
@@ -428,8 +428,8 @@ function equella_dndupload_handle($uploadinfo) {
         $data->intro = $info->description;
         $data->introformat = FORMAT_HTML;
         $item = array_pop($info->attachments);
-	$data->attachmentuuid = $item->uuid;
-	$data->url = $item->links->view;
+        $data->attachmentuuid = $item->uuid;
+        $data->url = $item->links->view;
         try {
             $moduleid = equella_add_instance($data, null);
         } catch (Exception $ex) {
