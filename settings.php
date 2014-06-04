@@ -22,13 +22,13 @@ require_once('adminsettings.class.php');
 require_once('equella_rest_api.php');
 
 // Horrible hack to avoid errors displaying error pages
-if( !function_exists('ecs') ) {
+if (!function_exists('ecs')) {
     function ecs($configoption, $params = null) {
         return get_string('config.'.$configoption, 'equella', $params);
     }
 }
 
-if( $ADMIN->fulltree ) {
+if ($ADMIN->fulltree) {
     /////////////////////////////////////////////////////////////////////////////////
     // GENERAL SETTINGS
     //
@@ -76,13 +76,13 @@ if( $ADMIN->fulltree ) {
     $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
 
     $defaultsharedsecret = '';
-    if( isset($CFG->equella_sharedsecret) ) {
+    if (isset($CFG->equella_sharedsecret)) {
         $defaultsharedsecret = $CFG->equella_sharedsecret;
     }
 
-    foreach( get_all_editing_roles() as $role ) {
+    foreach (get_all_editing_roles() as $role) {
         $defaultsecretvalue = '';
-        if( $defaultsharedsecret == '' || $defaultsharedsecret == '0' ) {
+        if ($defaultsharedsecret == '' || $defaultsharedsecret == '0') {
             $defaultsecretvalue = $role->shortname . $defaultsharedsecret;
         }
 

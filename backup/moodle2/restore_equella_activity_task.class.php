@@ -20,13 +20,13 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/mod/equella/backup/moodle2/restore_equella_stepslib.php');
  
 class restore_equella_activity_task extends restore_activity_task { 
-	protected function define_my_settings() {
-		// Nothing to do
-	}
+    protected function define_my_settings() {
+        // Nothing to do
+    }
 
-	protected function define_my_steps() {
-		$this->add_step(new restore_equella_activity_structure_step('equella_structure', 'equella.xml'));
-	}
+    protected function define_my_steps() {
+        $this->add_step(new restore_equella_activity_structure_step('equella_structure', 'equella.xml'));
+    }
 
     static public function define_decode_contents() {
         $contents = array();

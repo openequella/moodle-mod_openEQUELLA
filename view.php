@@ -24,7 +24,7 @@ require_login();
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
 $a  = optional_param('a', 0, PARAM_INT);  // EQUELLA instance ID
 
-if( $id ) {  // Two ways to specify the module
+if ($id) {  // Two ways to specify the module
     $cm = get_coursemodule_from_id('equella', $id, 0, false, MUST_EXIST);
     $equella = $DB->get_record('equella', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
@@ -36,7 +36,7 @@ $equella->cmid = $cm->id;
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+$context = context_module::instance($cm->id);
 $PAGE->set_context($context);
 require_capability('mod/equella:view', $context);
 
@@ -49,8 +49,7 @@ add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id
 $PAGE->set_url('/mod/equella/view.php', array('id' => $cm->id));
 
 $url = equella_appendtoken($equella->url);
-if (optional_param('inpopup', 0, PARAM_BOOL))
-{
+if (optional_param('inpopup', 0, PARAM_BOOL)) {
     redirect($url);
 }
 

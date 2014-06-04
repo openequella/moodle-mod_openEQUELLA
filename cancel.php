@@ -25,8 +25,7 @@ $course = optional_param('course',0, PARAM_INT);
     <head>
         <title>Please wait while you are redirected</title>
         <script type="text/javascript">
-        function redirect(url)
-        {
+        function redirect(url) {
             window.open(url, "_top", "");
         }
         </script>
