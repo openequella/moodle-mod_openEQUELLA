@@ -157,8 +157,7 @@ function equella_delete_instance($id) {
         return false;
     }
 
-    if ($equella->activation)
-    {
+    if ($equella->activation) {
         $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
         $url = equella_appendtoken($url)."&activationUuid=".rawurlencode($equella->activation);
         $curl = curl_init($url);
@@ -176,12 +175,12 @@ function equella_delete_instance($id) {
 }
 
 function equella_user_outline($course, $user, $mod, $equella) {
-	$result = NULL;
-	return $result;
+    $result = NULL;
+    return $result;
 }
 
 function equella_user_complete($course, $user, $mod, $equella) {
-	print_string("notsubmittedyet", "equella");
+    print_string("notsubmittedyet", "equella");
 }
 
 /**
@@ -261,7 +260,7 @@ function equella_capture_files($event) {
     }
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
     }
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
     if ($event->modulename != 'folder' && $event->modulename != 'resource') {
         return array();
     }
@@ -396,7 +395,7 @@ function equella_dndupload_handle($uploadinfo) {
     $data->coursemodule = $uploadinfo->coursemodule;
     $data->files = $uploadinfo->draftitemid;
 
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $usercontext = context_user::instance($USER->id);
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $uploadinfo->draftitemid, 'id', false);
 
     $moduleid = null;
@@ -428,8 +427,8 @@ function equella_dndupload_handle($uploadinfo) {
         $data->intro = $info->description;
         $data->introformat = FORMAT_HTML;
         $item = array_pop($info->attachments);
-	$data->attachmentuuid = $item->uuid;
-	$data->url = $item->links->view;
+        $data->attachmentuuid = $item->uuid;
+        $data->url = $item->links->view;
         try {
             $moduleid = equella_add_instance($data, null);
         } catch (Exception $ex) {

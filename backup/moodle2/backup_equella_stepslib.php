@@ -18,12 +18,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 class backup_equella_activity_structure_step extends backup_activity_structure_step {
-	protected function define_structure() {
-		$equella = new backup_nested_element('equella', array('id'),
-			array('course','name', 'intro', 'introformat', 'timecreated',
-			'timemodified', 'url', 'popup', 'activation', 'uuid', 'version', 'path', 'attachmentuuid'));
-		$equella->set_source_table('equella', array('id' => backup::VAR_ACTIVITYID));
-		$equella->annotate_files('mod_equella', 'intro', null);
-		return $this->prepare_activity_structure($equella);
+    protected function define_structure() {
+        $equella = new backup_nested_element('equella', array('id'),
+            array('course','name', 'intro', 'introformat', 'timecreated',
+            'timemodified', 'url', 'popup', 'activation', 'uuid', 'version', 'path', 'attachmentuuid'));
+        $equella->set_source_table('equella', array('id' => backup::VAR_ACTIVITYID));
+        $equella->annotate_files('mod_equella', 'intro', null);
+        return $this->prepare_activity_structure($equella);
     }
 }
