@@ -56,6 +56,9 @@ $string['option.popup.status'] = 'Show the status bar';
 
 $string['config.general.heading'] = 'General Settings';
 
+$string['config.changelog.title'] = 'View change log';
+$string['config.changelog.desc'] = 'View bug fixes, new features added to current EQUELLA module release.';
+
 $string['config.url.title'] = 'EQUELLA URL';
 $string['config.url.desc'] = 'The URL to EQUELLA. Should end with /signon.do (e.g. http://lcms.institution.edu.au/signon.do)';
 

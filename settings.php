@@ -34,6 +34,9 @@ if( $ADMIN->fulltree ) {
     //
     $settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
 
+    $changelogurl = new moodle_url('/mod/equella/changelog.php');
+    $settings->add(new admin_setting_openlink('changelog', ecs('changelog.title'), ecs('changelog.desc'), $changelogurl->out()));
+
     $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
     $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), ''));
 
