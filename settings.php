@@ -74,31 +74,20 @@ if ($ADMIN->fulltree) {
     //
     $settings->add(new admin_setting_heading('equella_sharedsecrets_settings', ecs('sharedsecrets.heading'), ecs('sharedsecrets.help')));
 
-    $settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
-    $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), '', ''));
-    $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), '', ''));
+    $defaultvalue = '';
+    $description = '';
 
-    $defaultsharedsecret = '';
-    if (isset($CFG->equella_sharedsecret)) {
-        $defaultsharedsecret = $CFG->equella_sharedsecret;
-    }
+    $settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
+    $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), $description, $defaultvalue));
+    $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), $description, $defaultvalue));
 
     foreach (get_all_editing_roles() as $role) {
-        $defaultsecretvalue = '';
-        if ($defaultsharedsecret == '' || $defaultsharedsecret == '0') {
-            $defaultsecretvalue = $role->shortname . $defaultsharedsecret;
-        }
-
-        $sectionname = 'equella_' . $role->shortname . 'role_group';
-        if (!empty($role->name)) {
-            $heading = ecs('group', format_string($role->name));
-        } else {
-            $heading = ecs('group.noname', format_string($role->shortname));
-        }
+        $sectionname = 'equella_' . $role->shortname . '_role_group';
+        $heading = ecs('group.' . $role->shortname);
         $settings->add(new equella_setting_left_heading($sectionname, $heading, ''));
 
-        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), '', $role->shortname, PARAM_TEXT));
-        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), '', $defaultsecretvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
     }
     /////////////////////////////////////////////////////////////////////////////////
     //
