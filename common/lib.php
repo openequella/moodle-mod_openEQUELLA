@@ -64,10 +64,9 @@ function equella_getssotoken($course = null) {
     }
 
     $context_sys = context_system::instance();
+    $context_cc = null;
     if (!empty($course->category) && is_int($course->category)) {
         $context_cc = context_coursecat::instance($course->category);
-    } else {
-        $context_cc = null;
     }
     $context_c   = context_course::instance($course->id);
 

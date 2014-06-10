@@ -1,3 +1,9 @@
+2014-06-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	More checks on course category
+
+	Remove hardcoded category id in @agrowe's code
+
 2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Merge pull request #23 from agrowe/unique_db_call
