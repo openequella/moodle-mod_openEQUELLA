@@ -344,7 +344,10 @@ function equella_is_instructor($user, $cm, $courseid) {
     $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
     $context_sys = context_system::instance();
-    $context_cc  = context_coursecat::instance($course->category);
+    $context_cc = null;
+    if (!empty($course->category)) {
+        $context_cc = context_coursecat::instance($course->category);
+    }
     $context_c   = context_course::instance($courseid);
 
     // roles are ordered by shortname
@@ -352,7 +355,10 @@ function equella_is_instructor($user, $cm, $courseid) {
     $isinstructor = false;
     foreach ($editingroles as $role) {
         $hassystemrole = user_has_role_assignment($user->id,  $role->id,  $context_sys->id);
-        $hascategoryrole = user_has_role_assignment($user->id, $role->id, $context_cc->id);
+        $hascategoryrole = false;
+        if (!empty($context_cc)) {
+            $hascategoryrole = user_has_role_assignment($user->id, $role->id, $context_cc->id);
+        }
         $hascourserole = user_has_role_assignment($user->id,  $role->id,  $context_c->id);
 
         if ($hassystemrole || $hascategoryrole || $hascourserole) {
