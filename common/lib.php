@@ -155,10 +155,11 @@ function equella_getssotoken_api() {
  */
 function get_all_editing_roles() {
     global $DB;
-    $sql = "SELECT DISTINCT r.* FROM {role_capabilities} rc
-            INNER JOIN {role} r ON rc.roleid = r.id
-            WHERE capability = :capability
-            AND permission = 1
-            ORDER BY r.sortorder";
-    return $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
+    $sql = "SELECT DISTINCT r.id,r.shortname,r.sortorder,r.archetype,r.description
+              FROM {role_capabilities} rc
+        INNER JOIN {role} r ON rc.roleid = r.id
+             WHERE rc.capability = :capability AND rc.permission = 1
+          ORDER BY r.sortorder";
+    $roles = $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
+    return $roles;
 }
