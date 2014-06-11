@@ -155,7 +155,7 @@ function equella_getssotoken_api() {
  */
 function get_all_editing_roles() {
     global $DB;
-    $sql = "SELECT DISTINCT r.id,r.shortname,r.sortorder,r.archetype,r.description
+    $sql = "SELECT DISTINCT r.id,r.shortname,r.name,r.sortorder,r.archetype,r.description
               FROM {role_capabilities} rc
         INNER JOIN {role} r ON rc.roleid = r.id
              WHERE rc.capability = :capability AND rc.permission = 1
