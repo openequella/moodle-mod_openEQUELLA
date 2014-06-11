@@ -1,4 +1,10 @@
+2014-06-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Issue #24 Fix custome roles' lang strings issue
+
 2014-06-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Clean up get_all_editing_roles()
 
 	More checks on course category
 
