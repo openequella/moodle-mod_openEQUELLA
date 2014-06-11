@@ -81,9 +81,17 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), $description, $defaultvalue));
     $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), $description, $defaultvalue));
 
+    $rolearchetypes = get_role_archetypes();
     foreach (get_all_editing_roles() as $role) {
         $sectionname = 'equella_' . $role->shortname . '_role_group';
-        $heading = ecs('group.' . $role->shortname);
+        if (in_array($role->shortname, $rolearchetypes)) {
+            $heading = ecs('group.' . $role->shortname);
+        } else {
+            $heading = ecs('group.noname', $role->shortname);
+            if (!empty($role->name)) {
+                $heading = ecs('group', $role->name);
+            }
+        }
         $settings->add(new equella_setting_left_heading($sectionname, $heading, ''));
 
         $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
