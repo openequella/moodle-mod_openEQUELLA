@@ -305,6 +305,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     $requestparams['lis_person_name_family'] =  $USER->lastname;
     $requestparams['lis_person_name_full'] = fullname($USER);
     $requestparams['lis_person_contact_email_primary'] = $USER->email;
+    $requestparams['lis_person_sourcedid'] = $USER->username;
     $requestparams["ext_lms"] = "moodle-2";
     $requestparams['tool_consumer_info_product_family_code'] = 'moodle';
     $requestparams['tool_consumer_info_version'] = strval($CFG->version);
