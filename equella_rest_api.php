@@ -9,11 +9,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * EQUELLA REST API for PHP
@@ -22,39 +22,80 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/filelib.php');
-require_once(dirname(__FILE__) . '/lib.php');
-
+require_once ($CFG->libdir . '/filelib.php');
+require_once (dirname(__FILE__) . '/lib.php');
 class equella_curl {
-    /** @var bool Caches http request contents */
-    public  $cache    = false;
-    /** @var bool Uses proxy */
-    public  $proxy    = false;
-    /** @var string library version */
-    public  $version  = '0.4 dev';
-    /** @var array http's response */
-    public  $response = array();
-    /** @var array http header */
-    public  $header   = array();
-    /** @var string cURL information */
-    public  $info;
-    /** @var string error */
-    public  $error;
-    /** @var int error code */
-    public  $errno;
+    /**
+     *
+     * @var bool Caches http request contents
+     */
+    public $cache = false;
+    /**
+     *
+     * @var bool Uses proxy
+     */
+    public $proxy = false;
+    /**
+     *
+     * @var string library version
+     */
+    public $version = '0.4 dev';
+    /**
+     *
+     * @var array http's response
+     */
+    public $response = array();
+    /**
+     *
+     * @var array http header
+     */
+    public $header = array();
+    /**
+     *
+     * @var string cURL information
+     */
+    public $info;
+    /**
+     *
+     * @var string error
+     */
+    public $error;
+    /**
+     *
+     * @var int error code
+     */
+    public $errno;
 
-    /** @var array cURL options */
+    /**
+     *
+     * @var array cURL options
+     */
     private $options;
-    /** @var string Proxy host */
+    /**
+     *
+     * @var string Proxy host
+     */
     private $proxy_host = '';
-    /** @var string Proxy auth */
+    /**
+     *
+     * @var string Proxy auth
+     */
     private $proxy_auth = '';
-    /** @var string Proxy type */
+    /**
+     *
+     * @var string Proxy type
+     */
     private $proxy_type = '';
-    /** @var bool Debug mode on */
-    private $debug    = false;
-    /** @var bool|string Path to cookie file */
-    private $cookie   = false;
+    /**
+     *
+     * @var bool Debug mode on
+     */
+    private $debug = false;
+    /**
+     *
+     * @var bool string to cookie file
+     */
+    private $cookie = false;
 
     /**
      * Constructor
@@ -74,9 +115,9 @@ class equella_curl {
         if (!empty($options['debug'])) {
             $this->debug = true;
         }
-        if(!empty($options['cookie'])) {
-            if($options['cookie'] === true) {
-                $this->cookie = $CFG->dataroot.'/curl_cookie.txt';
+        if (!empty($options['cookie'])) {
+            if ($options['cookie'] === true) {
+                $this->cookie = $CFG->dataroot . '/curl_cookie.txt';
             } else {
                 $this->cookie = $options['cookie'];
             }
@@ -94,26 +135,24 @@ class equella_curl {
             if (empty($CFG->proxyport)) {
                 $this->proxy_host = $CFG->proxyhost;
             } else {
-                $this->proxy_host = $CFG->proxyhost.':'.$CFG->proxyport;
+                $this->proxy_host = $CFG->proxyhost . ':' . $CFG->proxyport;
             }
             if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-                $this->proxy_auth = $CFG->proxyuser.':'.$CFG->proxypassword;
-                $this->setopt(array(
-                            'proxyauth'=> CURLAUTH_BASIC | CURLAUTH_NTLM,
-                            'proxyuserpwd'=>$this->proxy_auth));
+                $this->proxy_auth = $CFG->proxyuser . ':' . $CFG->proxypassword;
+                $this->setopt(array('proxyauth' => CURLAUTH_BASIC | CURLAUTH_NTLM,'proxyuserpwd' => $this->proxy_auth));
             }
             if (!empty($CFG->proxytype)) {
                 if ($CFG->proxytype == 'SOCKS5') {
                     $this->proxy_type = CURLPROXY_SOCKS5;
                 } else {
                     $this->proxy_type = CURLPROXY_HTTP;
-                    $this->setopt(array('httpproxytunnel'=>false));
+                    $this->setopt(array('httpproxytunnel' => false));
                 }
-                $this->setopt(array('proxytype'=>$this->proxy_type));
+                $this->setopt(array('proxytype' => $this->proxy_type));
             }
         }
         if (!empty($this->proxy_host)) {
-            $this->proxy = array('proxy'=>$this->proxy_host);
+            $this->proxy = array('proxy' => $this->proxy_host);
         }
     }
     /**
@@ -121,25 +160,25 @@ class equella_curl {
      */
     public function resetopt() {
         $this->options = array();
-        $this->options['CURLOPT_USERAGENT']         = 'MoodleBot/1.0';
+        $this->options['CURLOPT_USERAGENT'] = 'MoodleBot/1.0';
         // True to include the header in the output
-        $this->options['CURLOPT_HEADER']            = 0;
+        $this->options['CURLOPT_HEADER'] = 0;
         // True to Exclude the body from the output
-        $this->options['CURLOPT_NOBODY']            = 0;
+        $this->options['CURLOPT_NOBODY'] = 0;
         // TRUE to follow any "Location: " header that the server
         // sends as part of the HTTP header (note this is recursive,
         // PHP will follow as many "Location: " headers that it is sent,
         // unless CURLOPT_MAXREDIRS is set).
-        //$this->options['CURLOPT_FOLLOWLOCATION']    = 1;
-        $this->options['CURLOPT_MAXREDIRS']         = 10;
-        $this->options['CURLOPT_ENCODING']          = '';
+        // $this->options['CURLOPT_FOLLOWLOCATION'] = 1;
+        $this->options['CURLOPT_MAXREDIRS'] = 10;
+        $this->options['CURLOPT_ENCODING'] = '';
         // TRUE to return the transfer as a string of the return
         // value of curl_exec() instead of outputting it out directly.
-        $this->options['CURLOPT_RETURNTRANSFER']    = 1;
-        $this->options['CURLOPT_BINARYTRANSFER']    = 0;
-        $this->options['CURLOPT_SSL_VERIFYPEER']    = 0;
-        $this->options['CURLOPT_SSL_VERIFYHOST']    = 2;
-        $this->options['CURLOPT_CONNECTTIMEOUT']    = 30;
+        $this->options['CURLOPT_RETURNTRANSFER'] = 1;
+        $this->options['CURLOPT_BINARYTRANSFER'] = 0;
+        $this->options['CURLOPT_SSL_VERIFYPEER'] = 0;
+        $this->options['CURLOPT_SSL_VERIFYHOST'] = 2;
+        $this->options['CURLOPT_CONNECTTIMEOUT'] = 30;
 
         if ($cacert = self::get_cacert()) {
             $this->options['CURLOPT_CAINFO'] = $cacert;
@@ -148,6 +187,7 @@ class equella_curl {
 
     /**
      * Get the location of ca certificates.
+     *
      * @return string absolute file path or empty if default used
      */
     public static function get_cacert() {
@@ -203,12 +243,12 @@ class equella_curl {
      */
     public function setopt($options = array()) {
         if (is_array($options)) {
-            foreach ($options as $name => $val){
+            foreach($options as $name => $val) {
                 if (!is_string($name)) {
                     throw new coding_exception('Curl options should be defined using strings, not constant values.');
                 }
                 if (stripos($name, 'CURLOPT_') === false) {
-                    $name = strtoupper('CURLOPT_'.$name);
+                    $name = strtoupper('CURLOPT_' . $name);
                 }
                 $this->options[$name] = $val;
             }
@@ -242,8 +282,8 @@ class equella_curl {
      * @param array $header
      */
     public function setHeader($header) {
-        if (is_array($header)){
-            foreach ($header as $v) {
+        if (is_array($header)) {
+            foreach($header as $v) {
                 $this->setHeader($v);
             }
         } else {
@@ -253,7 +293,6 @@ class equella_curl {
 
     /**
      * Set HTTP Response Header
-     *
      */
     public function getResponse() {
         return $this->response;
@@ -272,14 +311,13 @@ class equella_curl {
             list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
             $key = rtrim($key, ':');
             if (!empty($this->response[$key])) {
-                if (is_array($this->response[$key])){
+                if (is_array($this->response[$key])) {
                     $this->response[$key][] = $value;
                 } else {
                     $tmp = $this->response[$key];
                     $this->response[$key] = array();
                     $this->response[$key][] = $tmp;
                     $this->response[$key][] = $value;
-
                 }
             } else {
                 $this->response[$key] = $value;
@@ -300,9 +338,7 @@ class equella_curl {
         $this->cleanopt();
         // set cookie
         if (!empty($this->cookie) || !empty($options['cookie'])) {
-            $this->setopt(array('cookiejar'=>$this->cookie,
-                            'cookiefile'=>$this->cookie
-                             ));
+            $this->setopt(array('cookiejar' => $this->cookie,'cookiefile' => $this->cookie));
         }
 
         // set proxy
@@ -314,17 +350,12 @@ class equella_curl {
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
         // set headers
         if (empty($this->header)) {
-            $this->setHeader(array(
-                'User-Agent: MoodleBot/1.0',
-                'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-                'Connection: keep-alive'
-                ));
+            $this->setHeader(array('User-Agent: MoodleBot/1.0','Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7','Connection: keep-alive'));
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
         // Bypass proxy (for this request only) if required.
-        if (!empty($this->options['CURLOPT_URL']) &&
-                is_proxybypass($this->options['CURLOPT_URL'])) {
+        if (!empty($this->options['CURLOPT_URL']) && is_proxybypass($this->options['CURLOPT_URL'])) {
             unset($this->options['CURLOPT_PROXY']);
         }
 
@@ -353,8 +384,8 @@ class equella_curl {
      * $file1 = fopen('a', 'wb');
      * $file2 = fopen('b', 'wb');
      * $c->download(array(
-     *     array('url'=>'http://localhost/', 'file'=>$file1),
-     *     array('url'=>'http://localhost/20/', 'file'=>$file2)
+     * array('url'=>'http://localhost/', 'file'=>$file1),
+     * array('url'=>'http://localhost/20/', 'file'=>$file2)
      * ));
      * fclose($file1);
      * fclose($file2);
@@ -365,19 +396,19 @@ class equella_curl {
      * <code>
      * $c = new curl();
      * $c->download(array(
-     *              array('url'=>'http://localhost/', 'filepath'=>'/tmp/file1.tmp'),
-     *              array('url'=>'http://localhost/20/', 'filepath'=>'/tmp/file2.tmp')
-     *              ));
+     * array('url'=>'http://localhost/', 'filepath'=>'/tmp/file1.tmp'),
+     * array('url'=>'http://localhost/20/', 'filepath'=>'/tmp/file2.tmp')
+     * ));
      * </code>
      *
      * @param array $requests An array of files to request {
-     *                  url => url to download the file [required]
-     *                  file => file handler, or
-     *                  filepath => file path
-     * }
-     * If 'file' and 'filepath' parameters are both specified in one request, the
-     * open file handle in the 'file' parameter will take precedence and 'filepath'
-     * will be ignored.
+     *        url => url to download the file [required]
+     *        file => file handler, or
+     *        filepath => file path
+     *        }
+     *        If 'file' and 'filepath' parameters are both specified in one request, the
+     *        open file handle in the 'file' parameter will take precedence and 'filepath'
+     *        will be ignored.
      *
      * @param array $options An array of options to set
      * @return array An array of results
@@ -397,17 +428,17 @@ class equella_curl {
      * @return array An array of results
      */
     protected function multi($requests, $options = array()) {
-        $count   = count($requests);
+        $count = count($requests);
         $handles = array();
         $results = array();
-        $main    = curl_multi_init();
-        for ($i = 0; $i < $count; $i++) {
+        $main = curl_multi_init();
+        for($i = 0; $i < $count; $i++) {
             if (!empty($requests[$i]['filepath']) and empty($requests[$i]['file'])) {
                 // open file
                 $requests[$i]['file'] = fopen($requests[$i]['filepath'], 'w');
                 $requests[$i]['auto-handle'] = true;
             }
-            foreach($requests[$i] as $n=>$v) {
+            foreach($requests[$i] as $n => $v) {
                 $options[$n] = $v;
             }
             $handles[$i] = curl_init($requests[$i]['url']);
@@ -418,7 +449,7 @@ class equella_curl {
         do {
             curl_multi_exec($main, $running);
         } while($running > 0);
-        for ($i = 0; $i < $count; $i++) {
+        for($i = 0; $i < $count; $i++) {
             if (!empty($options['CURLOPT_RETURNTRANSFER'])) {
                 $results[] = true;
             } else {
@@ -428,7 +459,7 @@ class equella_curl {
         }
         curl_multi_close($main);
 
-        for ($i = 0; $i < $count; $i++) {
+        for($i = 0; $i < $count; $i++) {
             if (!empty($requests[$i]['filepath']) and !empty($requests[$i]['auto-handle'])) {
                 // close file handler if file is opened in this function
                 fclose($requests[$i]['file']);
@@ -458,7 +489,7 @@ class equella_curl {
             }
         }
 
-        $this->info  = curl_getinfo($curl);
+        $this->info = curl_getinfo($curl);
         $this->error = curl_error($curl);
         $this->errno = curl_errno($curl);
 
@@ -478,7 +509,7 @@ class equella_curl {
         } else {
             return $this->error;
             // exception is not ajax friendly
-            //throw new moodle_exception($this->error, 'curl');
+            // throw new moodle_exception($this->error, 'curl');
         }
     }
 
@@ -493,8 +524,8 @@ class equella_curl {
      */
     public function head($url, $options = array()) {
         $options['CURLOPT_HTTPGET'] = 0;
-        $options['CURLOPT_HEADER']  = 1;
-        $options['CURLOPT_NOBODY']  = 1;
+        $options['CURLOPT_HEADER'] = 1;
+        $options['CURLOPT_NOBODY'] = 1;
         return $this->request($url, $options);
     }
 
@@ -507,10 +538,10 @@ class equella_curl {
      * @return bool
      */
     public function post($url, $params = '', $options = array()) {
-        $options['CURLOPT_POST']       = 1;
+        $options['CURLOPT_POST'] = 1;
         if (is_array($params)) {
             $this->_tmp_file_post_params = array();
-            foreach ($params as $key => $value) {
+            foreach($params as $key => $value) {
                 if ($value instanceof stored_file) {
                     $value->add_to_curl_request($this, $key);
                 } else {
@@ -551,28 +582,28 @@ class equella_curl {
      * $c = new curl();
      * $file = fopen('savepath', 'w');
      * $result = $c->download_one('http://localhost/', null,
-     *   array('file' => $file, 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * array('file' => $file, 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
      * fclose($file);
      * $download_info = $c->get_info();
      * if ($result === true) {
-     *   // file downloaded successfully
+     * // file downloaded successfully
      * } else {
-     *   $error_text = $result;
-     *   $error_code = $c->get_errno();
+     * $error_text = $result;
+     * $error_code = $c->get_errno();
      * }
      * </code>
      *
      * <code>
      * $c = new curl();
      * $result = $c->download_one('http://localhost/', null,
-     *   array('filepath' => 'savepath', 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
+     * array('filepath' => 'savepath', 'timeout' => 5, 'followlocation' => true, 'maxredirs' => 3));
      * // ... see above, no need to close handle and remove file if unsuccessful
      * </code>
      *
      * @param string $url
      * @param array|null $params key-value pairs to be added to $url as query string
      * @param array $options request options. Must include either 'file' or 'filepath'
-     * @return bool|string true on success or error string on failure
+     * @return bool string on success or error string on failure
      */
     public function download_one($url, $params, $options = array()) {
         $options['CURLOPT_HTTPGET'] = 1;
@@ -611,14 +642,13 @@ class equella_curl {
      */
     public function put($url, $params = array(), $options = array()) {
         $fp = $params['filehandle'];
-        $options['CURLOPT_PUT']    = 1;
+        $options['CURLOPT_PUT'] = 1;
         $options['CURLOPT_INFILE'] = $fp;
         // load balancers and reverse prixies require filesize
         $options['CURLOPT_INFILESIZE'] = $params['filesize'];
         $ret = $this->request($url, $options);
         return $ret;
     }
-
 
     /**
      * HTTP DELETE method
@@ -681,26 +711,22 @@ class equella_curl {
         return $this->errno;
     }
 }
-
 class equella_rest_api {
     const OAUTH_URI = 'oauth/authorise';
     const TOKEN_URI = 'oauth/access_token';
-
     public static function get_end_point() {
         global $CFG;
         if (empty($CFG->equella_url)) {
             throw new moodle_exception('equella url not set');
         }
-        $url = substr($CFG->equella_url, 0, strlen($CFG->equella_url)-strlen('signon.do'));
+        $url = substr($CFG->equella_url, 0, strlen($CFG->equella_url) - strlen('signon.do'));
         $url = rtrim($url, '/') . '/';
         return $url;
     }
-
     public static function get_redirect_url() {
         $url = new moodle_url('/mod/equella/oauthcallback.php');
         return $url;
     }
-
     public static function get_auth_code_url($options = array()) {
         $institutionurl = rtrim($options['endpoint'], '/') . '/';
         $oauthurl = $institutionurl . self::OAUTH_URI;
@@ -714,37 +740,28 @@ class equella_rest_api {
         $authurl = $oauthurl . '?' . http_build_query($options, '', '&');
         return $authurl;
     }
-
     public static function get_access_token($options = array()) {
         global $CFG;
-        $parameters = array(
-            'grant_type' => 'authorization_code',
-            'client_id' => $options['client_id'],
-            'code'=>$options['code'],
-            'redirect_uri'=>$options['redirect_uri']
-        );
-        foreach ($parameters as $key=>$value) {
+        $parameters = array('grant_type' => 'authorization_code','client_id' => $options['client_id'],'code' => $options['code'],'redirect_uri' => $options['redirect_uri']);
+        foreach($parameters as $key => $value) {
             if (!empty($options[$key])) {
                 $parameters[$key] = $options[$key];
             }
         }
         $tokenurl = $options['endpoint'] . self::TOKEN_URI;
         $tokenurl = $tokenurl . '?' . http_build_query($parameters, '', '&');
-        $curl = new curl;
+        $curl = new curl();
         $json = $curl->get($tokenurl);
         $info = json_decode($json);
         return $info;
     }
-
     public static function contribute_file_with_oauth($filename, $fp, $params = array()) {
         return self::contribute_file($filename, $fp, $params, true);
     }
-
     public static function contribute_file_with_shared_secret($filename, $fp, $params = array()) {
         $params['token'] = equella_getssotoken();
         return self::contribute_file($filename, $fp, $params, false);
     }
-
     private static function contribute_file($filename, $fp, $params = array(), $useoauth = false) {
         global $CFG;
         $endpoint = self::get_end_point() . 'api/item/quick/' . rawurlencode($filename);
@@ -752,11 +769,9 @@ class equella_rest_api {
 
         $curl = new equella_curl();
         if ($useoauth) {
-            $curl->setHeader(array(
-                'X-Authorization: access_token=' . $CFG->equella_oauth_access_token,
-            ));
+            $curl->setHeader(array('X-Authorization: access_token=' . $CFG->equella_oauth_access_token));
         }
-        $result = $curl->put($quickcontributeurl->out(false), array('filehandle'=>$fp, 'filesize'=>$params['filesize']));
+        $result = $curl->put($quickcontributeurl->out(false), array('filehandle' => $fp,'filesize' => $params['filesize']));
         fclose($fp);
 
         if (!empty($result)) {

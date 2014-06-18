@@ -9,26 +9,22 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * This file contains function that are used and/or useful for other
  * integration points in Moodle like the Blocks and Repository APIs.
  */
-
 function get_block_configdata($blockname) {
     global $DB, $PAGE;
     $sql = "SELECT *
               FROM {block_instances} bi
              WHERE bi.blockname = :name AND bi.parentcontextid = :parentcontextid";
-    $params =  array(
-        'name' => $blockname,
-        'parentcontextid' => $PAGE->context->id
-    );
+    $params = array('name' => $blockname,'parentcontextid' => $PAGE->context->id);
     $blockinstance = $DB->get_record_sql($sql, $params);
     return unserialize(base64_decode($blockinstance->configdata));
 }
@@ -68,26 +64,26 @@ function equella_getssotoken($course = null) {
     if (!empty($course->category) && is_int($course->category)) {
         $context_cc = context_coursecat::instance($course->category);
     }
-    $context_c   = context_course::instance($course->id);
+    $context_c = context_course::instance($course->id);
 
     // roles are ordered by shortname
     $editingroles = get_all_editing_roles();
-    foreach ($editingroles as $role) {
+    foreach($editingroles as $role) {
         $hassystemrole = false;
         if (!empty($context_sys)) {
-            $hassystemrole = user_has_role_assignment($USER->id,  $role->id,$context_sys->id);
+            $hassystemrole = user_has_role_assignment($USER->id, $role->id, $context_sys->id);
         }
         $hascategoryrole = false;
         if (!empty($context_cc)) {
-            $hascategoryrole = user_has_role_assignment($USER->id,$role->id,$context_cc->id);
+            $hascategoryrole = user_has_role_assignment($USER->id, $role->id, $context_cc->id);
         }
         $hascourserole = false;
         if (!empty($context_c)) {
-            $hascourserole = user_has_role_assignment($USER->id,  $role->id,$context_c->id);
+            $hascourserole = user_has_role_assignment($USER->id, $role->id, $context_c->id);
         }
 
         if ($hassystemrole || $hascategoryrole || $hascourserole) {
-            //see if the user has a role that is linked to an equella role
+            // see if the user has a role that is linked to an equella role
             $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
             if (!empty($shareid)) {
                 return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
@@ -142,7 +138,6 @@ function equella_appendtoken($url, $token = null) {
     $url .= 'token=' . rawurlencode($token);
     return $url;
 }
-
 function equella_getssotoken_api() {
     global $CFG;
     return equella_getssotoken_raw($CFG->equella_admin_username, $CFG->equella_shareid, $CFG->equella_sharedsecret);

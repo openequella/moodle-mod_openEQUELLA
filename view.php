@@ -9,22 +9,21 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-require_once('../../config.php');
-require_once('lib.php');
-require_once('locallib.php');
-require_once($CFG->libdir . '/resourcelib.php');
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once ('../../config.php');
+require_once ('lib.php');
+require_once ('locallib.php');
+require_once ($CFG->libdir . '/resourcelib.php');
 require_login();
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-$a  = optional_param('a', 0, PARAM_INT);  // EQUELLA instance ID
+$a = optional_param('a', 0, PARAM_INT); // EQUELLA instance ID
 
-if ($id) {  // Two ways to specify the module
+if ($id) { // Two ways to specify the module
     $cm = get_coursemodule_from_id('equella', $id, 0, false, MUST_EXIST);
     $equella = $DB->get_record('equella', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
@@ -58,7 +57,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_cm($cm);
 echo $OUTPUT->header();
 
-if( trim(strip_tags($equella->intro)) ) {
+if (trim(strip_tags($equella->intro))) {
     echo $OUTPUT->box_start('mod_introbox', 'equellaintro');
     echo format_module_intro('equella', $equella, $cm->id);
     echo $OUTPUT->box_end();
