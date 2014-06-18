@@ -38,8 +38,7 @@ class equella_external extends external_api {
             'version' => new external_value(PARAM_INT, 'Item version'),
             'isLatest' => new external_value(PARAM_BOOL, 'The supplied version param is the latest version of this item'),
             'archived' => new external_value(PARAM_BOOL, 'Include hidden items and courses'),
-            'allVersion' => new external_value(PARAM_BOOL, 'Show all versions of this item')
-        ));
+            'allVersion' => new external_value(PARAM_BOOL, 'Show all versions of this item')));
     }
     public static function find_all_usage_parameters() {
         return new external_function_parameters(array(
@@ -52,38 +51,33 @@ class equella_external extends external_api {
             'offset' => new external_value(PARAM_INT, 'Results paging'),
             'count' => new external_value(PARAM_INT, 'Results paging'),
             'sortcolumn' => new external_value(PARAM_RAW, 'The name of the sort column: name, course or timecreated (default is timecreated)'),
-            'sortasc' => new external_value(PARAM_BOOL, 'Sort ascending')
-        ));
+            'sortasc' => new external_value(PARAM_BOOL, 'Sort ascending')));
     }
     public static function unfiltered_usage_count_parameters() {
         return new external_function_parameters(array(
 
             'user' => new external_value(PARAM_RAW, 'Username'),
             'query' => new external_value(PARAM_RAW, 'Freetext query'),
-            'archived' => new external_value(PARAM_BOOL, 'Include hidden items and courses')
-        ));
+            'archived' => new external_value(PARAM_BOOL, 'Include hidden items and courses')));
     }
     public static function list_courses_for_user_parameters() {
         return new external_function_parameters(array(
 
             'user' => new external_value(PARAM_RAW, 'Username'),
             'modifiable' => new external_value(PARAM_BOOL, 'Only return courses user can add content to'),
-            'archived' => new external_value(PARAM_BOOL, 'Show hidden courses as well')
-        ));
+            'archived' => new external_value(PARAM_BOOL, 'Show hidden courses as well')));
     }
     public static function get_course_code_parameters() {
         return new external_function_parameters(array(
 
             'user' => new external_value(PARAM_RAW, 'Username'),
-            'courseid' => new external_value(PARAM_RAW, 'Course id')
-        ));
+            'courseid' => new external_value(PARAM_RAW, 'Course id')));
     }
     public static function list_sections_for_course_parameters() {
         return new external_function_parameters(array(
 
             'user' => new external_value(PARAM_RAW, 'Username'),
-            'courseid' => new external_value(PARAM_RAW, 'Course ID')
-        ));
+            'courseid' => new external_value(PARAM_RAW, 'Course ID')));
     }
     public static function edit_item_parameters() {
         return new external_function_parameters(array(
@@ -91,8 +85,7 @@ class equella_external extends external_api {
             'user' => new external_value(PARAM_RAW, 'Username'),
             'itemid' => new external_value(PARAM_RAW, 'Item ID'),
             'title' => new external_value(PARAM_RAW, 'Title'),
-            'description' => new external_value(PARAM_RAW, 'Description')
-        ));
+            'description' => new external_value(PARAM_RAW, 'Description')));
     }
     public static function move_item_parameters() {
         return new external_function_parameters(array(
@@ -100,15 +93,13 @@ class equella_external extends external_api {
             'user' => new external_value(PARAM_RAW, 'Username'),
             'itemid' => new external_value(PARAM_RAW, 'Item ID'),
             'courseid' => new external_value(PARAM_RAW, 'Course ID'),
-            'locationid' => new external_value(PARAM_RAW, 'Location ID')
-        ));
+            'locationid' => new external_value(PARAM_RAW, 'Location ID')));
     }
     public static function delete_item_parameters() {
         return new external_function_parameters(array(
 
             'user' => new external_value(PARAM_RAW, 'Username'),
-            'itemid' => new external_value(PARAM_RAW, 'Item ID')
-        ));
+            'itemid' => new external_value(PARAM_RAW, 'Item ID')));
     }
     public static function add_item_to_course_parameters() {
         return new external_function_parameters(array(
@@ -121,14 +112,12 @@ class equella_external extends external_api {
             'url' => new external_value(PARAM_RAW, 'URL'),
             'title' => new external_value(PARAM_RAW, 'Title'),
             'description' => new external_value(PARAM_RAW, 'Description'),
-            'attachmentUuid' => new external_value(PARAM_RAW, 'Attachment UUID')
-        ));
+            'attachmentUuid' => new external_value(PARAM_RAW, 'Attachment UUID')));
     }
     public static function test_connection_parameters() {
         return new external_function_parameters(array(
 
-            'param' => new external_value(PARAM_RAW, 'Parameter to echo back')
-        ));
+            'param' => new external_value(PARAM_RAW, 'Parameter to echo back')));
     }
     public static function find_usage_for_item_returns() {
         return new external_single_structure(array(
@@ -156,10 +145,7 @@ class equella_external extends external_api {
                 'attributes' => new external_multiple_structure(new external_single_structure(array(
 
                     'key' => new external_value(PARAM_RAW, 'Attribute key'),
-                    'value' => new external_value(PARAM_RAW, 'Attribute value')
-                )), '', false)
-            )))
-        ));
+                    'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', false))))));
     }
     public static function find_all_usage_returns() {
         return new external_single_structure(array(
@@ -188,31 +174,25 @@ class equella_external extends external_api {
                 'attributes' => new external_multiple_structure(new external_single_structure(array(
 
                     'key' => new external_value(PARAM_RAW, 'Attribute key'),
-                    'value' => new external_value(PARAM_RAW, 'Attribute value')
-                )), '', false)
-            )))
-        ));
+                    'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', false))))));
     }
     public static function unfiltered_usage_count_returns() {
         return new external_single_structure(array(
 
-            'available' => new external_value(PARAM_INT, 'Number of results available')
-        ));
+            'available' => new external_value(PARAM_INT, 'Number of results available')));
     }
     public static function list_courses_for_user_returns() {
         return new external_multiple_structure(new external_single_structure(array(
 
             'courseid' => new external_value(PARAM_INT, 'id of course'),
             'coursename' => new external_value(PARAM_RAW, 'name of course'),
-            'archived' => new external_value(PARAM_BOOL, 'visibility of course')
-        )));
+            'archived' => new external_value(PARAM_BOOL, 'visibility of course'))));
     }
     public static function list_sections_for_course_returns() {
         return new external_multiple_structure(new external_single_structure(array(
 
             'sectionid' => new external_value(PARAM_INT, 'id of section'),
-            'sectionname' => new external_value(PARAM_RAW, 'name of section')
-        )));
+            'sectionname' => new external_value(PARAM_RAW, 'name of section'))));
     }
     public static function add_item_to_course_returns() {
         return new external_single_structure(array(
@@ -220,38 +200,32 @@ class equella_external extends external_api {
             'courseid' => new external_value(PARAM_INT, 'id of course'),
             'coursename' => new external_value(PARAM_RAW, 'name of course'),
             'sectionid' => new external_value(PARAM_INT, 'id of section'),
-            'sectionname' => new external_value(PARAM_RAW, 'name of section')
-        ));
+            'sectionname' => new external_value(PARAM_RAW, 'name of section')));
     }
     public static function test_connection_returns() {
         return new external_single_structure(array(
 
-            'success' => new external_value(PARAM_RAW, 'success')
-        ));
+            'success' => new external_value(PARAM_RAW, 'success')));
     }
     public static function edit_item_returns() {
         return new external_single_structure(array(
 
-            'success' => new external_value(PARAM_BOOL, 'success')
-        ));
+            'success' => new external_value(PARAM_BOOL, 'success')));
     }
     public static function move_item_returns() {
         return new external_single_structure(array(
 
-            'success' => new external_value(PARAM_BOOL, 'success')
-        ));
+            'success' => new external_value(PARAM_BOOL, 'success')));
     }
     public static function delete_item_returns() {
         return new external_single_structure(array(
 
-            'success' => new external_value(PARAM_BOOL, 'success')
-        ));
+            'success' => new external_value(PARAM_BOOL, 'success')));
     }
     public static function get_course_code_returns() {
         return new external_single_structure(array(
 
-            'coursecode' => new external_value(PARAM_RAW, 'Course code')
-        ));
+            'coursecode' => new external_value(PARAM_RAW, 'Course code')));
     }
     public static function list_courses_for_user($user, $modifiable, $archived) {
         global $DB, $CFG;
@@ -261,8 +235,7 @@ class equella_external extends external_api {
 
             'user' => $user,
             'modifiable' => $modifiable,
-            'archived' => $archived
-        ));
+            'archived' => $archived));
 
         equella_debug_log("list_courses_for_user($user, $modifiable, $archived)");
 
@@ -289,8 +262,7 @@ class equella_external extends external_api {
 
                     'courseid' => $course->id,
                     'coursename' => $course->fullname,
-                    'archived' => !($course->visible)
-                );
+                    'archived' => !($course->visible));
             }
         }
 
@@ -302,21 +274,14 @@ class equella_external extends external_api {
         $params = self::validate_parameters(self::list_sections_for_course_parameters(), array(
 
             'user' => $user,
-            'courseid' => $courseid
-        ));
+            'courseid' => $courseid));
         // FIXME: can list_sections_for_course ever be called for non-write purposes?
         self::check_modify_permissions($params['user'], $params['courseid']);
 
         $courseid = $params['courseid'];
 
-        $course = $DB->get_record('course', array(
-
-            'id' => $courseid
-        ), '*', MUST_EXIST);
-        $sections = $DB->get_records('course_sections', array(
-
-            'course' => $courseid
-        ), 'section', 'section, id, course, name, summary, summaryformat, sequence, visible');
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section', 'section, id, course, name, summary, summaryformat, sequence, visible');
 
         $result = array();
         foreach($sections as $section) {
@@ -324,8 +289,7 @@ class equella_external extends external_api {
             $result[] = array(
 
                 'sectionid' => $section->section,
-                'sectionname' => $sectionname
-            );
+                'sectionname' => $sectionname);
         }
 
         return $result;
@@ -334,41 +298,36 @@ class equella_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::find_usage_for_item_parameters(), array(
-
             'user' => $user,
             'uuid' => $uuid,
             'version' => $version,
             'isLatest' => $isLatest,
             'archived' => $archived,
-            'allVersion' => $allVersion
-        ));
+            'allVersion' => $allVersion));
         equella_debug_log("find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion)");
-
         if ($params['allVersion']) {
-            $equella_items = $DB->get_recordset('equella', array(
-
-                'uuid' => $uuid
-            ), 'timecreated DESC');
-        } else if ($params['isLatest']) {
-            list($insql, $inparams) = $DB->get_in_or_equal(array(
-
-                0,
-                $version
-            ));
-            $sql = "SELECT *
-                      FROM {equella}
-                     WHERE version $insql
-                           AND uuid = ?
+            $sqlparams = array($uuid);
+            $sql = "SELECT e.*
+                      FROM {equella} e
+                           LEFT JOIN {course} c ON c.id=e.course
+                     WHERE uuid = ? AND c.id IS NOT NULL
                   ORDER BY timecreated DESC";
+            $equella_items = $DB->get_recordset_sql($sql, $sqlparams);
+        } else if ($params['isLatest']) {
+
+            list($insql, $inparams) = $DB->get_in_or_equal(array(0,$version));
+            $sql = "SELECT e.*
+                      FROM {equella} e
+                           LEFT JOIN {course} c ON c.id=e.course
+                     WHERE version $insql AND uuid = ? AND c.id IS NOT NULL
+                  ORDER BY timecreated DESC";
+
             $inparams[] = $uuid;
             $equella_items = $DB->get_recordset_sql($sql, $inparams);
         } else {
-            $equella_items = $DB->get_recordset('equella', array(
-
-                'uuid' => $uuid,
-                'version' => $version
-            ));
+            $equella_items = $DB->get_recordset('equella', array('uuid' => $uuid,'version' => $version));
         }
+
 
         $content = array();
         $itemViews = array();
@@ -376,19 +335,17 @@ class equella_external extends external_api {
         $enrollmentsMap = array();
         foreach($equella_items as $item) {
             $cm = get_coursemodule_from_instance('equella', $item->id);
-            if (!empty($coursecaches[$cm->course])) {
-                $course = $coursecaches[$cm->course];
+            $itemcourseid = $cm->course;
+            if (!empty($coursecaches[$itemcourseid])) {
+                $course = $coursecaches[$itemcourseid];
             } else {
-                $course = $DB->get_record("course", array(
-
-                    "id" => $cm->course
-                ));
+                $course = $DB->get_record("course", array("id" => $itemcourseid), '*', MUST_EXIST);
                 $coursecaches[$cm->course] = $course;
             }
 
-            if (!isset($enrollmentsMap[$item->course])) {
+            if (!isset($enrollmentsMap[$itemcourseid])) {
                 $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
-                $enrollmentsMap[$item->course] = count($enrolledusers);
+                $enrollmentsMap[$itemcourseid] = count($enrolledusers);
             }
             $enrollments = $enrollmentsMap[$item->course];
 
@@ -397,16 +354,12 @@ class equella_external extends external_api {
             if (!$params['archived'] && (!$course->visible || !$cm->visible)) {
                 continue;
             }
-
             $content[] = self::convert_item($item, $itemViews, $course, $cm, $params['archived'], $instructor, $enrollments);
             // reset course
             $course = null;
         }
 
-        return array(
-
-            'results' => $content
-        );
+        return array('results' => $content);
     }
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc) {
         global $DB, $CFG;
@@ -421,15 +374,10 @@ class equella_external extends external_api {
             'offset' => $offset,
             'count' => $count,
             'sortcolumn' => $sortcolumn,
-            'sortasc' => $sortasc
-        ));
+            'sortasc' => $sortasc));
         equella_debug_log("find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count)");
 
-        $equella = $DB->get_record('modules', array(
-
-            'name' => 'equella'
-        ), '*', MUST_EXIST);
-
+        $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
         $sortcol = $params['sortcolumn'];
         if (empty($sortcol)) {
             $sortcol = 'timecreated';
@@ -443,18 +391,18 @@ class equella_external extends external_api {
         $sortord = $params['sortasc'] ? 'ASC' : 'DESC';
 
         $args = array(
-
             $equella->id,
-            '%' . $params['query'] . '%'
-        );
+            '%' . $params['query'] . '%');
 
-        $sql = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,c.fullname AS coursename, e.name AS name,
-                    m.visible AS cmvisible, m.section as section,
-                    e.timecreated AS timecreated, e.timemodified AS timemodified,
-                    e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
-                FROM {equella} e
-                    INNER JOIN {course} c ON e.course = c.id
-                    INNER JOIN {course_modules} m ON m.instance = e.id AND m.module = ? WHERE LOWER(e.name) LIKE LOWER(?) ';
+        $sql = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,
+                       c.fullname AS coursename, e.name AS name,
+                       m.visible AS cmvisible, m.section as section,
+                       e.timecreated AS timecreated, e.timemodified AS timemodified,
+                       e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
+                  FROM {equella} e
+                       INNER JOIN {course} c ON e.course = c.id
+                       INNER JOIN {course_modules} m ON m.instance = e.id AND m.module = ?
+                 WHERE LOWER(e.name) LIKE LOWER(?)';
         if (!empty($params['courseid'])) {
             $sql .= ' AND c.id = ? ';
             $args[] = $params['courseid'];
@@ -469,7 +417,6 @@ class equella_external extends external_api {
             $args[] = 1;
         }
         $sql = $sql . ' ORDER BY ' . $sortcol . ' ' . $sortord;
-
         $equella_items = $DB->get_recordset_sql($sql, $args, $offset, $count);
 
         $content = array();
@@ -481,10 +428,7 @@ class equella_external extends external_api {
 
         foreach($equella_items as $item) {
             if (!array_key_exists($item->course, $courseMap)) {
-                $course = $DB->get_record('course', array(
-
-                    'id' => $item->course
-                ), '*', MUST_EXIST);
+                $course = $DB->get_record('course', array('id' => $item->course), '*', MUST_EXIST);
                 $courseMap[$item->course] = $course;
             } else {
                 $course = $courseMap[$item->course];
@@ -508,8 +452,7 @@ class equella_external extends external_api {
         return array(
 
             'available' => count($content),
-            'results' => $content
-        );
+            'results' => $content);
     }
     private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor = '', $enrollments = 0) {
         global $DB;
@@ -521,23 +464,18 @@ class equella_external extends external_api {
             $section = $DB->get_record('course_sections', array(
 
                 'course' => $courseModule->course,
-                'id' => $courseModule->section
-            ), '*', MUST_EXIST);
+                'id' => $courseModule->section), '*', MUST_EXIST);
             $section_name = get_section_name($course, $section);
             $section->sectionname = $section_name;
             $sectionsMap[$section->id] = $section;
         }
-
         if (!array_key_exists($course->id, $itemViews)) {
             $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
                       FROM {course_modules} cm
                            JOIN {modules} m ON m.id = cm.module
                            JOIN {log} l ON l.cmid = cm.id
                      WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
-            $itemViewInfo = $DB->get_records_sql($sql, array(
-
-                $course->id
-            ));
+            $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
 
             $itemViews[$course->id] = $itemViewInfo;
         } else {
@@ -555,11 +493,7 @@ class equella_external extends external_api {
             $views = $itemViewInfo[$courseModule->id]->numviews;
             $dateAccessed = $itemViewInfo[$courseModule->id]->lasttime * 1000;
         }
-        $attributes[] = array(
-
-            'key' => 'views',
-            'value' => $views
-        );
+        $attributes[] = array('key' => 'views', 'value' => $views);
 
         return array(
 
@@ -581,26 +515,24 @@ class equella_external extends external_api {
             'instructor' => $instructor,
             'dateAccessed' => $dateAccessed,
             'enrollments' => $enrollments,
-            'visible' => $visible
-        );
+            'visible' => $visible);
     }
     private static function get_instructor($courseid, &$instructorMap) {
         global $DB;
 
         if (!isset($instructorMap[$courseid])) {
             $sql = 'SELECT c.instanceid, u.firstname, u.lastname
-                    FROM {role_assignments} ra
-                        INNER JOIN {context} c on ra.contextid = c.id
-                        INNER JOIN {role} r on r.id = ra.roleid
-                        INNER JOIN {user} u ON ra.userid = u.id
-                    WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
+                      FROM {role_assignments} ra
+                           INNER JOIN {context} c on ra.contextid = c.id
+                           INNER JOIN {role} r on r.id = ra.roleid
+                           INNER JOIN {user} u ON ra.userid = u.id
+                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
             $instructors = $DB->get_records_sql($sql, array(
 
                 'teacher',
                 'editingteacher',
                 $courseid,
-                CONTEXT_COURSE
-            ));
+                CONTEXT_COURSE));
             $instructor = '';
             $first = true;
             foreach($instructors as $user) {
@@ -623,29 +555,21 @@ class equella_external extends external_api {
 
             'user' => $user,
             'query' => $query,
-            'archived' => $archived
-        ));
+            'archived' => $archived));
         equella_debug_log("unfiltered_usage_count($user, $query, $archived)");
 
         $available = 0;
         $equella = $DB->get_record('modules', array(
 
-            'name' => 'equella'
-        ), '*', MUST_EXIST);
+            'name' => 'equella'), '*', MUST_EXIST);
         $sql = "SELECT e.id, e.course AS course FROM {equella} e WHERE LOWER(e.name) LIKE LOWER(?)";
-        $items = $DB->get_records_sql($sql, array(
-
-            '%' . $params['query'] . '%'
-        ));
+        $items = $DB->get_records_sql($sql, array('%' . $params['query'] . '%'));
 
         /*
          * foreach ($items as $item) { $courseModule = $DB->get_record('course_modules', array('module' => $equella->id, 'instance' => $item->id), '*', MUST_EXIST); if (!$params['archived'] && (!$course->visible || !$courseModule->visible)) { continue; } $available++; }
          */
 
-        $result = array(
-
-            'available' => count($items)
-        );
+        $result = array('available' => count($items));
         return $result;
     }
     public static function add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid) {
@@ -661,16 +585,12 @@ class equella_external extends external_api {
             'url' => $url,
             'title' => $title,
             'description' => $description,
-            'attachmentUuid' => $attachmentUuid
-        ));
+            'attachmentUuid' => $attachmentUuid));
 
         equella_debug_log("add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid)");
         self::check_modify_permissions($params['user'], $params['courseid']);
 
-        $module = $DB->get_record('modules', array(
-
-            'name' => 'equella'
-        ));
+        $module = $DB->get_record('modules', array('name' => 'equella'));
 
         $mod = new stdClass();
         $mod->course = $params['courseid'];
@@ -702,8 +622,7 @@ class equella_external extends external_api {
 
         if (!$DB->set_field('course_modules', 'section', $sectionid, array(
 
-            'id' => $mod->coursemodule
-        ))) {
+            'id' => $mod->coursemodule))) {
             print_error("Could not update the course module with the correct section");
             return null;
         }
@@ -726,47 +645,32 @@ class equella_external extends external_api {
         $section = $DB->get_record('course_sections', array(
 
             'course' => $courseid,
-            'section' => $params['sectionid']
-        ));
+            'section' => $params['sectionid']));
 
-        $course = $DB->get_record('course', array(
-
-            'id' => $courseid
-        ), '*', MUST_EXIST);
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         $result = array(
 
             'courseid' => $courseid,
             'coursename' => $course->fullname,
             'sectionid' => $params['sectionid'],
-            'sectionname' => get_section_name($course, $section)
-        );
+            'sectionname' => get_section_name($course, $section));
         return $result;
     }
     public static function test_connection($param) {
-        $params = self::validate_parameters(self::test_connection_parameters(), array(
+        $params = self::validate_parameters(self::test_connection_parameters(), array('param' => $param));
 
-            'param' => $param
-        ));
-
-        $result = array(
-
-            'success' => $params['param']
-        );
+        $result = array('success' => $params['param']);
         return $result;
     }
     public static function get_course_code($user, $courseid) {
         $params = self::validate_parameters(self::get_course_code_parameters(), array(
 
             'user' => $user,
-            'courseid' => $courseid
-        ));
+            'courseid' => $courseid));
 
         $coursecode = equella_get_courseId($params['courseid']);
 
-        $result = array(
-
-            'coursecode' => $coursecode
-        );
+        $result = array('coursecode' => $coursecode);
         return $result;
     }
     public static function edit_item($user, $itemid, $title, $description) {
@@ -776,24 +680,16 @@ class equella_external extends external_api {
             'user' => $user,
             'itemid' => $itemid,
             'title' => $title,
-            'description' => $description
-        ));
+            'description' => $description));
 
-        $item = $DB->get_record('equella', array(
-
-            'id' => $params['itemid']
-        ), '*', MUST_EXIST);
+        $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
         self::check_modify_permissions($params['user'], $item->course);
 
-        $equella = $DB->get_record('modules', array(
-
-            'name' => 'equella'
-        ));
+        $equella = $DB->get_record('modules', array('name' => 'equella'));
         $courseModule = $DB->get_record('course_modules', array(
 
             'module' => $equella->id,
-            'instance' => $item->id
-        ), '*', MUST_EXIST);
+            'instance' => $item->id), '*', MUST_EXIST);
 
         $item->name = $params['title'];
         $item->intro = $params['description'];
@@ -813,10 +709,7 @@ class equella_external extends external_api {
         add_to_log($item->course, "equella", "update equella resource", "view.php?id=$courseModule->id", "$item->instance", $courseModule->id);
 
         rebuild_course_cache($item->course);
-        $result = array(
-
-            'success' => $success
-        );
+        $result = array('success' => $success);
         return $result;
     }
     public static function move_item($user, $itemid, $courseid, $locationid) {
@@ -827,25 +720,17 @@ class equella_external extends external_api {
             'user' => $user,
             'itemid' => $itemid,
             'courseid' => $courseid,
-            'locationid' => $locationid
-        ));
+            'locationid' => $locationid));
 
-        $item = $DB->get_record('equella', array(
-
-            'id' => $params['itemid']
-        ), '*', MUST_EXIST);
+        $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
         self::check_modify_permissions($params['user'], $item->course);
         self::check_modify_permissions($params['user'], $params['courseid']);
 
-        $equella = $DB->get_record('modules', array(
-
-            'name' => 'equella'
-        ));
+        $equella = $DB->get_record('modules', array('name' => 'equella'));
         $courseModule = $DB->get_record('course_modules', array(
 
             'module' => $equella->id,
-            'instance' => $item->id
-        ), '*', MUST_EXIST);
+            'instance' => $item->id), '*', MUST_EXIST);
 
         $oldCourse = $courseModule->course;
         $newCourse = $params['courseid'];
@@ -853,8 +738,7 @@ class equella_external extends external_api {
         $newSection = $DB->get_record('course_sections', array(
 
             'course' => $newCourse,
-            'section' => $params['locationid']
-        ), '*', MUST_EXIST);
+            'section' => $params['locationid']), '*', MUST_EXIST);
 
         delete_mod_from_section($courseModule->id, $courseModule->section);
 
@@ -891,8 +775,7 @@ class equella_external extends external_api {
         }
         $result = array(
 
-            'success' => $success
-        );
+            'success' => $success);
         return $result;
     }
     public static function delete_item($user, $itemid) {
@@ -901,24 +784,16 @@ class equella_external extends external_api {
         $params = self::validate_parameters(self::delete_item_parameters(), array(
 
             'user' => $user,
-            'itemid' => $itemid
-        ));
+            'itemid' => $itemid));
 
-        $item = $DB->get_record('equella', array(
-
-            'id' => $params['itemid']
-        ), '*', MUST_EXIST);
+        $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
         self::check_modify_permissions($params['user'], $item->course);
 
-        $equella = $DB->get_record('modules', array(
-
-            'name' => 'equella'
-        ));
+        $equella = $DB->get_record('modules', array('name' => 'equella'));
         $courseModule = $DB->get_record('course_modules', array(
 
             'module' => $equella->id,
-            'instance' => $item->id
-        ), '*', MUST_EXIST);
+            'instance' => $item->id), '*', MUST_EXIST);
 
         $success = equella_delete_instance($params['itemid']);
 
@@ -944,10 +819,7 @@ class equella_external extends external_api {
 
             rebuild_course_cache($item->course);
         }
-        $result = array(
-
-            'success' => $success
-        );
+        $result = array('success' => $success);
         return $result;
     }
     public static function get_user($username) {
