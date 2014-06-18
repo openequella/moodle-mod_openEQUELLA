@@ -82,11 +82,11 @@ $functions = array(
 
 $services = array(
     'equellaservice' => array(
-        'functions' => array ('equella_list_courses_for_user', 'equella_list_sections_for_course', 
-            'equella_add_item_to_course', 'equella_test_connection', 
-            'equella_find_usage_for_item', 'equella_find_all_usage', 'equella_unfiltered_usage_count', 
-            'equella_get_course_code', 'equella_edit_item', 'equella_delete_item', 'equella_move_item'), 
-        'requiredcapability' => 'moodle/course:manageactivities', 
+        'functions' => array ('equella_list_courses_for_user', 'equella_list_sections_for_course',
+            'equella_add_item_to_course', 'equella_test_connection',
+            'equella_find_usage_for_item', 'equella_find_all_usage', 'equella_unfiltered_usage_count',
+            'equella_get_course_code', 'equella_edit_item', 'equella_delete_item', 'equella_move_item'),
+        'requiredcapability' => 'moodle/course:manageactivities',
         'restrictedusers' => 1,
         'enabled' => 1,
     )

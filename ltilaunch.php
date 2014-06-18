@@ -9,14 +9,14 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-require_once('../../config.php');
-require_once('lib.php');
-require_once('locallib.php');
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once ('../../config.php');
+require_once ('lib.php');
+require_once ('locallib.php');
 require_login();
 
 $action = optional_param('action', 'view', PARAM_ACTION);
@@ -40,7 +40,7 @@ if ($action == 'view') {
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
 } elseif ($action == 'select') {
-    $args = new stdClass;
+    $args = new stdClass();
     $args->course = required_param('course', PARAM_INT);
     $args->section = required_param('section', PARAM_INT);
     $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
@@ -58,7 +58,7 @@ if ($action == 'view') {
         $extraparams['structure'] = $json;
     }
 
-    $equella = new stdClass;
+    $equella = new stdClass();
     $equella->id = 0;
     $equella->course = $args->course;
     $equella->url = $CFG->equella_url;

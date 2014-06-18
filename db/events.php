@@ -9,31 +9,31 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Capture module update and create events
  *
- * @package   mod_equella
+ * @package mod_equella
  */
 
 /* List of handlers */
-$handlers = array (
-    'mod_updated' => array (
-        'handlerfile'      => '/mod/equella/lib.php',
-        'handlerfunction'  => 'equella_handle_mod_updated',
-        'schedule'         => 'instant',
-        'internal'         => 1,
+$handlers = array(
+    'mod_updated' => array(
+        'handlerfile' => '/mod/equella/lib.php',
+        'handlerfunction' => 'equella_handle_mod_updated',
+        'schedule' => 'instant',
+        'internal' => 1
     ),
 
-    'mod_created' => array (
-        'handlerfile'      => '/mod/equella/lib.php',
-        'handlerfunction'  => 'equella_handle_mod_created',
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
+    'mod_created' => array(
+        'handlerfile' => '/mod/equella/lib.php',
+        'handlerfunction' => 'equella_handle_mod_created',
+        'schedule' => 'instant',
+        'internal' => 1
+    )
 );

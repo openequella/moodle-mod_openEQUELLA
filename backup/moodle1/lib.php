@@ -9,21 +9,21 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Provides support for the conversion of moodle1 backup to the moodle2 format
  *
- * @package    mod
+ * @package mod
  * @subpackage equella
- * @copyright  
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,10 +31,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_equella_handler extends moodle1_mod_handler {
 
-    /** @var moodle1_file_manager */
+    /**
+     * @var moodle1_file_manager
+     */
     protected $fileman = null;
 
-    /** @var int cmid */
+    /**
+     * @var int cmid
+     */
     protected $moduleid = null;
 
     /**
@@ -52,21 +56,7 @@ class moodle1_mod_equella_handler extends moodle1_mod_handler {
      */
     public function get_paths() {
         return array(
-            new convert_path(
-                'equella', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EQUELLA',
-                array(
-                    'renamefields' => array(
-                        'summary' => 'intro',
-                    ),
-                    'newfields' => array(
-                        'introformat' => 1,
-                    ),
-                    'dropfields' => array(
-                        'modtype'
-                    ),
-                )
-            ),
-        );
+            new convert_path('equella', '/MOODLE_BACKUP/COURSE/MODULES/MOD/EQUELLA', array('renamefields' => array('summary' => 'intro'),'newfields' => array('introformat' => 1),'dropfields' => array('modtype'))));
     }
 
     /**
@@ -76,27 +66,26 @@ class moodle1_mod_equella_handler extends moodle1_mod_handler {
     public function process_equella($data) {
 
         // get the course module id and context id
-        $instanceid     = $data['id'];
-        $cminfo         = $this->get_cminfo($instanceid);
+        $instanceid = $data['id'];
+        $cminfo = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
-        $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
+        $contextid = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_equella');
 
         // convert course files embedded into the intro
-        //$this->fileman->filearea = 'intro';
-        //$this->fileman->itemid   = 0;
-        //$data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
+        // $this->fileman->filearea = 'intro';
+        // $this->fileman->itemid = 0;
+        // $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
 
         // start writing equella.xml
         $this->open_xml_writer("activities/equella_{$this->moduleid}/equella.xml");
-        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
-            'modulename' => 'equella', 'contextid' => $contextid));
+        $this->xmlwriter->begin_tag('activity', array('id' => $instanceid,'moduleid' => $this->moduleid,'modulename' => 'equella','contextid' => $contextid));
         $this->xmlwriter->begin_tag('equella', array('id' => $instanceid));
 
-        foreach ($data as $field => $value) {
-            if ($field <> 'id') {
+        foreach($data as $field => $value) {
+            if ($field != 'id') {
                 $this->xmlwriter->full_tag($field, $value);
             }
         }
@@ -117,7 +106,7 @@ class moodle1_mod_equella_handler extends moodle1_mod_handler {
         $this->open_xml_writer("activities/equella_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');
-        foreach ($this->fileman->get_fileids() as $fileid) {
+        foreach($this->fileman->get_fileids() as $fileid) {
             $this->write_xml('file', array('id' => $fileid));
         }
         $this->xmlwriter->end_tag('fileref');

@@ -9,14 +9,14 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-require_once('../../config.php');
-require_once($CFG->dirroot.'/mod/equella/lib.php');
-require_once($CFG->dirroot.'/mod/equella/locallib.php');
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once ('../../config.php');
+require_once ($CFG->dirroot . '/mod/equella/lib.php');
+require_once ($CFG->dirroot . '/mod/equella/locallib.php');
 
 require_login();
 
@@ -34,7 +34,7 @@ if (!empty($ltierrormsg) || !empty($ltimsg)) {
     } else {
         $message = $ltimsg;
     }
-    $url = new moodle_url('/mod/equella/ltireturn.php', array('courseid' => $courseid, 'instanceid'=> $instanceid));
+    $url = new moodle_url('/mod/equella/ltireturn.php', array('courseid' => $courseid,'instanceid' => $instanceid));
     $PAGE->set_url($url);
 
     $pagetitle = strip_tags($course->shortname);

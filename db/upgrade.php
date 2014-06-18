@@ -9,14 +9,12 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-defined('MOODLE_INTERNAL') || die;
-
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+defined('MOODLE_INTERNAL') || die();
 function xmldb_equella_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
@@ -58,11 +56,11 @@ function xmldb_equella_upgrade($oldversion) {
         $equella_items = $DB->get_records('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)/";
 
-        foreach ($equella_items as $item) {
+        foreach($equella_items as $item) {
             $url = $item->url;
             preg_match($pattern, $url, $matches);
             $item->uuid = $matches['uuid'];
-            $item->version=$matches['version'];
+            $item->version = $matches['version'];
             $DB->update_record("equella", $item);
         }
 
@@ -79,10 +77,10 @@ function xmldb_equella_upgrade($oldversion) {
         $equella_items = $DB->get_records('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-        foreach ($equella_items as $item) {
+        foreach($equella_items as $item) {
             $url = $item->url;
             preg_match($pattern, $url, $matches);
-            $item->path=$matches['path'];
+            $item->path = $matches['path'];
             $DB->update_record("equella", $item);
         }
 
@@ -100,11 +98,11 @@ function xmldb_equella_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012082806) {
-        require_once($CFG->dirroot . '/mod/equella/lib.php');
+        require_once ($CFG->dirroot . '/mod/equella/lib.php');
         $records = $DB->get_recordset('equella');
         $pattern = "/(?P<uuid>[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12})\/(?P<version>[0-9]*)\/(?P<path>.*)/";
 
-        foreach ($records as $resource) {
+        foreach($records as $resource) {
             preg_match($pattern, $resource->url, $matches);
             if (empty($resource->uuid) && !empty($matches['uuid'])) {
                 $resource->uuid = $matches['uuid'];
@@ -134,7 +132,7 @@ function xmldb_equella_upgrade($oldversion) {
         }
 
         $records = $DB->get_recordset('equella');
-        foreach ($records as $eq) {
+        foreach($records as $eq) {
             $eq->ltisalt = uniqid('', true);
             $DB->update_record("equella", $eq);
         }
@@ -145,7 +143,7 @@ function xmldb_equella_upgrade($oldversion) {
     if ($oldversion < 2013080801) {
 
         $records = $DB->get_recordset('equella');
-        foreach ($records as $eq) {
+        foreach($records as $eq) {
             // check if attachmentuuid field exists
             if (preg_match('/[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/', $eq->attachmentuuid)) {
                 // not using attachment.uuid, fixing it up
@@ -164,7 +162,7 @@ function xmldb_equella_upgrade($oldversion) {
 
     if ($oldversion < 2013100100) {
         $records = $DB->get_recordset('equella');
-        foreach ($records as $eq) {
+        foreach($records as $eq) {
             if (!empty($eq->popup) && !strpos($eq->popup, 'resizable')) {
                 $eq->popup .= ',resizable=1';
                 $DB->update_record('equella', $eq);
@@ -175,7 +173,7 @@ function xmldb_equella_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013112501) {
-        require_once("$CFG->libdir/filelib.php");
+        require_once ("$CFG->libdir/filelib.php");
 
         // Define field mimetype to be added to equella.
         $table = new xmldb_table('equella');
@@ -187,7 +185,7 @@ function xmldb_equella_upgrade($oldversion) {
         }
 
         $records = $DB->get_recordset('equella');
-        foreach ($records as $eq) {
+        foreach($records as $eq) {
             $mimetype = mimeinfo('type', $eq->url);
             $eq->mimetype = $mimetype;
             $DB->update_record('equella', $eq);

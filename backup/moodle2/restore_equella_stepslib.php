@@ -9,32 +9,28 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 defined('MOODLE_INTERNAL') || die();
-
 class restore_equella_activity_structure_step extends restore_activity_structure_step {
     protected function define_structure() {
         $paths = array();
         $paths[] = new restore_path_element('equella', '/activity/equella');
         return $this->prepare_activity_structure($paths);
     }
-
     protected function process_equella($data) {
         global $DB;
 
-        $data = (object) $data;
+        $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
         $newitemid = $DB->insert_record('equella', $data);
         $this->apply_activity_instance($newitemid);
     }
-
     protected function after_execute() {
         $this->add_related_files('mod_equella', 'intro', null);
     }
