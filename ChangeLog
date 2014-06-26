@@ -1,4 +1,27 @@
+2014-06-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1373 Fix courseid in mdl_equella table
+
+2014-06-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improve find_item_usage to ignore items with invalid courseid
+
+	Fix coding style
+
+2014-06-12  Dongsheng Cai  <imdongsheng@gmail.com>
+
+	Merge pull request #25 from equella/bugfix/EQ-1317
+	Fixes EQ-1317 send username as lis_person_sourcedid
+
+2014-06-12  Holland, Aaron  <Aaron.Holland@Pearson.com>
+
+	Fixes EQ-1317 send username as lis_person_sourcedid
+
 2014-06-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Update ChangeLog
+
+	Issue #24 bump module version
 
 	Issue #24 Fix custome roles' lang strings issue
 
@@ -6,9 +29,15 @@
 
 	Clean up get_all_editing_roles()
 
+	Update ChangeLog
+
 	More checks on course category
 
 	Remove hardcoded category id in @agrowe's code
+
+2014-06-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Add changelog
 
 2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
