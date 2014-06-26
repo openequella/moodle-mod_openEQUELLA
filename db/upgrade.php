@@ -195,5 +195,17 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013112501, 'equella');
     }
 
+    $newversion = 2014061103;
+    if ($oldversion < $newversion) {
+        require_once ($CFG->libdir . "/datalib.php");
+        $records = $DB->get_recordset('equella', array('course'=>0));
+        foreach($records as $eq) {
+            $cm = get_coursemodule_from_instance('equella', $eq->id);
+            $eq->course = $cm->course;
+            $DB->update_record('equella', $eq);
+        }
+        upgrade_mod_savepoint(true, $newversion, 'equella');
+    }
+
     return true;
 }

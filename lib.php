@@ -94,7 +94,7 @@ function equella_get_courseId($courseid) {
     $record = $DB->get_record("course", array('id' => $courseid));
     return $record->idnumber;
 }
-function equella_add_instance($equella) {
+function equella_add_instance($equella, $mform = null) {
     global $DB, $USER, $CFG;
     $equella->timecreated = time();
     $equella->timemodified = time();
@@ -391,10 +391,8 @@ function equella_dndupload_handle($uploadinfo) {
     global $USER;
     $fs = get_file_storage();
     // Gather the required info.
-    $data = new stdClass();
-    $data->course = $uploadinfo->course->id;
-    $data->coursemodule = $uploadinfo->coursemodule;
-    $data->files = $uploadinfo->draftitemid;
+    $courseid = $uploadinfo->course->id;
+    $coursemodule = $uploadinfo->coursemodule;
 
     $usercontext = context_user::instance($USER->id);
     $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $uploadinfo->draftitemid, 'id', false);
@@ -413,7 +411,6 @@ function equella_dndupload_handle($uploadinfo) {
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
         }
-        $data = new stdClass();
         $modulename = '';
         if (!empty($info->name)) {
             $modulename = $info->name;
@@ -424,19 +421,21 @@ function equella_dndupload_handle($uploadinfo) {
                 $modulename = $info->uuid;
             }
         }
-        $data->name = $modulename;
-        $data->intro = $info->description;
-        $data->introformat = FORMAT_HTML;
+        $eqresource = new stdClass;
+        $eqresource->course = $courseid;
+        $eqresource->name = $modulename;
+        $eqresource->intro = $info->description;
+        $eqresource->introformat = FORMAT_HTML;
         $item = array_pop($info->attachments);
-        $data->attachmentuuid = $item->uuid;
-        $data->url = $item->links->view;
+        $eqresource->attachmentuuid = $item->uuid;
+        $eqresource->url = $item->links->view;
         try {
-            $moduleid = equella_add_instance($data, null);
+            $eqresourceid = equella_add_instance($eqresource, null);
         } catch(Exception $ex) {
             throw new equella_exception('Failed to create EQUELLA resource.');
         }
     }
-    return $moduleid;
+    return $eqresourceid;
 }
 class equella_exception extends Exception {
     function __construct($message, $debuginfo = null) {
