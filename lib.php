@@ -439,8 +439,9 @@ function equella_dndupload_handle($uploadinfo) {
 }
 class equella_exception extends Exception {
     function __construct($message, $debuginfo = null) {
+        global $CFG;
         parent::__construct($message, 0);
-        require_once (dirname(__FILE__) . '/locallib.php');
+        require_once ($CFG->dirroot . '/mod/equella/locallib.php');
         equella_debug_log($debuginfo);
     }
 }
