@@ -30,6 +30,9 @@ class equella_external extends external_api {
     const READ_PERMISSION = 'moodle/course:view';
     const WRITE_PERMISSION = 'moodle/course:manageactivities';
     const DEVMODE = 0; // DO-NOT-COMMI
+    private static $enrollmentcount = array();
+    private static $instructors = array();
+    private static $coursesections = array();
     public static function find_usage_for_item_parameters() {
         return new external_function_parameters(array(
 
@@ -251,6 +254,7 @@ class equella_external extends external_api {
             if ($course->id == SITEID) {
                 continue;
             }
+
             // Ugh
             if ($userobj != null && !self::has_modify_permissions($userobj, $course->id)) {
                 equella_debug_log("no modify permissions for course $course->fullname");
@@ -304,62 +308,111 @@ class equella_external extends external_api {
             'isLatest' => $isLatest,
             'archived' => $archived,
             'allVersion' => $allVersion));
-        equella_debug_log("find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion)");
+
+        $eqfields = "e.id AS eqid,e.name AS eqname, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
+        $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
+        $cmfields = "cm.section AS section,cm.visible AS cmvisible,cm.id AS cmid";
+        $sectionfields = "cs.name,cs.section,cs.id AS sectionid";
+
+        $sql = "SELECT $coursefields,$cmfields,$sectionfields,$eqfields
+                  FROM {equella} e
+                       LEFT JOIN {course} c ON c.id=e.course
+                       INNER JOIN {course_modules} cm ON cm.instance=e.id
+                       INNER JOIN {course_sections} cs ON cs.id=cm.section AND cs.course=c.id
+                       INNER JOIN {modules} md ON md.id=cm.module ";
+
         if ($params['allVersion']) {
             $sqlparams = array($uuid);
-            $sql = "SELECT e.*
-                      FROM {equella} e
-                           LEFT JOIN {course} c ON c.id=e.course
-                     WHERE uuid = ? AND c.id IS NOT NULL
-                  ORDER BY timecreated DESC";
-            $equella_items = $DB->get_recordset_sql($sql, $sqlparams);
+            $sql .= " WHERE e.uuid = ? AND c.id IS NOT NULL
+                  ORDER BY e.timecreated DESC";
+            $equellaitems = $DB->get_recordset_sql($sql, $sqlparams);
         } else if ($params['isLatest']) {
-
-            list($insql, $inparams) = $DB->get_in_or_equal(array(0,$version));
-            $sql = "SELECT e.*
-                      FROM {equella} e
-                           LEFT JOIN {course} c ON c.id=e.course
-                     WHERE version $insql AND uuid = ? AND c.id IS NOT NULL
-                  ORDER BY timecreated DESC";
-
+            list($insql, $inparams) = $DB->get_in_or_equal(array(0, $version));
+            $sql .= " WHERE e.version $insql AND e.uuid = ? AND c.id IS NOT NULL
+                  ORDER BY e.timecreated DESC";
             $inparams[] = $uuid;
-            $equella_items = $DB->get_recordset_sql($sql, $inparams);
+            $equellaitems = $DB->get_recordset_sql($sql, $inparams);
         } else {
-            $equella_items = $DB->get_recordset('equella', array('uuid' => $uuid,'version' => $version));
+            $sqlparams = array($uuid, $version);
+            $sql .= " WHERE e.uuid = ? AND e.version = ?
+                  ORDER BY e.timecreated DESC";
+            $equellaitems = $DB->get_recordset_sql('equella', $sqlparams);
         }
 
-
-        $content = array();
-        $itemViews = array();
-        $coursecaches = array();
-        $enrollmentsMap = array();
-        foreach($equella_items as $item) {
-            $cm = get_coursemodule_from_instance('equella', $item->id);
-            $itemcourseid = $cm->course;
-            if (!empty($coursecaches[$itemcourseid])) {
-                $course = $coursecaches[$itemcourseid];
-            } else {
-                $course = $DB->get_record("course", array("id" => $itemcourseid), '*', MUST_EXIST);
-                $coursecaches[$cm->course] = $course;
-            }
-
-            if (!isset($enrollmentsMap[$itemcourseid])) {
-                $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
-                $enrollmentsMap[$itemcourseid] = count($enrolledusers);
-            }
-            $enrollments = $enrollmentsMap[$item->course];
-
-            $instructor = self::get_instructor($item->course, $instructorMap);
-
-            if (!$params['archived'] && (!$course->visible || !$cm->visible)) {
+        $results = array();
+        foreach($equellaitems as $item) {
+            $courseid = $item->courseid;
+            if (!$params['archived'] && (!$item->coursevisible || !$item->cmvisible)) {
                 continue;
             }
-            $content[] = self::convert_item($item, $itemViews, $course, $cm, $params['archived'], $instructor, $enrollments);
-            // reset course
-            $course = null;
+            $results[] = self::build_item($item, $params['archived']);
         }
 
-        return array('results' => $content);
+        return array('results' => $results);
+    }
+
+    private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor = '', $enrollments = 0) {
+        global $DB;
+        static $sectionsMap = array();
+        if (isset($sectionsMap[$courseModule->section])) {
+            $section = $sectionsMap[$section->id];
+            $section_name = $section->sectionname;
+        } else {
+            $section = $DB->get_record('course_sections', array(
+
+                'course' => $courseModule->course,
+                'id' => $courseModule->section), '*', MUST_EXIST);
+            $section_name = get_section_name($course, $section);
+            $section->sectionname = $section_name;
+            $sectionsMap[$section->id] = $section;
+        }
+        if (!array_key_exists($course->id, $itemViews)) {
+            $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
+                      FROM {course_modules} cm
+                           JOIN {modules} m ON m.id = cm.module
+                           JOIN {log} l ON l.cmid = cm.id
+                     WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
+            $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
+
+            $itemViews[$course->id] = $itemViewInfo;
+        } else {
+            $itemViewInfo = $itemViews[$course->id];
+        }
+
+        $attributes = array();
+
+        $visible = ($course->visible && $courseModule->visible);
+
+        if (!array_key_exists($courseModule->id, $itemViewInfo)) {
+            $views = "0";
+            $dateAccessed = null;
+        } else {
+            $views = $itemViewInfo[$courseModule->id]->numviews;
+            $dateAccessed = $itemViewInfo[$courseModule->id]->lasttime * 1000;
+        }
+        $attributes[] = array('key' => 'views', 'value' => $views);
+
+        return array(
+
+            'id' => $item->id,
+            'coursename' => $course->fullname,
+            'courseid' => $course->id,
+            'section' => $section_name,
+            'sectionid' => $section->section,
+            'dateAdded' => $item->timecreated * 1000,
+            'dateModified' => $item->timemodified * 1000,
+            'uuid' => $item->uuid,
+            'version' => $item->version,
+            'attributes' => $attributes,
+            'attachment' => $item->path,
+            'attachmentUuid' => $item->attachmentuuid,
+            'moodlename' => $item->name,
+            'moodledescription' => strip_tags($item->intro),
+            'coursecode' => $course->idnumber,
+            'instructor' => $instructor,
+            'dateAccessed' => $dateAccessed,
+            'enrollments' => $enrollments,
+            'visible' => $visible);
     }
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc) {
         global $DB, $CFG;
@@ -432,7 +485,6 @@ class equella_external extends external_api {
 
         $itemViews = array();
         $courseMap = array();
-        $instructorMap = array();
         $enrollmentsMap = array();
 
         foreach($equella_items as $item) {
@@ -443,7 +495,7 @@ class equella_external extends external_api {
                 $course = $courseMap[$item->course];
             }
 
-            $instructor = self::get_instructor($item->course, $instructorMap);
+            $instructor = self::get_instructors($item->course);
 
             if (!isset($enrollmentsMap[$item->course])) {
                 $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
@@ -463,101 +515,7 @@ class equella_external extends external_api {
             'available' => $avail_items,
             'results' => $content);
     }
-    private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor = '', $enrollments = 0) {
-        global $DB;
-        static $sectionsMap = array();
-        if (isset($sectionsMap[$courseModule->section])) {
-            $section = $sectionsMap[$section->id];
-            $section_name = $section->sectionname;
-        } else {
-            $section = $DB->get_record('course_sections', array(
 
-                'course' => $courseModule->course,
-                'id' => $courseModule->section), '*', MUST_EXIST);
-            $section_name = get_section_name($course, $section);
-            $section->sectionname = $section_name;
-            $sectionsMap[$section->id] = $section;
-        }
-        if (!array_key_exists($course->id, $itemViews)) {
-            $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
-                      FROM {course_modules} cm
-                           JOIN {modules} m ON m.id = cm.module
-                           JOIN {log} l ON l.cmid = cm.id
-                     WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
-            $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
-
-            $itemViews[$course->id] = $itemViewInfo;
-        } else {
-            $itemViewInfo = $itemViews[$course->id];
-        }
-
-        $attributes = array();
-
-        $visible = ($course->visible && $courseModule->visible);
-
-        if (!array_key_exists($courseModule->id, $itemViewInfo)) {
-            $views = "0";
-            $dateAccessed = null;
-        } else {
-            $views = $itemViewInfo[$courseModule->id]->numviews;
-            $dateAccessed = $itemViewInfo[$courseModule->id]->lasttime * 1000;
-        }
-        $attributes[] = array('key' => 'views', 'value' => $views);
-
-        return array(
-
-            'id' => $item->id,
-            'coursename' => $course->fullname,
-            'courseid' => $course->id,
-            'section' => $section_name,
-            'sectionid' => $section->section,
-            'dateAdded' => $item->timecreated * 1000,
-            'dateModified' => $item->timemodified * 1000,
-            'uuid' => $item->uuid,
-            'version' => $item->version,
-            'attributes' => $attributes,
-            'attachment' => $item->path,
-            'attachmentUuid' => $item->attachmentuuid,
-            'moodlename' => $item->name,
-            'moodledescription' => strip_tags($item->intro),
-            'coursecode' => $course->idnumber,
-            'instructor' => $instructor,
-            'dateAccessed' => $dateAccessed,
-            'enrollments' => $enrollments,
-            'visible' => $visible);
-    }
-    private static function get_instructor($courseid, &$instructorMap) {
-        global $DB;
-
-        if (!isset($instructorMap[$courseid])) {
-            $sql = 'SELECT c.instanceid, u.firstname, u.lastname
-                      FROM {role_assignments} ra
-                           INNER JOIN {context} c on ra.contextid = c.id
-                           INNER JOIN {role} r on r.id = ra.roleid
-                           INNER JOIN {user} u ON ra.userid = u.id
-                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
-            $instructors = $DB->get_records_sql($sql, array(
-
-                'teacher',
-                'editingteacher',
-                $courseid,
-                CONTEXT_COURSE));
-            $instructor = '';
-            $first = true;
-            foreach($instructors as $user) {
-                if (!$first) {
-                    $instructor = $instructor . ', ';
-                }
-                $instructor = $instructor . fullname($user);
-                $first = false;
-            }
-
-            $instructorMap[$courseid] = $instructor;
-        } else {
-            $instructor = $instructorMap[$courseid];
-        }
-        return $instructor;
-    }
     public static function unfiltered_usage_count($user, $query, $archived) {
         global $DB;
         $params = self::validate_parameters(self::unfiltered_usage_count_parameters(), array(
@@ -581,6 +539,7 @@ class equella_external extends external_api {
         $result = array('available' => count($items));
         return $result;
     }
+
     public static function add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid) {
         global $DB, $USER;
 
@@ -671,6 +630,7 @@ class equella_external extends external_api {
         $result = array('success' => $params['param']);
         return $result;
     }
+
     public static function get_course_code($user, $courseid) {
         $params = self::validate_parameters(self::get_course_code_parameters(), array(
 
@@ -682,6 +642,7 @@ class equella_external extends external_api {
         $result = array('coursecode' => $coursecode);
         return $result;
     }
+
     public static function edit_item($user, $itemid, $title, $description) {
         global $DB;
         $params = self::validate_parameters(self::edit_item_parameters(), array(
@@ -721,6 +682,7 @@ class equella_external extends external_api {
         $result = array('success' => $success);
         return $result;
     }
+
     public static function move_item($user, $itemid, $courseid, $locationid) {
         global $DB;
         global $USER;
@@ -787,9 +749,9 @@ class equella_external extends external_api {
             'success' => $success);
         return $result;
     }
+
     public static function delete_item($user, $itemid) {
-        global $DB;
-        global $USER;
+        global $DB, $USER;
         $params = self::validate_parameters(self::delete_item_parameters(), array(
 
             'user' => $user,
@@ -831,6 +793,7 @@ class equella_external extends external_api {
         $result = array('success' => $success);
         return $result;
     }
+
     public static function get_user($username) {
         global $CFG;
 
@@ -841,6 +804,7 @@ class equella_external extends external_api {
         }
         return $user;
     }
+
     public static function is_enrolled($user, $courseid) {
         equella_debug_log("is_enrolled($user->id, $courseid)");
         $coursecontext = context_course::instance($courseid);
@@ -859,5 +823,139 @@ class equella_external extends external_api {
         $coursecontext = context_course::instance($courseid);
 
         require_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
+    }
+
+    static private function get_section_name($item) {
+        if (isset(self::$coursesections[$item->sectionid])) {
+            $section = self::$coursesections[$item->sectionid];
+            $section_name = $section->sectionname;
+        } else {
+            $section = new stdclass;
+            $section->course = $item->courseid;
+            $section->section = $item->section;
+            $section->id = $item->sectionid;
+            $section_name = get_section_name($item, $section);
+            $section->sectionname = $section_name;
+            self::$coursesections[$item->sectionid] = $section;
+        }
+        return $section_name;
+    }
+
+    static private function get_item_views($courseid) {
+        global $DB;
+        static $itemViews = array();
+        if (!isset($itemViews[$courseid])) {
+            $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
+                      FROM {course_modules} cm
+                           JOIN {modules} m ON m.id = cm.module
+                           JOIN {log} l ON l.cmid = cm.id
+                     WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
+            $itemViewInfo = $DB->get_records_sql($sql, array($courseid));
+
+            $itemViews[$courseid] = $itemViewInfo;
+        } else {
+            $itemViewInfo = $itemViews[$courseid];
+        }
+
+        return $itemViewInfo;
+    }
+    static private function build_item($item, $archived) {
+        global $DB;
+        $attributes = array();
+
+        $cmid = $item->cmid;
+        $visible = ($item->coursevisible && $item->cmvisible);
+
+        $itemViewInfo = self::get_item_views($item->courseid);
+        if (!array_key_exists($cmid, $itemViewInfo)) {
+            $views = "0";
+            $dateAccessed = null;
+        } else {
+            $views = $itemViewInfo[$cmid]->numviews;
+            $dateAccessed = $itemViewInfo[$cmid]->lasttime * 1000;
+        }
+        $attributes[] = array('key' => 'views', 'value' => $views);
+
+        return array(
+            'id' => $item->eqid,
+            'coursename' => $item->fullname,
+            'courseid' => $item->courseid,
+            'section' => self::get_section_name($item),
+            'sectionid' => $item->section,
+            'dateAdded' => $item->timecreated * 1000,
+            'dateModified' => $item->timemodified * 1000,
+            'uuid' => $item->uuid,
+            'version' => $item->version,
+            'attributes' => $attributes,
+            'attachment' => $item->path,
+            'attachmentUuid' => $item->attachmentuuid,
+            'moodlename' => $item->eqname,
+            'moodledescription' => strip_tags($item->eqintro),
+            'coursecode' => $item->idnumber,
+            'instructor' => self::get_instructors($item->courseid),
+            'dateAccessed' => $dateAccessed,
+            'enrollments' => self::count_enrolled_users($item->courseid),
+            'visible' => $visible);
+    }
+
+    static private function count_enrolled_users($courseid) {
+        global $DB;
+        if (!isset(self::$enrollmentcount[$courseid])) {
+            $coursecontext = context_course::instance($courseid, IGNORE_MISSING);
+            if ($courseid == SITEID) {
+                $context = context_system::instance();
+            } else {
+                $context = $coursecontext;
+            }
+            if ($courseid == SITEID) {
+                require_capability('moodle/site:viewparticipants', $context);
+            } else {
+                require_capability('moodle/course:viewparticipants', $context);
+            }
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext);
+            $enrolledparams['contextlevel'] = CONTEXT_USER;
+            $sql = "SELECT count(u.id)
+                      FROM {user} u
+                     WHERE u.id IN ($enrolledsql)";
+            self::$enrollmentcount[$courseid] = $DB->count_records_sql($sql, $enrolledparams);
+        }
+        return self::$enrollmentcount[$courseid];
+    }
+
+    /**
+     * Return course instructors
+     *
+     * @param int $courseid
+     * @return string
+     */
+    static private function get_instructors($courseid) {
+        global $DB;
+
+        if (!isset(self::$instructors[$courseid])) {
+            $sql = 'SELECT u.id, u.firstname, u.lastname
+                      FROM {role_assignments} ra
+                           INNER JOIN {context} c on ra.contextid = c.id
+                           INNER JOIN {role} r on r.id = ra.roleid
+                           INNER JOIN {user} u ON ra.userid = u.id
+                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
+            $users = $DB->get_records_sql($sql, array(
+                'teacher',
+                'editingteacher',
+                $courseid,
+                CONTEXT_COURSE));
+            $first = true;
+            $return = '';
+            foreach($users as $user) {
+                if (!$first) {
+                    $return .= ', ';
+                }
+                $return .= fullname($user);
+                $first = false;
+            }
+
+            self::$instructors[$courseid] = $return;
+        }
+
+        return self::$instructors[$courseid];
     }
 }
