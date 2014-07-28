@@ -26,6 +26,7 @@ require_once ($CFG->dirroot . '/enrol/externallib.php');
 
 require_once (dirname(__FILE__) . '/lib.php');
 require_once (dirname(__FILE__) . '/locallib.php');
+
 class equella_external extends external_api {
     const READ_PERMISSION = 'moodle/course:view';
     const WRITE_PERMISSION = 'moodle/course:manageactivities';
@@ -230,40 +231,54 @@ class equella_external extends external_api {
 
             'coursecode' => new external_value(PARAM_RAW, 'Course code')));
     }
+
     public static function list_courses_for_user($user, $modifiable, $archived) {
         global $DB, $CFG;
+
         $result = array();
-
         $params = self::validate_parameters(self::list_courses_for_user_parameters(), array(
-
             'user' => $user,
             'modifiable' => $modifiable,
             'archived' => $archived));
-
-        equella_debug_log("list_courses_for_user($user, $modifiable, $archived)");
 
         if ($modifiable) {
             $userobj = self::get_user($params['user']);
         } else {
             $userobj = null;
         }
+        $coursefields = " c.id,c.fullname,c.visible ";
+        $contextfields = " ctx.id AS contextid,ctx.contextlevel,ctx.instanceid,ctx.path,ctx.depth ";
+        $sql = "SELECT $coursefields,$contextfields FROM {context} ctx
+                                     JOIN {course} c
+                                          ON c.id=ctx.instanceid
+                                    WHERE ctx.contextlevel=? ";
 
-        $courses = $DB->get_recordset('course');
+        $courses = $DB->get_recordset_sql($sql, array(CONTEXT_COURSE));
         foreach($courses as $course) {
             // Ignore site level course
             if ($course->id == SITEID) {
                 continue;
             }
 
-            // Ugh
-            if ($userobj != null && !self::has_modify_permissions($userobj, $course->id)) {
-                equella_debug_log("no modify permissions for course $course->fullname");
-                continue;
+            if ($modifiable) {
+                $contextrecord = new stdclass;
+                $contextrecord->id = $course->contextid;
+                $contextrecord->contextlevel = CONTEXT_COURSE;
+                $contextrecord->instanceid = $course->id;
+                $contextrecord->path = $course->path;
+                $contextrecord->depth = $course->depth;
+                $coursecontext = eq_context_course::get_from_record($contextrecord);
+                try {
+                    $canedit = has_capability(self::WRITE_PERMISSION, $coursecontext, $userobj);
+                }catch (Exception $ex){
+                }
+                if (!$canedit) {
+                    continue;
+                }
             }
 
             if ($archived || $course->visible) {
                 $result[] = array(
-
                     'courseid' => $course->id,
                     'coursename' => $course->fullname,
                     'archived' => !($course->visible));

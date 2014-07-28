@@ -650,3 +650,14 @@ XML;
         }
     }
 }
+
+class eq_context_course extends context_course {
+    public static function get_from_record($record) {
+        if ($context = context::cache_get(CONTEXT_COURSE, $instanceid)) {
+            return $context;
+        }
+        $context = new context_course($record);
+        context::cache_add($context);
+        return $context;
+    }
+}
