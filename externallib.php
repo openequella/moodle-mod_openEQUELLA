@@ -394,30 +394,39 @@ class equella_external extends external_api {
             $equella->id,
             '%' . $params['query'] . '%');
 
-        $sql = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,
+        // compose 2 sql statements, one to fetch the requested records in a recordeset ...
+        $sqlselect = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,
                        c.fullname AS coursename, e.name AS name,
                        m.visible AS cmvisible, m.section as section,
                        e.timecreated AS timecreated, e.timemodified AS timemodified,
-                       e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid
-                  FROM {equella} e
+                       e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid ';
+
+        // and a simple SELECT COUNT query to get the total available
+        $sqlcount = 'SELECT COUNT(*) AS avail_count ';
+
+        $sqlfrom = ' FROM {equella} e
                        INNER JOIN {course} c ON e.course = c.id
                        INNER JOIN {course_modules} m ON m.instance = e.id AND m.module = ?
                  WHERE LOWER(e.name) LIKE LOWER(?)';
         if (!empty($params['courseid'])) {
-            $sql .= ' AND c.id = ? ';
+            $sqlfrom .= ' AND c.id = ? ';
             $args[] = $params['courseid'];
         }
         if (!empty($params['sectionid'])) {
-            $sql .= ' AND m.section = ? ';
+            $sqlfrom .= ' AND m.section = ? ';
             $args[] = $params['sectionid'];
         }
         if (empty($params['archived'])) {
-            $sql .= ' AND (c.visible = ? AND m.visible = ?) ';
+            $sqlfrom .= ' AND (c.visible = ? AND m.visible = ?) ';
             $args[] = 1;
             $args[] = 1;
         }
-        $sql = $sql . ' ORDER BY ' . $sortcol . ' ' . $sortord;
-        $equella_items = $DB->get_recordset_sql($sql, $args, $offset, $count);
+        $sqlselect = $sqlselect . $sqlfrom . ' ORDER BY ' . $sortcol . ' ' . $sortord;
+        $equella_items = $DB->get_recordset_sql($sqlselect, $args, $offset, $count);
+
+        $sqlcount = $sqlcount . $sqlfrom;
+
+        $avail_items = $DB->count_records_sql($sqlcount, $args);
 
         $content = array();
 
@@ -451,7 +460,7 @@ class equella_external extends external_api {
 
         return array(
 
-            'available' => count($content),
+            'available' => $avail_items,
             'results' => $content);
     }
     private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor = '', $enrollments = 0) {

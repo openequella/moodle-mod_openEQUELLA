@@ -1,3 +1,7 @@
+2014-08-01  Larry Cook  <larry.cook@pearson.com>
+
+	EQ-1462 Provide SELECT COUNT(...) in find_all_usages
+
 2014-06-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1373 Fix courseid in mdl_equella table
