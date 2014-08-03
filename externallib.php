@@ -29,7 +29,6 @@ require_once (dirname(__FILE__) . '/locallib.php');
 class equella_external extends external_api {
     const READ_PERMISSION = 'moodle/course:view';
     const WRITE_PERMISSION = 'moodle/course:manageactivities';
-    const DEVMODE = 0; // DO-NOT-COMMI
     private static $enrollmentcount = array();
     private static $instructors = array();
     private static $coursesections = array();
@@ -209,23 +208,32 @@ class equella_external extends external_api {
 
         'coursecode' => new external_value(PARAM_RAW, 'Course code')));
     }
-    public static function list_courses_for_user($user, $modifiable, $archived) {
+
+    /**
+     * List courses for given user
+     *
+     * @param string $username
+     * @param boolean $modifiable
+     * @param boolean $archived
+     * @return array
+     */
+    public static function list_courses_for_user($username, $modifiable, $archived) {
         global $DB, $CFG;
 
-        $result = array();
-        $params = self::validate_parameters(self::list_courses_for_user_parameters(), array('user' => $user,'modifiable' => $modifiable,'archived' => $archived));
+        $courselist = array();
+        $params = self::validate_parameters(self::list_courses_for_user_parameters(), array('user' => $username,'modifiable' => $modifiable,'archived' => $archived));
 
         if ($modifiable) {
-            $userobj = self::get_user($params['user']);
+            $userobj = self::get_user_by_username($params['user']);
         } else {
             $userobj = null;
         }
-        $coursefields = " c.id,c.fullname,c.visible ";
-        $contextfields = " ctx.id AS contextid,ctx.contextlevel,ctx.instanceid,ctx.path,ctx.depth ";
-        $sql = "SELECT $coursefields,$contextfields FROM {context} ctx
-                                     JOIN {course} c
-                                          ON c.id=ctx.instanceid
-                                    WHERE ctx.contextlevel=? ";
+        $coursefields = "c.id,c.fullname,c.visible";
+        $contextfields = "ctx.id AS contextid,ctx.contextlevel,ctx.instanceid,ctx.path,ctx.depth";
+        $sql = "SELECT $coursefields,$contextfields
+                  FROM {context} ctx
+                       JOIN {course} c ON c.id=ctx.instanceid
+                 WHERE ctx.contextlevel=? ";
 
         $courses = $DB->get_recordset_sql($sql, array(CONTEXT_COURSE));
         foreach($courses as $course) {
@@ -242,26 +250,28 @@ class equella_external extends external_api {
                 $contextrecord->path = $course->path;
                 $contextrecord->depth = $course->depth;
                 $coursecontext = eq_context_course::get_from_record($contextrecord);
-                try {
-                    $canedit = has_capability(self::WRITE_PERMISSION, $coursecontext, $userobj);
-                } catch(Exception $ex) {
-                }
-                if (!$canedit) {
+                if (!has_capability(self::WRITE_PERMISSION, $coursecontext, $userobj)) {
                     continue;
                 }
             }
 
             if ($archived || $course->visible) {
-                $result[] = array('courseid' => $course->id,'coursename' => $course->fullname,'archived' => !($course->visible));
+                $courselist[] = array('courseid'=>$course->id, 'coursename'=>$course->fullname, 'archived'=>!($course->visible));
             }
         }
-
-        return $result;
+        return $courselist;
     }
-    public static function list_sections_for_course($user, $courseid) {
+    /**
+     * List sections in given course
+     *
+     * @param string $username
+     * @param int $courseid
+     * @return array
+     */
+    public static function list_sections_for_course($username, $courseid) {
         global $DB;
 
-        $params = self::validate_parameters(self::list_sections_for_course_parameters(), array('user' => $user,'courseid' => $courseid));
+        $params = self::validate_parameters(self::list_sections_for_course_parameters(), array('user' => $username,'courseid' => $courseid));
 
         self::check_modify_permissions($params['user'], $params['courseid']);
 
@@ -272,16 +282,28 @@ class equella_external extends external_api {
 
         $result = array();
         foreach($sections as $section) {
+            // this triggers context_modinfo->instance, it will rebuild modinfo
             $sectionname = get_section_name($course, $section);
             $result[] = array('sectionid' => $section->section,'sectionname' => $sectionname);
         }
 
         return $result;
     }
-    public static function find_usage_for_item($user, $uuid, $version, $isLatest, $archived, $allVersion) {
+
+    /**
+     *
+     * @param string $username
+     * @param string $uuid
+     * @param int $version
+     * @param boolean $isLatest
+     * @param boolean $archived
+     * @param boolean $allVersion
+     * @return array
+     */
+    public static function find_usage_for_item($username, $uuid, $version, $isLatest, $archived, $allVersion) {
         global $DB;
 
-        $params = self::validate_parameters(self::find_usage_for_item_parameters(), array('user' => $user,'uuid' => $uuid,'version' => $version,'isLatest' => $isLatest,'archived' => $archived,'allVersion' => $allVersion));
+        $params = self::validate_parameters(self::find_usage_for_item_parameters(), array('user' => $username,'uuid' => $uuid,'version' => $version,'isLatest' => $isLatest,'archived' => $archived,'allVersion' => $allVersion));
 
         $eqfields = "e.id AS eqid,e.name AS eqname, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
         $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
@@ -314,92 +336,52 @@ class equella_external extends external_api {
         }
 
         $results = array();
+        $count = 0;
         foreach($equellaitems as $item) {
             $courseid = $item->courseid;
             if (!$params['archived'] && (!$item->coursevisible || !$item->cmvisible)) {
                 continue;
             }
             $results[] = self::build_item($item, $params['archived']);
+            $count++;
         }
-
         return array('results' => $results);
     }
-    private static function convert_item($item, &$itemViews, $course, $courseModule, $archived, $instructor = '', $enrollments = 0) {
-        global $DB;
-        static $sectionsMap = array();
-        if (isset($sectionsMap[$courseModule->section])) {
-            $section = $sectionsMap[$section->id];
-            $section_name = $section->sectionname;
-        } else {
-            $section = $DB->get_record('course_sections', array(
 
-            'course' => $courseModule->course,'id' => $courseModule->section), '*', MUST_EXIST);
-            $section_name = get_section_name($course, $section);
-            $section->sectionname = $section_name;
-            $sectionsMap[$section->id] = $section;
-        }
-        if (!array_key_exists($course->id, $itemViews)) {
-            $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
-                      FROM {course_modules} cm
-                           JOIN {modules} m ON m.id = cm.module
-                           JOIN {log} l ON l.cmid = cm.id
-                     WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
-            $itemViewInfo = $DB->get_records_sql($sql, array($course->id));
-
-            $itemViews[$course->id] = $itemViewInfo;
-        } else {
-            $itemViewInfo = $itemViews[$course->id];
-        }
-
-        $attributes = array();
-
-        $visible = ($course->visible && $courseModule->visible);
-
-        if (!array_key_exists($courseModule->id, $itemViewInfo)) {
-            $views = "0";
-            $dateAccessed = null;
-        } else {
-            $views = $itemViewInfo[$courseModule->id]->numviews;
-            $dateAccessed = $itemViewInfo[$courseModule->id]->lasttime * 1000;
-        }
-        $attributes[] = array('key' => 'views','value' => $views);
-
-        return array(
-
-            'id' => $item->id,
-            'coursename' => $course->fullname,
-            'courseid' => $course->id,
-            'section' => $section_name,
-            'sectionid' => $section->section,
-            'dateAdded' => $item->timecreated * 1000,
-            'dateModified' => $item->timemodified * 1000,
-            'uuid' => $item->uuid,
-            'version' => $item->version,
-            'attributes' => $attributes,
-            'attachment' => $item->path,
-            'attachmentUuid' => $item->attachmentuuid,
-            'moodlename' => $item->name,
-            'moodledescription' => strip_tags($item->intro),
-            'coursecode' => $course->idnumber,
-            'instructor' => $instructor,
-            'dateAccessed' => $dateAccessed,
-            'enrollments' => $enrollments,
-            'visible' => $visible);
-    }
+    /**
+     *
+     * @param unknown $user
+     * @param unknown $query
+     * @param unknown $courseid
+     * @param unknown $sectionid
+     * @param unknown $archived
+     * @param unknown $offset
+     * @param unknown $count
+     * @param unknown $sortcolumn
+     * @param unknown $sortasc
+     * @return array
+     */
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc) {
         global $DB, $CFG;
 
         $params = self::validate_parameters(self::find_all_usage_parameters(), array(
+            'user' => $user,
+            'query' => $query,
+            'courseid' => $courseid,
+            'sectionid' => $sectionid,
+            'archived' => $archived,
+            'offset' => $offset,
+            'count' => $count,
+            'sortcolumn' => $sortcolumn,
+            'sortasc' => $sortasc)
+        );
 
-        'user' => $user,'query' => $query,'courseid' => $courseid,'sectionid' => $sectionid,'archived' => $archived,'offset' => $offset,'count' => $count,'sortcolumn' => $sortcolumn,'sortasc' => $sortasc));
-        equella_debug_log("find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count)");
-
-        $equella = $DB->get_record('modules', array('name' => 'equella'), '*', MUST_EXIST);
         $sortcol = $params['sortcolumn'];
         if (empty($sortcol)) {
             $sortcol = 'timecreated';
-        } else if ($sortcol == 'course') {
-            $sortcol = 'coursename';
+        }
+        if ($sortcol == 'course') {
+            $sortcol = 'fullname';
         } else if ($sortcol == 'name' || $sortcol == 'timecreated') {
             // all good
         } else {
@@ -407,257 +389,228 @@ class equella_external extends external_api {
         }
         $sortord = $params['sortasc'] ? 'ASC' : 'DESC';
 
-        $args = array($equella->id,'%' . $params['query'] . '%');
+        $args = array('%' . $params['query'] . '%');
 
-        // compose 2 sql statements, one to fetch the requested records in a recordeset ...
-        $sqlselect = 'SELECT e.id AS id, c.id AS course, c.visible AS coursevisible,
-                       c.fullname AS coursename, e.name AS name,
-                       m.visible AS cmvisible, m.section as section,
-                       e.timecreated AS timecreated, e.timemodified AS timemodified,
-                       e.uuid AS uuid, e.version AS version, e.path AS path, e.intro as intro, e.attachmentuuid as attachmentuuid ';
+        $eqfields = "e.id AS eqid,e.name AS name, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
+        $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
+        $cmfields = "cm.section AS section,cm.visible AS cmvisible,cm.id AS cmid";
+        $sectionfields = "cs.name,cs.section,cs.id AS sectionid";
 
-        // and a simple SELECT COUNT query to get the total available
-        $sqlcount = 'SELECT COUNT(*) AS avail_count ';
-
-        $sqlfrom = ' FROM {equella} e
+        $sql = "SELECT $eqfields,$coursefields,$cmfields,$sectionfields
+                  FROM {equella} e
                        INNER JOIN {course} c ON e.course = c.id
-                       INNER JOIN {course_modules} m ON m.instance = e.id AND m.module = ?
-                 WHERE LOWER(e.name) LIKE LOWER(?)';
+                       INNER JOIN {course_modules} cm ON cm.instance = e.id
+                       INNER JOIN {course_sections} cs ON cs.id=cm.section AND cs.course=c.id
+                       INNER JOIN {modules} md ON md.id = cm.module
+                 WHERE LOWER(e.name) LIKE LOWER(?)";
+
         if (!empty($params['courseid'])) {
-            $sqlfrom .= ' AND c.id = ? ';
+            $sql .= ' AND c.id = ? ';
             $args[] = $params['courseid'];
         }
         if (!empty($params['sectionid'])) {
-            $sqlfrom .= ' AND m.section = ? ';
+            $sql .= ' AND cm.section = ? ';
             $args[] = $params['sectionid'];
         }
         if (empty($params['archived'])) {
-            $sqlfrom .= ' AND (c.visible = ? AND m.visible = ?) ';
+            $sql .= ' AND (c.visible = ? AND cm.visible = ?) ';
             $args[] = 1;
             $args[] = 1;
         }
-        $sqlselect = $sqlselect . $sqlfrom . ' ORDER BY ' . $sortcol . ' ' . $sortord;
-        $equella_items = $DB->get_recordset_sql($sqlselect, $args, $offset, $count);
-
-        $sqlcount = $sqlcount . $sqlfrom;
-
-        $avail_items = $DB->count_records_sql($sqlcount, $args);
+        $sql = $sql . ' ORDER BY ' . $sortcol . ' ' . $sortord;
+        $equellaitems = $DB->get_recordset_sql($sql, $args, $offset, $count);
 
         $content = array();
-
-        $itemViews = array();
-        $courseMap = array();
-        $enrollmentsMap = array();
-
-        foreach($equella_items as $item) {
-            if (!array_key_exists($item->course, $courseMap)) {
-                $course = $DB->get_record('course', array('id' => $item->course), '*', MUST_EXIST);
-                $courseMap[$item->course] = $course;
-            } else {
-                $course = $courseMap[$item->course];
-            }
-
-            $instructor = self::get_instructors($item->course);
-
-            if (!isset($enrollmentsMap[$item->course])) {
-                $enrolledusers = core_enrol_external::get_enrolled_users($item->course);
-                $enrollmentsMap[$item->course] = count($enrolledusers);
-            }
-            $enrollments = $enrollmentsMap[$item->course];
-
-            $courseModule = new stdClass();
-            $courseModule->course = $item->course;
-            $courseModule->section = $item->section;
-
-            $content[] = self::convert_item($item, $itemViews, $course, $courseModule, $params['archived'], $instructor, $enrollments);
+        $count = 0;
+        foreach($equellaitems as $item) {
+            $content[] = self::build_item($item);
+            $count++;
         }
 
-        return array(
-            'available' => $avail_items,
-            'results' => $content);
+        return array('available' => $count, 'results' => $content);
     }
-    public static function unfiltered_usage_count($user, $query, $archived) {
+    /**
+     *
+     * @param string $username
+     * @param string $query
+     * @param boolean $archived
+     * @return array
+     */
+    public static function unfiltered_usage_count($username, $query, $archived) {
         global $DB;
         $params = self::validate_parameters(self::unfiltered_usage_count_parameters(), array(
-
-        'user' => $user,'query' => $query,'archived' => $archived));
-        equella_debug_log("unfiltered_usage_count($user, $query, $archived)");
-
-        $available = 0;
-        $equella = $DB->get_record('modules', array(
-
-        'name' => 'equella'), '*', MUST_EXIST);
-        $sql = "SELECT e.id, e.course AS course FROM {equella} e WHERE LOWER(e.name) LIKE LOWER(?)";
-        $items = $DB->get_records_sql($sql, array('%' . $params['query'] . '%'));
-
-        /*
-         * foreach ($items as $item) { $courseModule = $DB->get_record('course_modules', array('module' => $equella->id, 'instance' => $item->id), '*', MUST_EXIST); if (!$params['archived'] && (!$course->visible || !$courseModule->visible)) { continue; } $available++; }
-         */
-
-        $result = array('available' => count($items));
-        return $result;
+            'user' => $username,'query' => $query,'archived' => $archived));
+        $sql = "SELECT count(e.id) FROM {equella} e WHERE LOWER(e.name) LIKE LOWER(?)";
+        $count = $DB->count_records_sql($sql, array('%' . $params['query'] . '%'));
+        return array('available' => $count);
     }
-    public static function add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid) {
+
+    /**
+     *
+     * @param unknown $user
+     * @param unknown $courseid
+     * @param unknown $sectionid
+     * @param unknown $itemUuid
+     * @param unknown $itemVersion
+     * @param unknown $url
+     * @param unknown $title
+     * @param unknown $description
+     * @param unknown $attachmentUuid
+     * @return array
+     */
+    public static function add_item_to_course($username, $courseid, $sectionnum, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid) {
         global $DB, $USER;
 
         $params = self::validate_parameters(self::add_item_to_course_parameters(), array(
+            'user' => $username,
+            'courseid' => $courseid,
+            'sectionid' => $sectionnum,
+            'itemUuid' => $itemUuid,
+            'itemVersion' => $itemVersion,
+            'url' => $url,
+            'title' => $title,
+            'description' => $description,
+            'attachmentUuid' => $attachmentUuid
+        ));
 
-        'user' => $user,'courseid' => $courseid,'sectionid' => $sectionid,'itemUuid' => $itemUuid,'itemVersion' => $itemVersion,'url' => $url,'title' => $title,'description' => $description,'attachmentUuid' => $attachmentUuid));
+        self::check_modify_permissions($username, $courseid);
+        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
-        equella_debug_log("add_item_to_course($user, $courseid, $sectionid, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid)");
-        self::check_modify_permissions($params['user'], $params['courseid']);
+        $modname = 'equella';
+        $module = $DB->get_record('modules', array('name' => $modname));
 
-        $module = $DB->get_record('modules', array('name' => 'equella'));
+        $eq = new stdClass();
+        $eq->course = $courseid;
+        $eq->module = $module->id;
+        $eq->name = $title;
+        $eq->intro = $description;
+        $eq->introformat = FORMAT_HTML;
+        $eq->url = $url;
+        $eq->uuid = $itemUuid;
+        $eq->version = $itemVersion;
+        $eq->attachmentuuid = $attachmentUuid;
 
-        $mod = new stdClass();
-        $mod->course = $params['courseid'];
+        $eqid = equella_add_instance($eq);
+
+        $cmid = null;
+
+        $mod = new stdClass;
+        $mod->course = $courseid;
         $mod->module = $module->id;
-        $mod->coursemodule = '';
-        $mod->section = $params['sectionid'];
-        $mod->modulename = 'equella';
-        $mod->name = $params['title'];
-        $mod->intro = $params['description'];
-        $mod->introformat = FORMAT_HTML;
-        $mod->url = $params['url'];
-        $mod->uuid = $params['itemUuid'];
-        $mod->version = $params['itemVersion'];
-        $mod->attachmentuuid = $params['attachmentUuid'];
-        $mod->instance = equella_add_instance($mod);
-
-        $success = true;
-        // course_modules and course_sections each contain a reference
-        // to each other, so we have to update one of them twice.
-        if (!$mod->coursemodule = add_course_module($mod)) {
-            print_error('cannotaddcoursemodule');
-            $success = false;
+        $mod->instance = $eqid;
+        $mod->modulename = $modname;
+        $mod->section = 0;
+        if (!$cmid = add_course_module($mod)) {
+            throw new moodle_exception('cannotaddcoursemodule');
         }
-        $modcontext = context_module::instance($mod->coursemodule);
-        if (!$sectionid = add_mod_to_section($mod)) {
-            print_error('cannotaddcoursemoduletosection');
-            return null;
+        if (!$addedsectionid = course_add_cm_to_section($courseid, $cmid, $sectionnum)) {
+            throw new moodle_exception('cannotaddcoursemoduletosection');
         }
 
-        if (!$DB->set_field('course_modules', 'section', $sectionid, array(
-
-        'id' => $mod->coursemodule))) {
-            print_error("Could not update the course module with the correct section");
-            return null;
-        }
-
-        set_coursemodule_visible($mod->coursemodule, true);
+        set_coursemodule_visible($cmid, true);
 
         $eventdata = new stdClass();
-        $eventdata->modulename = $mod->modulename;
-        $eventdata->name = $mod->name;
-        $eventdata->cmid = $mod->coursemodule;
-        $eventdata->courseid = $mod->course;
+        $eventdata->modulename = $modname;
+        $eventdata->name = $eq->name;
+        $eventdata->cmid = $cmid;
+        $eventdata->courseid = $eq->course;
         $eventdata->userid = $USER->id;
         events_trigger('mod_created', $eventdata);
 
-        add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance");
-        add_to_log($mod->course, $mod->modulename, "add equella resource", "view.php?id=$mod->coursemodule", "$mod->instance", $mod->coursemodule);
+        add_to_log($eq->course, "course", "add mod", "../mod/$modname/view.php?id=$cmid", "$modname $eqid");
+        add_to_log($eq->course, $modname, "add equella resource", "view.php?id=$cmid", "$eqid", $cmid);
 
-        rebuild_course_cache($mod->course);
-
-        $section = $DB->get_record('course_sections', array(
-
-        'course' => $courseid,'section' => $params['sectionid']));
-
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         $result = array(
+            'courseid' => $courseid,
+            'coursename' => $course->fullname,
+            'sectionid' => $params['sectionid'],
+            'sectionname' => get_section_name($courseid, $sectionnum)
+        );
+        //flog("DB queries: " . $DB->perf_get_queries());
 
-        'courseid' => $courseid,'coursename' => $course->fullname,'sectionid' => $params['sectionid'],'sectionname' => get_section_name($course, $section));
         return $result;
     }
     public static function test_connection($param) {
         $params = self::validate_parameters(self::test_connection_parameters(), array('param' => $param));
 
-        $result = array('success' => $params['param']);
-        return $result;
+        return array('success' => $params['param']);
     }
     public static function get_course_code($user, $courseid) {
-        $params = self::validate_parameters(self::get_course_code_parameters(), array(
-
-        'user' => $user,'courseid' => $courseid));
+        $params = self::validate_parameters(self::get_course_code_parameters(),
+            array(
+                'user' => $user,
+                'courseid' => $courseid
+            )
+        );
 
         $coursecode = equella_get_courseId($params['courseid']);
 
-        $result = array('coursecode' => $coursecode);
-        return $result;
+        return array('coursecode' => $coursecode);
     }
     public static function edit_item($user, $itemid, $title, $description) {
         global $DB;
         $params = self::validate_parameters(self::edit_item_parameters(), array(
+            'user' => $user,
+            'itemid' => $itemid,
+            'title' => $title,
+            'description' => $description));
 
-        'user' => $user,'itemid' => $itemid,'title' => $title,'description' => $description));
+        $eq = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
+        self::check_modify_permissions($params['user'], $eq->course);
 
-        $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
-        self::check_modify_permissions($params['user'], $item->course);
+        $cm = get_coursemodule_from_instance('equella', $eq->id, $eq->course, false, MUST_EXIST);
 
-        $equella = $DB->get_record('modules', array('name' => 'equella'));
-        $courseModule = $DB->get_record('course_modules', array(
+        $eq->name = $params['title'];
+        $eq->intro = $params['description'];
+        $eq->instance = $cm->instance;
 
-        'module' => $equella->id,'instance' => $item->id), '*', MUST_EXIST);
-
-        $item->name = $params['title'];
-        $item->intro = $params['description'];
-        $item->instance = $courseModule->instance;
-
-        $success = equella_update_instance($item);
+        $success = equella_update_instance($eq);
 
         $eventdata = new stdClass();
         $eventdata->modulename = 'equella';
-        $eventdata->name = $item->name;
-        $eventdata->cmid = $courseModule->instance;
-        $eventdata->courseid = $item->course;
+        $eventdata->name = $eq->name;
+        $eventdata->cmid = $cm->id;
+        $eventdata->courseid = $eq->course;
         $eventdata->userid = $USER->id;
         events_trigger('mod_updated', $eventdata);
 
-        add_to_log($item->course, "course", "update mod", "../mod/equella/view.php?id=$courseModule->id", "equella $item->instance");
-        add_to_log($item->course, "equella", "update equella resource", "view.php?id=$courseModule->id", "$item->instance", $courseModule->id);
+        add_to_log($eq->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $eq->instance");
+        add_to_log($eq->course, "equella", "update equella resource", "view.php?id=$cm->id", "$eq->instance", $cm->id);
 
-        rebuild_course_cache($item->course);
-        $result = array('success' => $success);
-        return $result;
+        rebuild_course_cache($eq->course);
+        return array('success' => $success);
     }
     public static function move_item($user, $itemid, $courseid, $locationid) {
-        global $DB;
-        global $USER;
+        global $DB, $USER;
         $params = self::validate_parameters(self::move_item_parameters(), array(
-
-        'user' => $user,'itemid' => $itemid,'courseid' => $courseid,'locationid' => $locationid));
+            'user' => $user,'itemid' => $itemid,'courseid' => $courseid,'locationid' => $locationid));
 
         $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
         self::check_modify_permissions($params['user'], $item->course);
-        self::check_modify_permissions($params['user'], $params['courseid']);
 
-        $equella = $DB->get_record('modules', array('name' => 'equella'));
-        $courseModule = $DB->get_record('course_modules', array(
+        $cm = get_coursemodule_from_instance('equella', $item->id, $item->course, false, MUST_EXIST);
 
-        'module' => $equella->id,'instance' => $item->id), '*', MUST_EXIST);
-
-        $oldCourse = $courseModule->course;
+        $oldCourse = $cm->course;
         $newCourse = $params['courseid'];
 
         $newSection = $DB->get_record('course_sections', array(
+            'course' => $newCourse,'section' => $params['locationid']), '*', MUST_EXIST);
 
-        'course' => $newCourse,'section' => $params['locationid']), '*', MUST_EXIST);
+        delete_mod_from_section($cm->id, $cm->section);
 
-        delete_mod_from_section($courseModule->id, $courseModule->section);
-
-        $courseModule->section = $newSection->id;
-        $courseModule->course = $newCourse;
+        $cm->section = $newSection->id;
+        $cm->course = $newCourse;
         $item->course = $newCourse;
         $item->section = $newSection->section;
-        $item->instance = $courseModule->instance;
-        $item->coursemodule = $courseModule->id;
+        $item->instance = $cm->instance;
+        $item->cm = $cm->id;
 
-        $success = $DB->update_record("course_modules", $courseModule);
+        $success = $DB->update_record("course_modules", $cm);
 
         if ($success) {
             $success = equella_update_instance($item);
 
-            if (!$sectionid = add_mod_to_section($item)) {
+            if (!$sectionid = course_add_cm_to_section($newCourse, $cm->id, $newSection->section)) {
                 print_error('cannotaddcoursemoduletosection');
                 return null;
             }
@@ -665,64 +618,51 @@ class equella_external extends external_api {
             $eventdata = new stdClass();
             $eventdata->modulename = 'equella';
             $eventdata->name = $item->name;
-            $eventdata->cmid = $courseModule->instance;
+            $eventdata->cmid = $cm->id;
             $eventdata->courseid = $item->course;
             $eventdata->userid = $USER->id;
             events_trigger('mod_updated', $eventdata);
 
-            add_to_log($item->course, "course", "update mod", "../mod/equella/view.php?id=$courseModule->id", "equella $item->instance");
-            add_to_log($item->course, "equella", "update equella resource", "view.php?id=$courseModule->id", "$item->instance", $courseModule->id);
+            add_to_log($item->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $item->instance");
+            add_to_log($item->course, "equella", "update equella resource", "view.php?id=$cm->id", "$item->instance", $cm->id);
 
             rebuild_course_cache($oldCourse);
             rebuild_course_cache($newCourse);
         }
-        $result = array(
-
-        'success' => $success);
-        return $result;
+        return array('success' => $success);
     }
     public static function delete_item($user, $itemid) {
         global $DB, $USER;
         $params = self::validate_parameters(self::delete_item_parameters(), array(
-
-        'user' => $user,'itemid' => $itemid));
+            'user' => $user,
+            'itemid' => $itemid));
 
         $item = $DB->get_record('equella', array('id' => $params['itemid']), '*', MUST_EXIST);
         self::check_modify_permissions($params['user'], $item->course);
 
-        $equella = $DB->get_record('modules', array('name' => 'equella'));
-        $courseModule = $DB->get_record('course_modules', array(
+        $cm = get_coursemodule_from_instance('equella', $item->id, $item->course, false, MUST_EXIST);
 
-        'module' => $equella->id,'instance' => $item->id), '*', MUST_EXIST);
-
-        $success = equella_delete_instance($params['itemid']);
+        $success = equella_delete_instance($item->id);
 
         if ($success) {
-            if (!delete_course_module($courseModule->id)) {
-                print_error('deletednot', '', '', "the {$courseModule->modname} (coursemodule)");
-                $success = false;
-            }
-
-            if (!delete_mod_from_section($courseModule->id, $courseModule->section)) {
-                print_error('deletednot', '', '', "the {$courseModule->modname} from that section");
+            if (!course_delete_module($cm->id)) {
+                print_error('deletednot', '', '', "the {$cm->modname} (coursemodule)");
                 $success = false;
             }
 
             $eventdata = new stdClass();
             $eventdata->modulename = 'equella';
-            $eventdata->cmid = $courseModule->instance;
+            $eventdata->cmid = $cm->id;
             $eventdata->courseid = $item->course;
             $eventdata->userid = $USER->id;
             events_trigger('mod_delete', $eventdata);
 
-            add_to_log($item->course, "course", "delete mod", "view.php?id=$courseModule->course", "equella $courseModule->instance", $courseModule->id);
+            add_to_log($item->course, "course", "delete mod", "view.php?id=$cm->course", "equella $cm->instance", $cm->id);
 
-            rebuild_course_cache($item->course);
         }
-        $result = array('success' => $success);
-        return $result;
+        return array('success' => $success);
     }
-    public static function get_user($username) {
+    private static function get_user_by_username($username) {
         global $CFG;
 
         $user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id);
@@ -733,7 +673,6 @@ class equella_external extends external_api {
         return $user;
     }
     public static function is_enrolled($user, $courseid) {
-        equella_debug_log("is_enrolled($user->id, $courseid)");
         $coursecontext = context_course::instance($courseid);
         return is_enrolled($coursecontext, $user->id);
     }
@@ -746,12 +685,54 @@ class equella_external extends external_api {
         return has_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
     public static function check_modify_permissions($username, $courseid) {
-        $user = self::get_user($username);
+        $user = self::get_user_by_username($username);
         $coursecontext = context_course::instance($courseid);
 
         require_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
-    static private function get_section_name($item) {
+    static private function build_item($item, $archived) {
+        global $DB;
+        $attributes = array();
+
+        $cmid = $item->cmid;
+        $visible = ($item->coursevisible && $item->cmvisible);
+
+
+        $instructors = self::get_instructors($item->courseid);
+        $enrollmentcount = self::count_enrolled_users($item->courseid);
+        $sectionname = self::get_section_name_from_item($item);
+        $itemViewInfo = self::get_item_views($item->courseid);
+        if (!array_key_exists($cmid, $itemViewInfo)) {
+            $views = "0";
+            $dateAccessed = null;
+        } else {
+            $views = $itemViewInfo[$cmid]->numviews;
+            $dateAccessed = $itemViewInfo[$cmid]->lasttime * 1000;
+        }
+        $attributes[] = array('key' => 'views','value' => $views);
+
+        return array(
+            'id' => $item->eqid,
+            'coursename' => $item->fullname,
+            'courseid' => $item->courseid,
+            'section' => $sectionname,
+            'sectionid' => $item->section,
+            'dateAdded' => $item->timecreated * 1000,
+            'dateModified' => $item->timemodified * 1000,
+            'uuid' => $item->uuid,
+            'version' => $item->version,
+            'attributes' => $attributes,
+            'attachment' => $item->path,
+            'attachmentUuid' => $item->attachmentuuid,
+            'moodlename' => $item->eqname,
+            'moodledescription' => format_text($item->eqintro),
+            'coursecode' => $item->idnumber,
+            'instructor' => $instructors,
+            'dateAccessed' => $dateAccessed,
+            'enrollments' => $enrollmentcount,
+            'visible' => $visible);
+    }
+    static private function get_section_name_from_item($item, $fast=false) {
         if (isset(self::$coursesections[$item->sectionid])) {
             $section = self::$coursesections[$item->sectionid];
             $section_name = $section->sectionname;
@@ -760,7 +741,11 @@ class equella_external extends external_api {
             $section->course = $item->courseid;
             $section->section = $item->section;
             $section->id = $item->sectionid;
-            $section_name = get_section_name($item, $section);
+            if ($fast) {
+                $section_name = get_string('sectionname', 'format_'.$item->format) . ' ' . $item->section;
+            } else {
+                $section_name = get_section_name($item->courseid, $section);
+            }
             $section->sectionname = $section_name;
             self::$coursesections[$item->sectionid] = $section;
         }
@@ -783,44 +768,6 @@ class equella_external extends external_api {
         }
 
         return $itemViewInfo;
-    }
-    static private function build_item($item, $archived) {
-        global $DB;
-        $attributes = array();
-
-        $cmid = $item->cmid;
-        $visible = ($item->coursevisible && $item->cmvisible);
-
-        $itemViewInfo = self::get_item_views($item->courseid);
-        if (!array_key_exists($cmid, $itemViewInfo)) {
-            $views = "0";
-            $dateAccessed = null;
-        } else {
-            $views = $itemViewInfo[$cmid]->numviews;
-            $dateAccessed = $itemViewInfo[$cmid]->lasttime * 1000;
-        }
-        $attributes[] = array('key' => 'views','value' => $views);
-
-        return array(
-            'id' => $item->eqid,
-            'coursename' => $item->fullname,
-            'courseid' => $item->courseid,
-            'section' => self::get_section_name($item),
-            'sectionid' => $item->section,
-            'dateAdded' => $item->timecreated * 1000,
-            'dateModified' => $item->timemodified * 1000,
-            'uuid' => $item->uuid,
-            'version' => $item->version,
-            'attributes' => $attributes,
-            'attachment' => $item->path,
-            'attachmentUuid' => $item->attachmentuuid,
-            'moodlename' => $item->eqname,
-            'moodledescription' => strip_tags($item->eqintro),
-            'coursecode' => $item->idnumber,
-            'instructor' => self::get_instructors($item->courseid),
-            'dateAccessed' => $dateAccessed,
-            'enrollments' => self::count_enrolled_users($item->courseid),
-            'visible' => $visible);
     }
     static private function count_enrolled_users($courseid) {
         global $DB;
