@@ -11,7 +11,7 @@ M.mod_equella.submitform = function(Y, formid) {
 M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	title, redirecturl) {
     var bodyNode = Y.one('body');
-    var initialheight = 500;
+    var initialheight = Y.one('body').get('winHeight') * 0.9;
     bodyNode.addClass('equella-page');
     var generate_html = function(append) {
 	var iframe = '';
@@ -69,15 +69,15 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	var footerheight = get_htmlelement_size('page-footer', 'height');
 	var newheight;
 	if (initialize) {
-	    //newheight = Y.one('body').get('winHeight') * 0.9;
-	    //if (newheight < minheight) {
-	    //newheight = minheight;
-	    //}
-	    newheight = initialheight;
+            if (initialheight < minheight) {
+                newheight = minheight;
+            } else {
+                newheight = initialheight;
+            }
 	} else {
 	    newheight = get_htmlelement_size(parentContainer, 'height');
 	}
-	newheight = newheight - 50;
+        newheight = newheight - 50;
 	obj.setStyle('height', newheight + 'px');
     };
     Y.use('panel', 'dd-plugin', 'resize-plugin', 'event', function(Y) {
