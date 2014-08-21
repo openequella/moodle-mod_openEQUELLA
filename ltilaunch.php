@@ -36,6 +36,9 @@ if ($action == 'view') {
     $equella->cmid = $cmid;
     $equella->course = $course->id;
     $params = equella_lti_params($equella, $course);
+    
+    add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
+    
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
