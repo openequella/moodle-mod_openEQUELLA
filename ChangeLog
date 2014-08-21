@@ -1,6 +1,29 @@
-2014-08-01  Larry Cook  <larry.cook@pearson.com>
+2014-08-28  Luke Rossiter  <lukerossiter@hotmail.com>
+
+	Add EQUELLA views to moodle logs when using LTI
+	When LTI authentication is enabled, viewing an EQUELLA resource set to open in a new window did not add an entry to the moodle logs. Log entry added just before the redirect (similar to view.php).
+
+2014-08-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1450 improve find_all_usage
+
+	coding style fix
+
+	Check if coursemodule exists
+
+	EQ-1444 Improve list_courses_for_user()
+
+	EQ-1450 find_usage_for_item performance improvements
+
+	EQ-1052 Dynamic window size
+
+2014-08-01  Larry Cook  <larry.cook@equella.com>
 
 	EQ-1462 Provide SELECT COUNT(...) in find_all_usages
+
+2014-07-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Declare $CFG in exception class
 
 2014-06-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
@@ -23,8 +46,6 @@
 
 2014-06-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	Update ChangeLog
-
 	Issue #24 bump module version
 
 	Issue #24 Fix custome roles' lang strings issue
@@ -33,15 +54,9 @@
 
 	Clean up get_all_editing_roles()
 
-	Update ChangeLog
-
 	More checks on course category
 
 	Remove hardcoded category id in @agrowe's code
-
-2014-06-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
-
-	Add changelog
 
 2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
