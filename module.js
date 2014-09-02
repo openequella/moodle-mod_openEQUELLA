@@ -13,6 +13,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
     var bodyNode = Y.one('body');
     var initialheight = Y.one('body').get('winHeight') * 0.9;
     bodyNode.addClass('equella-page');
+
     var generate_html = function(append) {
 	var iframe = '';
 	//if (Y.UA.ie > 0) {
@@ -27,7 +28,6 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 		+ '"><div class="yui3-widget-hd">' + title
 		+ '</div><div class="yui3-widget-bd">' + iframe
 		+ '</div></div>');
-	var bodyNode = Y.one(document.body);
 	if (append) {
 	    bodyNode.append(html);
 	}
@@ -95,7 +95,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	    srcNode : '#' + equellaContainer,
 	    width : width,
 	    height : initialheight,
-	    zIndex : 1031,
+	    zIndex : 4031,
 	    xy : [ x, y ],
 	    centered : false,
 	    modal : true,

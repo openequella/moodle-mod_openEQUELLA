@@ -62,7 +62,7 @@ class mod_equella_mod_form extends moodleform_mod {
             $mform->setAdvanced($option);
         }
 
-        $this->standard_coursemodule_elements(false);
+        $this->standard_coursemodule_elements();
         $this->add_action_buttons();
     }
     function set_data($data) {
@@ -96,6 +96,14 @@ class mod_equella_mod_form extends moodleform_mod {
             $args->instance = $form->instance;
 
             echo equella_select_dialog($args);
+
+            // XXX https://github.com/equella/moodle-module/issues/28
+            // This is a hack to make moodle believes certain html element exists.
+            // When conditional access is enabled, moodle expects id_availabilityconditionsjson field
+            // in standard module form, as we don't use standard form.
+            echo html_writer::start_tag('form', array('style'=>'display:none'));
+            echo html_writer::empty_tag('input', array('id'=>'id_availabilityconditionsjson', 'type'=>'hidden'));
+            echo html_writer::end_tag('form');
         } else {
             parent::display();
         }
