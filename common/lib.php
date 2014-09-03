@@ -152,13 +152,11 @@ function get_all_editing_roles() {
     global $DB;
     $sql = "SELECT r.id,r.shortname,r.name,r.sortorder,r.archetype,r.description
               FROM {role} r
-             WHERE r.id IN (
-                SELECT r.id
-                  FROM {role_capabilities} rc
-            INNER JOIN {role} r ON rc.roleid = r.id
-                 WHERE rc.capability = :capability AND rc.permission = 1
-              ORDER BY r.sortorder
-        )";
+             WHERE r.id IN (SELECT r.id
+                              FROM {role_capabilities} rc
+                        INNER JOIN {role} r ON rc.roleid = r.id
+                             WHERE rc.capability = :capability AND rc.permission = 1)
+                   ORDER BY r.sortorder";
     $roles = $DB->get_records_sql($sql, array('capability' => 'moodle/course:manageactivities'));
     return $roles;
 }
