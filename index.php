@@ -9,20 +9,19 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-require_once("../../config.php");
-require_once("lib.php");
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once ("../../config.php");
+require_once ("lib.php");
 
 require_login();
 
-$id = required_param('id', PARAM_INT);   // course
+$id = required_param('id', PARAM_INT); // course
 
-if (! $course = $DB->get_record("course", array("id" => $id))) {
+if (!$course = $DB->get_record("course", array("id" => $id))) {
     print_error('invalidcourseid', '', '', $id);
 }
 
@@ -37,27 +36,27 @@ $strtopic = get_string("topic");
 $strname = get_string("name");
 
 $PAGE->set_url('/mod/equella/index.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname.': '.$strequellas);
+$PAGE->set_title($course->shortname . ': ' . $strequellas);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strequellas);
 echo $OUTPUT->header();
 
-if (! $equellas = get_all_instances_in_course("equella", $course)) {
+if (!$equellas = get_all_instances_in_course("equella", $course)) {
     notice($strnoinst, "../../course/view.php?id=$course->id");
-    die;
+    die();
 }
 
 $timenow = time();
 $table = new html_table();
 if ($course->format == "weeks") {
-    $table->head  = array ($strweek, $strname);
-    $table->align = array ("center", "left");
+    $table->head = array($strweek,$strname);
+    $table->align = array("center","left");
 } else if ($course->format == "topics") {
-    $table->head  = array ($strtopic, $strname);
-    $table->align = array ("center", "left");
+    $table->head = array($strtopic,$strname);
+    $table->align = array("center","left");
 } else {
-    $table->head  = array ($strname);
-    $table->align = array ("left");
+    $table->head = array($strname);
+    $table->align = array("left");
 }
 
 $currentgroup = get_current_group($course->id);
@@ -70,12 +69,12 @@ if ($currentgroup and isteacheredit($course->id)) {
 
 $currentsection = "";
 
-foreach ($equellas as $equella) {
+foreach($equellas as $equella) {
     if (!$equella->visible) {
-        //Show dimmed if the mod is hidden
+        // Show dimmed if the mod is hidden
         $link = "<a class=\"dimmed\" href=\"view.php?id=$equella->coursemodule\">$equella->name</a>";
     } else {
-        //Show normal if the mod is visible
+        // Show normal if the mod is visible
         $link = "<a href=\"view.php?id=$equella->coursemodule\">$equella->name</a>";
     }
 
@@ -91,9 +90,9 @@ foreach ($equellas as $equella) {
     }
 
     if ($course->format == "weeks" or $course->format == "topics") {
-        $table->data[] = array ($printsection, $link);
+        $table->data[] = array($printsection,$link);
     } else {
-        $table->data[] = array ($link);
+        $table->data[] = array($link);
     }
 }
 

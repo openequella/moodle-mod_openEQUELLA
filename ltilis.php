@@ -9,14 +9,13 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-require_once(dirname(__FILE__) . "/../../config.php");
-require_once($CFG->dirroot . '/mod/equella/locallib.php');
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once (dirname(__FILE__) . "/../../config.php");
+require_once ($CFG->dirroot . '/mod/equella/locallib.php');
 
 $httpbody = file_get_contents("php://input");
 

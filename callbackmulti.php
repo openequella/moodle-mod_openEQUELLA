@@ -9,15 +9,14 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-require_once("../../config.php");
-require_once("../../course/lib.php");
-require_once("lib.php");
+// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+require_once ("../../config.php");
+require_once ("../../course/lib.php");
+require_once ("lib.php");
 
 require_login();
 $links = required_param('tlelinks', PARAM_RAW);
@@ -28,13 +27,13 @@ $coursecontext = context_course::instance($courseid);
 require_capability('moodle/course:manageactivities', $coursecontext);
 
 $links = json_decode($links, true);
-$mod = new stdClass;
+$mod = new stdClass();
 $mod->course = $courseid;
 $mod->modulename = 'equella';
-$module = $DB->get_record('modules', array('name'=>$mod->modulename));
+$module = $DB->get_record('modules', array('name' => $mod->modulename));
 $mod->module = $module->id;
 
-foreach ($links as $link) {
+foreach($links as $link) {
 
     $mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
     $mod->intro = $link['description'];
@@ -61,15 +60,15 @@ foreach ($links as $link) {
 
     // course_modules and course_sections each contain a reference
     // to each other, so we have to update one of them twice.
-    if (! $mod->coursemodule = add_course_module($mod) ) {
+    if (!$mod->coursemodule = add_course_module($mod)) {
         print_error('cannotaddcoursemodule');
     }
 
-    if (! $addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $targetsection) ) {
+    if (!$addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $targetsection)) {
         print_error('cannotaddcoursemoduletosection');
     }
 
-    if (! $DB->set_field('course_modules', 'section', $addedsectionid, array('id' => $mod->coursemodule))) {
+    if (!$DB->set_field('course_modules', 'section', $addedsectionid, array('id' => $mod->coursemodule))) {
         print_error('Could not update the course module with the correct section');
     }
 
@@ -77,17 +76,17 @@ foreach ($links as $link) {
 
     $eventdata = new stdClass();
     $eventdata->modulename = $mod->modulename;
-    $eventdata->name       = $mod->name;
-    $eventdata->cmid       = $mod->coursemodule;
-    $eventdata->courseid   = $mod->course;
-    $eventdata->userid     = $USER->id;
+    $eventdata->name = $mod->name;
+    $eventdata->cmid = $mod->coursemodule;
+    $eventdata->courseid = $mod->course;
+    $eventdata->userid = $USER->id;
     events_trigger('mod_created', $eventdata);
 
     $url = "view.php?id={$mod->coursemodule}";
     add_to_log($mod->course, $mod->modulename, 'add equella resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
 }
 
-$courseurl = new moodle_url('/course/view.php', array('id'=>$courseid));
+$courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
 $courseurl = $courseurl->out(false);
 rebuild_course_cache($courseid);
 echo '<html><body>';
