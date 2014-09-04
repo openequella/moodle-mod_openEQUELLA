@@ -19,7 +19,7 @@ class backup_equella_activity_structure_step extends backup_activity_structure_s
     protected function define_structure() {
         $equella = new backup_nested_element('equella',
                 array('id'),
-                array('course','name','intro','introformat','timecreated','timemodified','url','popup','activation','uuid','version','path','attachmentuuid')
+                array('course','name','intro','introformat','timecreated','timemodified','url','mimetype','popup','activation','uuid','version','path','attachmentuuid','ltisalt')
         );
         $equella->set_source_table('equella', array('id' => backup::VAR_ACTIVITYID));
         $equella->annotate_files('mod_equella', 'intro', null);

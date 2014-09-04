@@ -1,3 +1,17 @@
+2014-09-05  Alex Rowe  <arowe@studygroup.com>
+
+	Add mimetype and ltisalt on backup / restore
+
+2014-09-03  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1576 Fix SQL for Oracle DB
+
+2014-09-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1576 Avoid using DISTINCT in SQL
+
+	EQ-1574 fix js error when conditional access enabled #28
+
 2014-08-28  Luke Rossiter  <lukerossiter@hotmail.com>
 
 	Add EQUELLA views to moodle logs when using LTI
