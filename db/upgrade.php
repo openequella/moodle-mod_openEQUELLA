@@ -195,8 +195,7 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013112501, 'equella');
     }
 
-    $newversion = 2014061103;
-    if ($oldversion < $newversion) {
+    if ($oldversion < 2014061103) {
         require_once ($CFG->libdir . "/datalib.php");
         $records = $DB->get_recordset('equella', array('course'=>0));
         foreach($records as $eq) {
@@ -205,7 +204,37 @@ function xmldb_equella_upgrade($oldversion) {
                 $DB->update_record('equella', $eq);
             }
         }
-        upgrade_mod_savepoint(true, $newversion, 'equella');
+        upgrade_mod_savepoint(true, 2014061103, 'equella');
+    }
+
+    if ($oldversion < 2014062601) {
+        require_once ($CFG->libdir . '/filelib.php');
+        require_once ($CFG->dirroot . '/mod/equella/common/lib.php');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        $temp = tmpfile();
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $temp);
+        curl_setopt($ch, CURLOPT_COOKIEJAR, $temp);
+
+        $records = $DB->get_recordset('equella');
+        foreach($records as $eq) {
+            if ($eq->mimetype == 'document/unknown' || $eq->mimetype == null) {
+                $url = equella_appendtoken($eq->url, equella_getssotoken_api());
+                curl_setopt($ch, CURLOPT_URL, $url);
+                if (curl_exec($ch)) {
+                    $info = curl_getinfo($ch);
+                    $mimetype = mimeinfo('type', $info['url']);
+                    $eq->mimetype = $mimetype;
+                    $DB->update_record('equella', $eq);
+                }
+            }
+        }
+        
+        curl_close($ch);
+        upgrade_mod_savepoint(true, 2014062601, 'equella');
     }
 
     return true;
