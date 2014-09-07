@@ -697,7 +697,6 @@ class equella_external extends external_api {
         $cmid = $item->cmid;
         $visible = ($item->coursevisible && $item->cmvisible);
 
-
         $instructors = self::get_instructors($item->courseid);
         $enrollmentcount = self::count_enrolled_users($item->courseid);
         $sectionname = self::get_section_name_from_item($item);
@@ -802,13 +801,14 @@ class equella_external extends external_api {
     static private function get_instructors($courseid) {
         global $DB;
 
+        $ufields = get_all_user_name_fields(true, 'u');
         if (!isset(self::$instructors[$courseid])) {
-            $sql = 'SELECT u.id, u.firstname, u.lastname
+            $sql = "SELECT u.id, $ufields
                       FROM {role_assignments} ra
                            INNER JOIN {context} c on ra.contextid = c.id
                            INNER JOIN {role} r on r.id = ra.roleid
                            INNER JOIN {user} u ON ra.userid = u.id
-                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?';
+                     WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?";
             $users = $DB->get_records_sql($sql, array('teacher','editingteacher',$courseid,CONTEXT_COURSE));
             $first = true;
             $return = '';
