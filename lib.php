@@ -335,6 +335,9 @@ function equella_module_event_handler($event) {
     if (empty($CFG->equella_intercept_files)) {
         return;
     }
+    if ((int)$CFG->equella_intercept_files != EQUELLA_CONFIG_INTERCEPT_FULL) {
+        return;
+    }
     $course = $DB->get_record('course', array('id' => $event->courseid));
     $params = array();
     $params['moodlemoduletype'] = $event->modulename;
