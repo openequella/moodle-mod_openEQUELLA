@@ -47,7 +47,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
     $settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
-    $settings->add(new admin_setting_configcheckbox('equellaopeninnewwindow', ecs('open.newwindow'), '', 1));
+    $settings->add(new admin_setting_configcheckbox('equella_open_in_new_window', ecs('open.newwindow'), '', 1));
 
     $settings->add(new admin_setting_configtext('equella_default_window_width', ecs('window.width'), '', EQUELLA_DEFAULT_WINDOW_WIDTH));
 

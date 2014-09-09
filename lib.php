@@ -98,7 +98,7 @@ function equella_add_instance($equella, $mform = null) {
     global $DB, $USER, $CFG;
     $equella->timecreated = time();
     $equella->timemodified = time();
-    if (!empty($CFG->equellaopeninnewwindow)) {
+    if (!empty($CFG->equella_open_in_new_window)) {
         $equella->windowpopup = 1;
     }
     $equella = equella_postprocess($equella);

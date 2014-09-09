@@ -208,5 +208,13 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, $newversion, 'equella');
     }
 
+    if ($oldversion < 2014090902) {
+        if (!empty($CFG->equellaopeninnewwindow) && empty($CFG->equella_open_in_new_window)) {
+            set_config('equella_open_in_new_window', $CFG->equellaopeninnewwindow);
+            unset_config('equellaopeninnewwindow');
+        }
+        upgrade_mod_savepoint(true, 2014090902, 'equella');
+    }
+
     return true;
 }
