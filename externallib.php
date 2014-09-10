@@ -332,7 +332,7 @@ class equella_external extends external_api {
             $sqlparams = array($uuid,$version);
             $sql .= " WHERE e.uuid = ? AND e.version = ?
                   ORDER BY e.timecreated DESC";
-            $equellaitems = $DB->get_recordset_sql('equella', $sqlparams);
+            $equellaitems = $DB->get_recordset_sql($sql, $sqlparams);
         }
 
         $results = array();
@@ -642,24 +642,16 @@ class equella_external extends external_api {
 
         $cm = get_coursemodule_from_instance('equella', $item->id, $item->course, false, MUST_EXIST);
 
-        $success = equella_delete_instance($item->id);
-
-        if ($success) {
-            if (!course_delete_module($cm->id)) {
-                print_error('deletednot', '', '', "the {$cm->modname} (coursemodule)");
-                $success = false;
-            }
-
-            $eventdata = new stdClass();
-            $eventdata->modulename = 'equella';
-            $eventdata->cmid = $cm->id;
-            $eventdata->courseid = $item->course;
-            $eventdata->userid = $USER->id;
-            events_trigger('mod_delete', $eventdata);
-
-            add_to_log($item->course, "course", "delete mod", "view.php?id=$cm->course", "equella $cm->instance", $cm->id);
-
+        $success = true;
+        try {
+            course_delete_module($cm->id);
+        } catch (Exception $ex) {
+            $success = false;
+            throw $ex;
         }
+
+        add_to_log($item->course, "course", "delete mod", "view.php?id=$cm->course", "equella $cm->instance", $cm->id);
+
         return array('success' => $success);
     }
     private static function get_user_by_username($username) {

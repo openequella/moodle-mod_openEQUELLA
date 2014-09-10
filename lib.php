@@ -158,6 +158,7 @@ function equella_update_instance($equella) {
 }
 function equella_delete_instance($id) {
     global $DB, $CFG;
+
     if (!$equella = $DB->get_record("equella", array("id" => $id))) {
         return false;
     }
@@ -170,13 +171,10 @@ function equella_delete_instance($id) {
         $res = curl_exec($curl);
         curl_close($curl);
     }
-    $result = true;
 
-    if (!$DB->delete_records("equella", array("id" => $equella->id))) {
-        $result = false;
-    }
+    $DB->delete_records("equella", array("id" => $equella->id));
 
-    return $result;
+    return true;
 }
 function equella_user_outline($course, $user, $mod, $equella) {
     $result = NULL;
