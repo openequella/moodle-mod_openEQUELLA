@@ -321,18 +321,20 @@ class equella_external extends external_api {
             $sqlparams = array($uuid);
             $sql .= " WHERE e.uuid = ? AND c.id IS NOT NULL
                   ORDER BY e.timecreated DESC";
-            $equellaitems = $DB->get_recordset_sql($sql, $sqlparams);
         } else if ($params['isLatest']) {
-            list($insql, $inparams) = $DB->get_in_or_equal(array(0,$version));
+            list($insql, $sqlparams) = $DB->get_in_or_equal(array(0,$version));
             $sql .= " WHERE e.version $insql AND e.uuid = ? AND c.id IS NOT NULL
                   ORDER BY e.timecreated DESC";
-            $inparams[] = $uuid;
-            $equellaitems = $DB->get_recordset_sql($sql, $inparams);
+            $sqlparams[] = $uuid;
         } else {
             $sqlparams = array($uuid,$version);
             $sql .= " WHERE e.uuid = ? AND e.version = ?
                   ORDER BY e.timecreated DESC";
+        }
+        try {
             $equellaitems = $DB->get_recordset_sql($sql, $sqlparams);
+        } catch (Exception $ex) {
+            throw new moodle_exception($ex->debuginfo);
         }
 
         $results = array();
@@ -793,15 +795,24 @@ class equella_external extends external_api {
     static private function get_instructors($courseid) {
         global $DB;
 
-        $ufields = get_all_user_name_fields(true, 'u');
+        // XXX get_all_user_name_fields() exists 2.6 onward
+        if (function_exists('get_all_user_name_fields')) {
+            $ufields = get_all_user_name_fields(true, 'u');
+        } else {
+            $ufields = 'u.firstname,u.lastname';
+        }
         if (!isset(self::$instructors[$courseid])) {
-            $sql = "SELECT u.id, $ufields
+            $sql = "SELECT u.id,$ufields
                       FROM {role_assignments} ra
                            INNER JOIN {context} c on ra.contextid = c.id
                            INNER JOIN {role} r on r.id = ra.roleid
                            INNER JOIN {user} u ON ra.userid = u.id
                      WHERE (r.shortname = ? OR r.shortname = ?) AND c.instanceid = ? AND c.contextlevel <= ?";
-            $users = $DB->get_records_sql($sql, array('teacher','editingteacher',$courseid,CONTEXT_COURSE));
+            try {
+                $users = $DB->get_records_sql($sql, array('teacher','editingteacher',$courseid,CONTEXT_COURSE));
+            } catch (Exception $ex) {
+                throw new moodle_exception($ex->debuginfo);
+            }
             $first = true;
             $return = '';
             foreach($users as $user) {
