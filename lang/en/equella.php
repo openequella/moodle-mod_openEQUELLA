@@ -161,3 +161,5 @@ $string['push.archived.yes'] = 'yes';
 $string['push.archived.no'] = 'no';
 $string['push.attachment'] = 'Selected attachment';
 */
+
+$string['webserviceerror'] = '{$a}';

@@ -334,7 +334,7 @@ class equella_external extends external_api {
         try {
             $equellaitems = $DB->get_recordset_sql($sql, $sqlparams);
         } catch (Exception $ex) {
-            throw new moodle_exception($ex->debuginfo);
+            throw new moodle_exception('webserviceerror', 'equella', '', $ex->error, $ex->debuginfo);
         }
 
         $results = array();
@@ -420,7 +420,12 @@ class equella_external extends external_api {
             $args[] = 1;
         }
         $sql = $sql . ' ORDER BY ' . $sortcol . ' ' . $sortord;
-        $equellaitems = $DB->get_recordset_sql($sql, $args, $offset, $count);
+
+        try {
+            $equellaitems = $DB->get_recordset_sql($sql, $args, $offset, $count);
+        } catch (Exception $ex) {
+            throw new moodle_exception('webserviceerror', 'equella', '', $ex->error, $ex->debuginfo);
+        }
 
         $content = array();
         $count = 0;
@@ -753,8 +758,11 @@ class equella_external extends external_api {
                            JOIN {modules} m ON m.id = cm.module
                            JOIN {log} l ON l.cmid = cm.id
                      WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1 GROUP BY cm.id";
-            $itemViewInfo = $DB->get_records_sql($sql, array($courseid));
-
+            try {
+                $itemViewInfo = $DB->get_records_sql($sql, array($courseid));
+            } catch (Exception $ex) {
+                throw new moodle_exception('webserviceerror', 'equella', '', $ex->error, $ex->debuginfo);
+            }
             $itemViews[$courseid] = $itemViewInfo;
         } else {
             $itemViewInfo = $itemViews[$courseid];
@@ -811,7 +819,7 @@ class equella_external extends external_api {
             try {
                 $users = $DB->get_records_sql($sql, array('teacher','editingteacher',$courseid,CONTEXT_COURSE));
             } catch (Exception $ex) {
-                throw new moodle_exception($ex->debuginfo);
+                throw new moodle_exception('webserviceerror', 'equella', '', $ex->error, $ex->debuginfo);
             }
             $first = true;
             $return = '';
