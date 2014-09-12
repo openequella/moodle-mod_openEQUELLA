@@ -723,7 +723,7 @@ class equella_external extends external_api {
             'attachment' => $item->path,
             'attachmentUuid' => $item->attachmentuuid,
             'moodlename' => $item->eqname,
-            'moodledescription' => format_text($item->eqintro),
+            'moodledescription' => html_to_text($item->eqintro),
             'coursecode' => $item->idnumber,
             'instructor' => $instructors,
             'dateAccessed' => $dateAccessed,
