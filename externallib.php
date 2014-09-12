@@ -393,7 +393,7 @@ class equella_external extends external_api {
 
         $args = array('%' . $params['query'] . '%');
 
-        $eqfields = "e.id AS eqid,e.name AS name, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
+        $eqfields = "e.id AS eqid,e.name AS eqname, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
         $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
         $cmfields = "cm.section AS section,cm.visible AS cmvisible,cm.id AS cmid";
         $sectionfields = "cs.name,cs.section,cs.id AS sectionid";

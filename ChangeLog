@@ -1,3 +1,35 @@
+2014-09-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1599 Fix find all usage web service
+
+	Description should be text only.
+
+2014-09-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Output exception error message to equella
+
+	EQ-1598 Fix webservice for moodle 2.5
+
+	Fix EQUELLA delete instance webservice
+
+2014-09-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix SQL
+
+2014-09-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Rename equellaopeninnewwindow option
+
+2014-09-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1582 Only intercept files when auto contribute selected
+
+	fix fullname() warning
+
+2014-09-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Cleanup linkcheck.php code
+
 2014-09-05  Alex Rowe  <arowe@studygroup.com>
 
 	Add mimetype and ltisalt on backup / restore
