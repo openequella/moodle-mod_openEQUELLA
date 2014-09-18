@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 defined('MOODLE_INTERNAL') || die();
+
 function xmldb_equella_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
@@ -214,6 +215,15 @@ function xmldb_equella_upgrade($oldversion) {
             unset_config('equellaopeninnewwindow');
         }
         upgrade_mod_savepoint(true, 2014090902, 'equella');
+    }
+
+    if ($oldversion < 2014091800) {
+        require_once ($CFG->dirroot . '/mod/equella/lib.php');
+        if ((int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_FULL) {
+            set_config('equella_intercept_files', EQUELLA_CONFIG_INTERCEPT_ASK);
+        }
+
+        upgrade_mod_savepoint(true, 2014091800, 'equella');
     }
 
     return true;

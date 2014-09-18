@@ -1,3 +1,7 @@
+2014-09-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1607 Remove intercept files option
+
 2014-09-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1599 Fix find all usage web service
@@ -10,11 +14,9 @@
 
 	EQ-1598 Fix webservice for moodle 2.5
 
-	Fix EQUELLA delete instance webservice
-
 2014-09-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	Fix SQL
+	Fix EQUELLA delete instance webservice
 
 2014-09-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
@@ -44,22 +46,28 @@
 
 	EQ-1574 fix js error when conditional access enabled #28
 
-2014-08-28  Luke Rossiter  <lukerossiter@hotmail.com>
+2014-08-21  Luke Rossiter  <lukerossiter@hotmail.com>
 
 	Add EQUELLA views to moodle logs when using LTI
 	When LTI authentication is enabled, viewing an EQUELLA resource set to open in a new window did not add an entry to the moodle logs. Log entry added just before the redirect (similar to view.php).
 
-2014-08-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+2014-08-03  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1450 improve find_all_usage
 
+2014-07-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	coding style fix
+
+2014-07-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Check if coursemodule exists
 
 	EQ-1444 Improve list_courses_for_user()
 
 	EQ-1450 find_usage_for_item performance improvements
+
+2014-08-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1052 Dynamic window size
 
@@ -81,11 +89,6 @@
 
 	Fix coding style
 
-2014-06-12  Dongsheng Cai  <imdongsheng@gmail.com>
-
-	Merge pull request #25 from equella/bugfix/EQ-1317
-	Fixes EQ-1317 send username as lis_person_sourcedid
-
 2014-06-12  Holland, Aaron  <Aaron.Holland@Pearson.com>
 
 	Fixes EQ-1317 send username as lis_person_sourcedid
@@ -102,7 +105,9 @@
 
 	More checks on course category
 
-	Remove hardcoded category id in @agrowe's code
+2014-06-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Add ChangeLog file & fix hard-coded category id
 
 2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
@@ -329,7 +334,7 @@
 
 	callbackmulti: The section passed to course_add_cm_to_section is the relative section number
 
-2013-09-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+2013-09-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-489 filename urls migrate to uuid urls
 
@@ -345,7 +350,7 @@
 
 	common/soap.php: Removed blank line breaking some Moodle functionally.
 
-2013-08-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+2013-08-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-393 Fixed param value encoded issue
 
@@ -353,15 +358,27 @@
 
 	EQ-392 Send course structure to EQUELLA
 
+2013-08-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	Code improvement
+
+2013-08-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Refs EQ-106 Fixed url encoding
 
+2013-08-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	EQ-392 Launch the selection session with LTI
+
+2013-08-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Check array index
 
+2013-08-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	EQ-366 Launch EQUELLA resource in LTI
+
+2013-08-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-102 Moodle course no longer targetable
 
@@ -527,9 +544,9 @@
 
 	Added sort field
 
-	Improve find_useage_for_item webservice
-
 2012-11-16  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improve find_useage_for_item webservice
 
 	Fixed hard coded log path
 
@@ -557,19 +574,31 @@
 
 	Error checking rest api response
 
+2012-10-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	Improved option texts
 
+2012-10-16  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	Refs #7070 Tweak admin settings
+
+2012-08-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Refs #7070: Change help text
 
 	Refs #7070: Improved exception message
 
+2012-08-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
 	Refs #7070: Improved activity settings
+
+2012-08-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Refs #7070: Improved admin settings
 
 	Issue #4: Use new window option when create new EQUELLA instance
+
+2012-08-28  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Refs #7070: Option to enable DnD hook
 
@@ -581,6 +610,8 @@
 
 	Refs #7070: Drag & drop into moodle course
 	Files will be intecepted by EQUELLA
+
+2012-10-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Initialise PHP object before assign properties
 
