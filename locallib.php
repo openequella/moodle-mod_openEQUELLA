@@ -109,7 +109,16 @@ function equella_embed_general($equella) {
     // IE can not embed stuff properly, that is why we use iframe instead.
     // Unfortunately this tag does not validate in xhtml strict mode,
     // but in any case it is undeprecated in HTML 5 - we will use it everywhere soon!
-    if (check_browser_version('MSIE', 5) || $CFG->equella_enable_lti) {
+    $ie5 = false;
+    $vendor = 'MSIE';
+    $version = 5;
+    if (method_exists('core_useragent', 'check_browser_version')) {
+        $ie5 = core_useragent::check_browser_version($vendor, $version);
+    } else {
+        $ie5 = check_browser_version($vendor, $version);
+    }
+
+    if ($ie5 || $CFG->equella_enable_lti) {
         $iframe = true;
     }
 

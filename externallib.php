@@ -444,7 +444,7 @@ class equella_external extends external_api {
         $content = array();
         $count = 0;
         foreach($equellaitems as $item) {
-            $content[] = self::build_item($item);
+            $content[] = self::build_item($item, $params['archived']);
             $count++;
         }
 
@@ -530,16 +530,22 @@ class equella_external extends external_api {
 
         set_coursemodule_visible($cmid, true);
 
-        $eventdata = new stdClass();
-        $eventdata->modulename = $modname;
-        $eventdata->name = $eq->name;
-        $eventdata->cmid = $cmid;
-        $eventdata->courseid = $eq->course;
-        $eventdata->userid = $USER->id;
-        events_trigger('mod_created', $eventdata);
+        if (class_exists('core\\event\\course_module_created')) {
+            $cm = get_coursemodule_from_id('equella', $cmid, 0, false, MUST_EXIST);
+            $event = \core\event\course_module_created::create_from_cm($cm);
+            $event->trigger();
+        } else {
+            $eventdata = new stdClass();
+            $eventdata->modulename = $modname;
+            $eventdata->name = $eq->name;
+            $eventdata->cmid = $cmid;
+            $eventdata->courseid = $eq->course;
+            $eventdata->userid = $USER->id;
+            events_trigger('mod_created', $eventdata);
 
-        add_to_log($eq->course, "course", "add mod", "../mod/$modname/view.php?id=$cmid", "$modname $eqid");
-        add_to_log($eq->course, $modname, "add equella resource", "view.php?id=$cmid", "$eqid", $cmid);
+            add_to_log($eq->course, "course", "add mod", "../mod/$modname/view.php?id=$cmid", "$modname $eqid");
+            add_to_log($eq->course, $modname, "add equella resource", "view.php?id=$cmid", "$eqid", $cmid);
+        }
 
         $result = array(
             'courseid' => $courseid,
@@ -587,16 +593,21 @@ class equella_external extends external_api {
 
         $success = equella_update_instance($eq);
 
-        $eventdata = new stdClass();
-        $eventdata->modulename = 'equella';
-        $eventdata->name = $eq->name;
-        $eventdata->cmid = $cm->id;
-        $eventdata->courseid = $eq->course;
-        $eventdata->userid = $USER->id;
-        events_trigger('mod_updated', $eventdata);
+        if (class_exists('core\\event\\course_module_updated')) {
+            $event = \core\event\course_module_updated::create_from_cm($cm);
+            $event->trigger();
+        } else {
+            $eventdata = new stdClass();
+            $eventdata->modulename = 'equella';
+            $eventdata->name = $eq->name;
+            $eventdata->cmid = $cm->id;
+            $eventdata->courseid = $eq->course;
+            $eventdata->userid = $USER->id;
+            events_trigger('mod_updated', $eventdata);
 
-        add_to_log($eq->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $eq->instance");
-        add_to_log($eq->course, "equella", "update equella resource", "view.php?id=$cm->id", "$eq->instance", $cm->id);
+            add_to_log($eq->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $eq->instance");
+            add_to_log($eq->course, "equella", "update equella resource", "view.php?id=$cm->id", "$eq->instance", $cm->id);
+        }
 
         rebuild_course_cache($eq->course);
         return array('success' => $success);
@@ -636,16 +647,22 @@ class equella_external extends external_api {
                 return null;
             }
 
-            $eventdata = new stdClass();
-            $eventdata->modulename = 'equella';
-            $eventdata->name = $item->name;
-            $eventdata->cmid = $cm->id;
-            $eventdata->courseid = $item->course;
-            $eventdata->userid = $USER->id;
-            events_trigger('mod_updated', $eventdata);
+            if (class_exists('core\\event\\course_module_updated')) {
+                $cm = get_coursemodule_from_id('equella', $cmid, 0, false, MUST_EXIST);
+                $event = \core\event\course_module_updated::create_from_cm($cm);
+                $event->trigger();
+            } else {
+                $eventdata = new stdClass();
+                $eventdata->modulename = 'equella';
+                $eventdata->name = $item->name;
+                $eventdata->cmid = $cm->id;
+                $eventdata->courseid = $item->course;
+                $eventdata->userid = $USER->id;
+                events_trigger('mod_updated', $eventdata);
 
-            add_to_log($item->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $item->instance");
-            add_to_log($item->course, "equella", "update equella resource", "view.php?id=$cm->id", "$item->instance", $cm->id);
+                add_to_log($item->course, "course", "update mod", "../mod/equella/view.php?id=$cm->id", "equella $item->instance");
+                add_to_log($item->course, "equella", "update equella resource", "view.php?id=$cm->id", "$item->instance", $cm->id);
+            }
 
             rebuild_course_cache($oldCourse);
             rebuild_course_cache($newCourse);
@@ -670,8 +687,6 @@ class equella_external extends external_api {
             $success = false;
             throw $ex;
         }
-
-        add_to_log($item->course, "course", "delete mod", "view.php?id=$cm->course", "equella $cm->instance", $cm->id);
 
         return array('success' => $success);
     }
@@ -703,7 +718,7 @@ class equella_external extends external_api {
 
         require_capability(self::WRITE_PERMISSION, $coursecontext, $user->id);
     }
-    static private function build_item($item, $archived) {
+    static private function build_item($item, $archived = false) {
         global $DB;
         $attributes = array();
 

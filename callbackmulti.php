@@ -74,16 +74,21 @@ foreach($links as $link) {
 
     set_coursemodule_visible($mod->coursemodule, true);
 
-    $eventdata = new stdClass();
-    $eventdata->modulename = $mod->modulename;
-    $eventdata->name = $mod->name;
-    $eventdata->cmid = $mod->coursemodule;
-    $eventdata->courseid = $mod->course;
-    $eventdata->userid = $USER->id;
-    events_trigger('mod_created', $eventdata);
-
-    $url = "view.php?id={$mod->coursemodule}";
-    add_to_log($mod->course, $mod->modulename, 'add equella resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
+    if (class_exists('core\\event\\course_module_created')) {
+        $cm = get_coursemodule_from_id('equella', $mod->coursemodule, 0, false, MUST_EXIST);
+        $event = \core\event\course_module_created::create_from_cm($cm);
+        $event->trigger();
+    } else {
+        $eventdata = new stdClass();
+        $eventdata->modulename = $mod->modulename;
+        $eventdata->name = $mod->name;
+        $eventdata->cmid = $mod->coursemodule;
+        $eventdata->courseid = $mod->course;
+        $eventdata->userid = $USER->id;
+        events_trigger('mod_created', $eventdata);
+        $url = "view.php?id={$mod->coursemodule}";
+        add_to_log($mod->course, $mod->modulename, 'add equella resource', $url, "$mod->modulename ID: $mod->instance", $mod->instance);
+    }
 }
 
 $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));

@@ -38,8 +38,20 @@ if ($action == 'view') {
     $equella->cmid = $cmid;
     $equella->course = $course->id;
     $params = equella_lti_params($equella, $course);
-    
-    add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
+
+    if (class_exists('mod_equella\\event\\course_module_viewed')) {
+        $eventparams = array(
+            'context' => $context,
+            'objectid' => $equella->id
+        );
+        $event = \mod_equella\event\course_module_viewed::create($eventparams);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('equella', $equella);
+        $event->trigger();
+    } else {
+        add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
+    }
 
     // Update 'viewed' state if required by completion system
     $completion = new completion_info($course);

@@ -1,6 +1,9 @@
-2014-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+2014-09-27  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	Clean up equella_get_coursecode() code
+	EQ-1583 Moodle 2.7 Event APIs #33
+	Replace deprecated APIs
+
+2014-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1676 list_courses_for_user returns course id number
 
