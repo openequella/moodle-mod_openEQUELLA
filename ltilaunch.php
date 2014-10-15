@@ -17,6 +17,8 @@
 require_once ('../../config.php');
 require_once ('lib.php');
 require_once ('locallib.php');
+require_once ($CFG->libdir . '/completionlib.php');
+
 require_login();
 
 $action = optional_param('action', 'view', PARAM_ACTION);
@@ -38,7 +40,11 @@ if ($action == 'view') {
     $params = equella_lti_params($equella, $course);
     
     add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
-    
+
+    // Update 'viewed' state if required by completion system
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';

@@ -18,6 +18,7 @@ require_once ('../../config.php');
 require_once ('lib.php');
 require_once ('locallib.php');
 require_once ($CFG->libdir . '/resourcelib.php');
+require_once ($CFG->libdir . '/completionlib.php');
 require_login();
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or
@@ -44,6 +45,10 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $con
 }
 
 add_to_log($course->id, "equella", "view equella resource", "view.php?id=$cm->id", $equella->id, $cm->id);
+
+// Update 'viewed' state if required by completion system
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 
 $PAGE->set_url('/mod/equella/view.php', array('id' => $cm->id));
 
