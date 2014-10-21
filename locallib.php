@@ -160,10 +160,8 @@ function equella_select_dialog($args) {
     } else {
         if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
             $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl' => $equrl->out(false),'courseid' => $args->course,'sectionid' => $args->section));
-            $objecturl = $redirecturl->out(false);
-        } else {
-            $objecturl = $equrl->out();
         }
+        $objecturl = $equrl->out(false);
     }
 
     $equellatitle = get_string('chooseeqeullaresources', 'mod_equella');
