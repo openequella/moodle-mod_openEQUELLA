@@ -89,11 +89,18 @@ function equella_get_window_options() {
 
     return array('width' => $width,'height' => $height,'resizable' => 1,'scrollbars' => 1,'directories' => 0,'location' => 0,'menubar' => 0,'toolbar' => 0,'status' => 0);
 }
-function equella_get_courseId($courseid) {
+
+/**
+ * Return course code (aka course id number)
+ *
+ * @param int $courseid
+ * @return string
+ */
+function equella_get_coursecode($courseid) {
     global $DB;
-    $record = $DB->get_record("course", array('id' => $courseid));
-    return $record->idnumber;
+    return $DB->get_field('course', 'idnumber', array('id' => $courseid));
 }
+
 function equella_add_instance($equella, $mform = null) {
     global $DB, $USER, $CFG;
     $equella->timecreated = time();

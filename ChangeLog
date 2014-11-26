@@ -1,18 +1,37 @@
+2014-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Clean up equella_get_coursecode() code
+
+	EQ-1676 list_courses_for_user returns course id number
+
+2014-10-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix redirect url
+
+2014-10-21  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1663 Load iframe after resizing
+
+2014-10-15  Alex Rowe  <arowe@studygroup.com>
+
+	Add required functions for the completion library
+	fixes #34 #35
+
 2014-09-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1607 Remove intercept files option
 
 2014-09-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	EQ-1599 Fix find all usage web service
+	EQ-1599 Add missing module title in find_all_usage.
 
-	Description should be text only.
+	Description in webservice should be plain text.
 
 2014-09-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	Output exception error message to equella
+	Output detailed webservice error message
 
-	EQ-1598 Fix webservice for moodle 2.5
+	EQ-1598 Fix webservice error in moodle 2.5
 
 2014-09-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
 

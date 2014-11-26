@@ -169,9 +169,16 @@ class equella_external extends external_api {
         'available' => new external_value(PARAM_INT, 'Number of results available')));
     }
     public static function list_courses_for_user_returns() {
-        return new external_multiple_structure(new external_single_structure(array(
-
-        'courseid' => new external_value(PARAM_INT, 'id of course'),'coursename' => new external_value(PARAM_RAW, 'name of course'),'archived' => new external_value(PARAM_BOOL, 'visibility of course'))));
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'courseid' => new external_value(PARAM_INT, 'Course ID'),
+                    'coursecode' => new external_value(PARAM_RAW, 'Course code'),
+                    'coursename' => new external_value(PARAM_RAW, 'Course name'),
+                    'archived' => new external_value(PARAM_BOOL, 'Visibility of course'),
+                )
+            )
+        );
     }
     public static function list_sections_for_course_returns() {
         return new external_multiple_structure(new external_single_structure(array(
@@ -204,9 +211,11 @@ class equella_external extends external_api {
         'success' => new external_value(PARAM_BOOL, 'success')));
     }
     public static function get_course_code_returns() {
-        return new external_single_structure(array(
-
-        'coursecode' => new external_value(PARAM_RAW, 'Course code')));
+        return new external_single_structure(
+            array(
+                'coursecode' => new external_value(PARAM_RAW, 'Course code')
+            )
+        );
     }
 
     /**
@@ -228,7 +237,7 @@ class equella_external extends external_api {
         } else {
             $userobj = null;
         }
-        $coursefields = "c.id,c.fullname,c.visible";
+        $coursefields = "c.id,c.fullname,c.visible,c.idnumber";
         $contextfields = "ctx.id AS contextid,ctx.contextlevel,ctx.instanceid,ctx.path,ctx.depth";
         $sql = "SELECT $coursefields,$contextfields
                   FROM {context} ctx
@@ -256,7 +265,12 @@ class equella_external extends external_api {
             }
 
             if ($archived || $course->visible) {
-                $courselist[] = array('courseid'=>$course->id, 'coursename'=>$course->fullname, 'archived'=>!($course->visible));
+                $courselist[] = array(
+                    'courseid' => $course->id,
+                    'coursecode' => $course->idnumber,
+                    'coursename' => $course->fullname,
+                    'archived' => !($course->visible)
+                );
             }
         }
         return $courselist;
@@ -306,7 +320,7 @@ class equella_external extends external_api {
         $params = self::validate_parameters(self::find_usage_for_item_parameters(), array('user' => $username,'uuid' => $uuid,'version' => $version,'isLatest' => $isLatest,'archived' => $archived,'allVersion' => $allVersion));
 
         $eqfields = "e.id AS eqid,e.name AS eqname, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
-        $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
+        $coursefields = "c.id,c.id AS courseid,c.idnumber,c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
         $cmfields = "cm.section AS section,cm.visible AS cmvisible,cm.id AS cmid";
         $sectionfields = "cs.name,cs.section,cs.id AS sectionid";
 
@@ -550,7 +564,7 @@ class equella_external extends external_api {
             )
         );
 
-        $coursecode = equella_get_courseId($params['courseid']);
+        $coursecode = equella_get_coursecode($params['courseid']);
 
         return array('coursecode' => $coursecode);
     }

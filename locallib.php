@@ -231,8 +231,20 @@ function equella_build_integration_url($args, $appendtoken = true) {
     $callbackurl = new moodle_url('/mod/equella/callbackmulti.php', $callbackurlparams);
     $cancelurl = new moodle_url('/mod/equella/cancel.php', array('course' => $args->course));
 
-    $equrlparams = array('method' => 'lms','attachmentUuidUrls' => 'true','returnprefix' => 'tle','template' => 'standard','courseId' => equella_get_courseId($args->course),'action' => $CFG->equella_action,'selectMultiple' => 'true','cancelDisabled' => 'true','returnurl' => $callbackurl->out(false),
-        'cancelurl' => $cancelurl->out(false));
+    $coursecode = equella_get_coursecode($args->course);
+    $equrlparams = array(
+        'method' => 'lms',
+        'attachmentUuidUrls' => 'true',
+        'returnprefix' => 'tle',
+        'template' => 'standard',
+        'courseId' => $args->course,
+        'courseCode' => $coursecode,
+        'action' => $CFG->equella_action,
+        'selectMultiple' => 'true',
+        'cancelDisabled' => 'true',
+        'returnurl' => $callbackurl->out(false),
+        'cancelurl' => $cancelurl->out(false)
+    );
     if ($appendtoken) {
         $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
         $equrlparams['token'] = equella_getssotoken($course);
