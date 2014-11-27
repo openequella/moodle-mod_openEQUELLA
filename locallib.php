@@ -171,7 +171,7 @@ function equella_select_dialog($args) {
             $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl' => $equrl->out(false),'courseid' => $args->course,'sectionid' => $args->section));
             $objecturl = $redirecturl->out(false);
         } else {
-            $objecturl = $equrl->out(false);
+            $objecturl = $equrl->out();
         }
     }
 
@@ -266,8 +266,21 @@ function equella_build_integration_url($args, $appendtoken = true) {
         $equrlparams[$CFG->equella_select_restriction] = 'true';
     }
 
+    $xml = <<<XML
+<xml>
+    <integration>
+        <moodlecourseidnumber>$coursecode</moodlecourseidnumber>
+        <moodlecourseid>$course->id</moodlecourseid>
+        <moodlecourseshortname>$course->shortname</moodlecourseshortname>
+        <moodlecoursefullname>$course->fullname</moodlecoursefullname>
+    </integration>
+</xml>
+XML;
+    $equrlparams['itemXml'] = htmlentities($xml);
+
     return new moodle_url($CFG->equella_url, $equrlparams);
 }
+
 function equella_lti_params($equella, $course, $extra = array()) {
     global $USER, $CFG;
 
