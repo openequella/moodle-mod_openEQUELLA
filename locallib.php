@@ -156,7 +156,7 @@ function equella_select_dialog($args) {
     if ($CFG->equella_enable_lti) {
         $args->action = 'select';
         $launchurl = new moodle_url('/mod/equella/ltilaunch.php', (array)$args);
-        $objecturl = $launchurl->out();
+        $objecturl = $launchurl->out(false);
     } else {
         if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
             $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl' => $equrl->out(false),'courseid' => $args->course,'sectionid' => $args->section));
