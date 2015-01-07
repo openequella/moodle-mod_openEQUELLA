@@ -26,6 +26,7 @@ $string['noinstances'] = 'There are no EQUELLA Resources in this course';
 $string['modulenameplural'] = 'EQUELLA Resources';
 $string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
+$string['crontask'] = 'EQUELLA cron task';
 // Course page drag and drop dialog
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
 $string['mustloggintoview'] = 'Please log in to view this page.';
