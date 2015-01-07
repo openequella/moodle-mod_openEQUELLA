@@ -445,10 +445,9 @@ class equella_lti_oauth extends oauth_helper {
     }
     public static function verify_message($message) {
         global $CFG;
-        // TODO: Switch to core oauthlib once implemented - MDL-30149
-        require_once ($CFG->dirroot . '/mod/lti/OAuthBody.php');
+        require_once dirname(__FILE__) . '/' . 'oauthlocallib.php';
         try {
-            moodle\mod\lti\handleOAuthBodyPOST($CFG->equella_lti_oauth_key, $CFG->equella_lti_oauth_secret, $message);
+            moodle\mod\equella\handle_oauth_body_post($CFG->equella_lti_oauth_key, $CFG->equella_lti_oauth_secret, $message);
         } catch(Exception $e) {
             return false;
         }

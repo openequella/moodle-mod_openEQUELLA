@@ -1,7 +1,17 @@
+2015-01-07  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1862 Fix lti outcome parsing library
+
+	equella module cron
+
 2014-09-27  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1583 Moodle 2.7 Event APIs #33
 	Replace deprecated APIs
+
+2014-12-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Escape ltilaunch.php url parameters
 
 2014-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
