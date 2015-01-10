@@ -29,7 +29,7 @@ $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $coursecontext = context_course::instance($course->id);
 require_capability('moodle/course:manageactivities', $coursecontext);
 $PAGE->set_context($coursecontext);
-$url = new moodle_url('/mod/equella/generator.php', array('id' => $course->id));
+$url = new moodle_url('/mod/equella/tools/generator.php', array('id' => $course->id));
 $PAGE->set_url($url);
 $PAGE->set_heading($course->fullname);
 

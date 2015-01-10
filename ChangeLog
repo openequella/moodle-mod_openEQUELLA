@@ -1,3 +1,15 @@
+2015-01-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix generator url
+
+	Add a tool to generate module instances
+
+2015-01-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1862 Integrated LTI testing tools
+
+	Add css style to LTI messages
+
 2015-01-07  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1862 Fix lti outcome parsing library
