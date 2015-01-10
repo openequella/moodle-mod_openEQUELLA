@@ -32,6 +32,9 @@ $cm = get_coursemodule_from_id('equella', $cmid, 0, false, MUST_EXIST);
 $homeurl = new moodle_url('/mod/equella/popup.php', array('cmid'=>$cmid));
 $graderurl = new moodle_url('/grade/report/grader/index.php', array('id'=>$cm->course));
 
+$coursecontext = context_course::instance($cm->course);
+require_capability('moodle/course:manageactivities', $coursecontext);
+
 $context = context_system::instance();
 
 $PAGE->set_context($context);
