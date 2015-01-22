@@ -469,3 +469,42 @@ function equella_get_view_actions() {
 function equella_get_post_actions() {
     return array('add','update','delete','update equella resource','delete equella resource','add equella resource');
 }
+
+/**
+ * Get equella module recent activities
+ *
+ * @global object
+ * @global object
+ * @global object
+ * @global object
+ * @uses CONTEXT_MODULE
+ * @param array $activities Passed by reference
+ * @param int $index Passed by reference
+ * @param int $timemodified Timestamp
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid
+ * @return void
+ */
+function equella_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
+    global $CFG, $COURSE, $USER, $DB;
+
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
+    } else {
+        $course = $DB->get_record('course', array('id'=>$courseid));
+    }
+
+    $modinfo = get_fast_modinfo($course);
+    $cm = $modinfo->cms[$cmid];
+
+    $equella = $DB->get_record('equella', array('id' => $cm->instance), '*', MUST_EXIST);
+    if ($equella->timemodified < $timestart) {
+        // Remove the activity
+        unset($activities[$index--]);
+    }
+
+
+    return;
+}
