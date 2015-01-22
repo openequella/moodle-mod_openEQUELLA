@@ -415,6 +415,7 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecourseid'] = $uploadinfo->course->id;
         $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
         $params['filesize'] = $file->get_filesize();
+        $mimetype = $file->get_mimetype();
         $info = equella_rest_api::contribute_file_with_shared_secret($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
@@ -434,6 +435,7 @@ function equella_dndupload_handle($uploadinfo) {
         $eqresource->name = $modulename;
         $eqresource->intro = $info->description;
         $eqresource->introformat = FORMAT_HTML;
+        $eqresource->mimetype = $mimetype;
         $item = array_pop($info->attachments);
         $eqresource->attachmentuuid = $item->uuid;
         $eqresource->url = $item->links->view;

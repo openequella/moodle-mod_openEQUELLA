@@ -1,3 +1,9 @@
+2015-01-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1931 Set mimetype for drag and drop resources
+
+	EQ-1465 Show recent equella modules in moodle recent report page
+
 2015-01-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Fix generator url
