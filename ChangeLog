@@ -1,3 +1,7 @@
+2015-03-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	fix is_https()
+
 2015-01-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-1931 Set mimetype for drag and drop resources
