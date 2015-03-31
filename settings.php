@@ -44,7 +44,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
-    $settings->add(new admin_setting_configtext('equella_options', ecs('options.title'), ecs('options.desc'), ''));
+    $settings->add(new admin_setting_configtextarea('equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
     $settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
     $settings->add(new admin_setting_configcheckbox('equella_open_in_new_window', ecs('open.newwindow'), '', 1));

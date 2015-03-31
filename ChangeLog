@@ -1,3 +1,7 @@
+2015-03-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2067 equella options config uses larger textarea
+
 2015-03-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	fix is_https()

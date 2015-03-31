@@ -252,8 +252,9 @@ function equella_build_integration_url($args, $appendtoken = true) {
         'selectMultiple' => 'true',
         'cancelDisabled' => 'true',
         'returnurl' => $callbackurl->out(false),
-        'cancelurl' => $cancelurl->out(false)
+        'cancelurl' => $cancelurl->out(false),
     );
+
     if ($appendtoken) {
         $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
         $equrlparams['token'] = equella_getssotoken($course);
