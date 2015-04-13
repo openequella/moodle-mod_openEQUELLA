@@ -205,13 +205,7 @@ function equella_get_coursemodule_info($coursemodule) {
 
     if ($resource = $DB->get_record("equella", array("id" => $coursemodule->instance))) {
         require_once ($CFG->libdir . '/filelib.php');
-
-        // $url = $resource->url;
-        // if( $ind = strrpos($url, '?') ) {
-        // $url = substr($url, 0, $ind);
-        // }
-        // $info->icon = equella_guess_icon($url, 24);
-        $info->icon = file_mimetype_icon($resource->mimetype, 24);
+        $info->icon = equella_guess_icon($resource, 24);
         if ($coursemodule->showdescription) {
             $info->content = format_module_intro('equella', $resource, $coursemodule->id, false);
         }
@@ -222,6 +216,7 @@ function equella_get_coursemodule_info($coursemodule) {
             $info->onclick = "window.open('{$url}', '','{$resource->popup}'); return false;";
         }
     }
+    flog($info);
 
     return $info;
 }
@@ -230,29 +225,41 @@ function equella_get_coursemodule_info($coursemodule) {
  * Optimised mimetype detection from general URL.
  * Copied from /mod/url/locallib.php
  *
- * @param $fullurl
- * @return string mimetype
+ * @param $equella stdclass
+ * @param $size int
+ * @return string
  */
-function equella_guess_icon($fullurl, $size = null) {
+function equella_guess_icon($equella, $size = 24) {
     global $CFG;
     require_once ("$CFG->libdir/filelib.php");
 
-    if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
-        // Most probably default directory - index.php, index.html, etc. Return null because
-        // we want to use the default module icon instead of the HTML file icon.
-        return null;
+    $mimetype = $equella->mimetype;
+    $icon = file_mimetype_icon($mimetype, $size);
+
+    // XXX: file_mimetype_icon doesn't work as expected
+    // when $mimetype == 'video/mp4', it returns "flash"
+    if ($mimetype === 'video/mp4') {
+        $mimetype = 'mp4';
+        $icon = 'f/mpeg-24';
     }
-
-    $icon = file_extension_icon($fullurl, $size);
-    $htmlicon = file_extension_icon('.htm', $size);
-    $unknownicon = file_extension_icon('', $size);
-
-    // We do not want to return those icon types, the module icon is more appropriate.
-    if ($icon === $unknownicon || $icon === $htmlicon) {
-        return null;
-    }
-
     return $icon;
+
+    //if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
+        //// Most probably default directory - index.php, index.html, etc. Return null because
+        //// we want to use the default module icon instead of the HTML file icon.
+        //return null;
+    //}
+
+    //$icon = file_extension_icon($fullurl, $size);
+    //$htmlicon = file_extension_icon('.htm', $size);
+    //$unknownicon = file_extension_icon('', $size);
+
+    //// We do not want to return those icon types, the module icon is more appropriate.
+    //if ($icon === $unknownicon || $icon === $htmlicon) {
+        //return null;
+    //}
+
+    //return $icon;
 }
 
 /**
