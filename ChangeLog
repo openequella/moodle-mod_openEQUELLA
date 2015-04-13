@@ -1,6 +1,14 @@
+2015-04-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2097 Store resource info sent from EQUELLA
+
+	EQ-2097 Hack to display mp4 icon in moodle
+
+	EQ-2073 Assign mimetype when using push-to-lms
+
 2015-03-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
-	EQ-2067 equella options config uses larger textarea
+	EQ-2067 "options" field uses larger textarea
 
 2015-03-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
 

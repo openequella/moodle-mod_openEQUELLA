@@ -16,6 +16,6 @@
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2014091800;
+$module->version   = 2015042000;
 $module->requires  = 2012120300;    // Requires this Moodle version
 $module->component = 'mod_equella'; // Full name of the plugin (used for diagnostics)

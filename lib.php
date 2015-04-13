@@ -204,7 +204,6 @@ function equella_get_coursemodule_info($coursemodule) {
     $info = new cached_cm_info();
 
     if ($resource = $DB->get_record("equella", array("id" => $coursemodule->instance))) {
-        require_once ($CFG->libdir . '/filelib.php');
         $info->icon = equella_guess_icon($resource, 24);
         if ($coursemodule->showdescription) {
             $info->content = format_module_intro('equella', $resource, $coursemodule->id, false);
@@ -216,7 +215,6 @@ function equella_get_coursemodule_info($coursemodule) {
             $info->onclick = "window.open('{$url}', '','{$resource->popup}'); return false;";
         }
     }
-    flog($info);
 
     return $info;
 }
@@ -231,17 +229,19 @@ function equella_get_coursemodule_info($coursemodule) {
  */
 function equella_guess_icon($equella, $size = 24) {
     global $CFG;
-    require_once ("$CFG->libdir/filelib.php");
 
-    $mimetype = $equella->mimetype;
-    $icon = file_mimetype_icon($mimetype, $size);
-
-    // XXX: file_mimetype_icon doesn't work as expected
-    // when $mimetype == 'video/mp4', it returns "flash"
-    if ($mimetype === 'video/mp4') {
-        $mimetype = 'mp4';
-        $icon = 'f/mpeg-24';
+    $icon = null;
+    if (!empty($equella->filename)) {
+        if ('document/unknown' != mimeinfo('type', $equella->filename)) {
+            $icon = 'f/' . mimeinfo('icon' . $size, $equella->filename);
+        }
     }
+
+    if (empty($icon)) {
+        $mimetype = $equella->mimetype;
+        $icon = file_mimetype_icon($mimetype, $size);
+    }
+
     return $icon;
 
     //if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {

@@ -226,5 +226,28 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014091800, 'equella');
     }
 
+    if ($oldversion < 2015041401) {
+
+        // Define field metadata to be added to equella.
+        $table = new xmldb_table('equella');
+
+        $field = new xmldb_field('filename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'ltisalt');
+
+        // Conditionally launch add field filename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('metadata', XMLDB_TYPE_TEXT, null, null, null, null, null, 'filename');
+
+        // Conditionally launch add field metadata.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Equella savepoint reached.
+        upgrade_mod_savepoint(true, 2015041401, 'equella');
+    }
+
     return true;
 }

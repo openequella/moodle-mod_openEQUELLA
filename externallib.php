@@ -510,7 +510,10 @@ class equella_external extends external_api {
         $eq->uuid = $itemUuid;
         $eq->version = $itemVersion;
         $eq->mimetype = mimeinfo('type', $title);
-        $eq->attachmentuuid = $attachmentUuid;
+        if (!empty($attachmentUuid)) {
+            $eq->filename = $title;
+            $eq->attachmentuuid = $attachmentUuid;
+        }
 
         $eqid = equella_add_instance($eq);
 

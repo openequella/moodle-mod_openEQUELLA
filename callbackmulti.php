@@ -40,10 +40,16 @@ foreach($links as $link) {
     $mod->introformat = FORMAT_HTML;
     $mod->attachmentuuid = $link['attachmentUuid'];
     $mod->url = $link['url'];
+    $mod->metadata = serialize($link);
     $targetsection = $sectionnum;
+
     // if equella returns section id, overwrite moodle section parameter
     if (isset($link['folder']) && $link['folder'] != null) {
         $targetsection = clean_param($link['folder'], PARAM_INT);
+    }
+
+    if (isset($link['filename'])) {
+        $mod->filename = clean_param($link['filename'], PARAM_FILE);
     }
 
     if (isset($link['mimetype'])) {
@@ -51,9 +57,11 @@ foreach($links as $link) {
     } else {
         $mod->mimetype = mimeinfo('type', $mod->url);
     }
+
     if (isset($link['activationUuid'])) {
         $mod->activation = $link['activationUuid'];
     }
+
     $equellaid = equella_add_instance($mod);
 
     $mod->instance = $equellaid;
