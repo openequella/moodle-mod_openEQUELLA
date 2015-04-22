@@ -1,3 +1,7 @@
+2015-04-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix data records missing error in webservice
+
 2015-04-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-2097 Store resource info sent from EQUELLA

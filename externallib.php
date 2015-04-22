@@ -652,7 +652,6 @@ class equella_external extends external_api {
             }
 
             if (class_exists('core\\event\\course_module_updated')) {
-                $cm = get_coursemodule_from_id('equella', $cmid, 0, false, MUST_EXIST);
                 $event = \core\event\course_module_updated::create_from_cm($cm);
                 $event->trigger();
             } else {
