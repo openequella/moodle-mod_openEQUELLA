@@ -398,7 +398,9 @@ class equella_external extends external_api {
         }
         if ($sortcol == 'course') {
             $sortcol = 'fullname';
-        } else if ($sortcol == 'name' || $sortcol == 'timecreated') {
+        } else if ($sortcol == 'name') {
+            $sortcol = 'eqname';
+        } else if ($sortcol == 'timecreated') {
             // all good
         } else {
             $sortcol = 'timecreated';

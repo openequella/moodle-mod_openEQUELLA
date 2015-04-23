@@ -1,3 +1,9 @@
+2015-04-23  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2124 Web Service: Fixed sorting field name
+
+	EQ-2121 Web Service: Fix records count for paging
+
 2015-04-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	Fix data records missing error in webservice
