@@ -380,7 +380,7 @@ class equella_external extends external_api {
     public static function find_all_usage($user, $query, $courseid, $sectionid, $archived, $offset, $count, $sortcolumn, $sortasc) {
         global $DB, $CFG;
 
-        $params = self::validate_parameters(self::find_all_usage_parameters(), array(
+        $input = self::validate_parameters(self::find_all_usage_parameters(), array(
             'user' => $user,
             'query' => $query,
             'courseid' => $courseid,
@@ -392,7 +392,7 @@ class equella_external extends external_api {
             'sortasc' => $sortasc)
         );
 
-        $sortcol = $params['sortcolumn'];
+        $sortcol = $input['sortcolumn'];
         if (empty($sortcol)) {
             $sortcol = 'timecreated';
         }
@@ -403,9 +403,8 @@ class equella_external extends external_api {
         } else {
             $sortcol = 'timecreated';
         }
-        $sortord = $params['sortasc'] ? 'ASC' : 'DESC';
+        $sortord = $input['sortasc'] ? 'ASC' : 'DESC';
 
-        $args = array('%' . $params['query'] . '%');
 
         $eqfields = "e.id AS eqid,e.name AS eqname, e.intro AS eqintro,e.uuid,e.path,e.attachmentuuid,e.version,e.activation,e.mimetype,e.timecreated,e.timemodified";
         $coursefields = "c.id,c.id AS courseid, c.shortname,c.fullname,c.idnumber,c.visible AS coursevisible,c.format";
@@ -419,36 +418,45 @@ class equella_external extends external_api {
                        INNER JOIN {course_sections} cs ON cs.id=cm.section AND cs.course=c.id
                        INNER JOIN {modules} md ON md.id = cm.module
                  WHERE LOWER(e.name) LIKE LOWER(?)";
+        $countsql = "SELECT count(e.id) AS eqid
+                  FROM {equella} e
+                       INNER JOIN {course} c ON e.course = c.id
+                       INNER JOIN {course_modules} cm ON cm.instance = e.id
+                       INNER JOIN {course_sections} cs ON cs.id=cm.section AND cs.course=c.id
+                       INNER JOIN {modules} md ON md.id = cm.module
+                 WHERE LOWER(e.name) LIKE LOWER(?)";
 
-        if (!empty($params['courseid'])) {
+        $params = array('%' . $input['query'] . '%');
+
+        if (!empty($input['courseid'])) {
             $sql .= ' AND c.id = ? ';
-            $args[] = $params['courseid'];
+            $params[] = $input['courseid'];
         }
-        if (!empty($params['sectionid'])) {
+        if (!empty($input['sectionid'])) {
             $sql .= ' AND cm.section = ? ';
-            $args[] = $params['sectionid'];
+            $params[] = $input['sectionid'];
         }
-        if (empty($params['archived'])) {
+        if (empty($input['archived'])) {
             $sql .= ' AND (c.visible = ? AND cm.visible = ?) ';
-            $args[] = 1;
-            $args[] = 1;
+            $params[] = 1;
+            $params[] = 1;
         }
         $sql = $sql . ' ORDER BY ' . $sortcol . ' ' . $sortord;
 
+        $availablecount = 0;
         try {
-            $equellaitems = $DB->get_recordset_sql($sql, $args, $offset, $count);
+            $equellaitems = $DB->get_recordset_sql($sql, $params, $offset, $count);
+            $availablecount = $DB->count_records_sql($countsql, $params);
         } catch (Exception $ex) {
             throw new moodle_exception('webserviceerror', 'equella', '', $ex->error, $ex->debuginfo);
         }
 
         $content = array();
-        $count = 0;
         foreach($equellaitems as $item) {
-            $content[] = self::build_item($item, $params['archived']);
-            $count++;
+            $content[] = self::build_item($item, $input['archived']);
         }
 
-        return array('available' => $count, 'results' => $content);
+        return array('available' => $availablecount, 'results' => $content);
     }
     /**
      *
