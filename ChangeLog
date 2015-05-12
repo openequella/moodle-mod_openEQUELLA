@@ -1,5 +1,7 @@
 2015-05-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
+	Clean up cancel.php and github url
+
 	moodleform_mod::add_intro_editor() is deprecated
 	use standard_intro_elements() instead
 

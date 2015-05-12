@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of the EQUELLA Moodle Integration - https://github.com/equella/moodle-module
+// This file is part of the EQUELLA module - http://git.io/vUuof
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +18,10 @@
 require_once ("../../config.php");
 require_once ("lib.php");
 $course = optional_param('course', 0, PARAM_INT);
-?>
 
+$url = new moodle_url('/course/view.php', array('id'=>$course));
+$url = $url->out(false);
+?>
 <html>
 <head>
 <title>Please wait while you are redirected</title>
@@ -28,10 +29,13 @@ $course = optional_param('course', 0, PARAM_INT);
 function redirect(url) {
     window.open(url, "_top", "");
 }
+window.onload = function() {
+    var url = "<?php echo $url; ?>";
+    redirect(url);
+}
 </script>
 </head>
-<body
-	onload="redirect('<?php echo $CFG->wwwroot.'/course/view.php?id='.$course; ?>');">
-	Please wait while you are redirected...
+<body>
+    <div>Please wait while you are redirected...</div>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <?php
-
-// This file is part of the EQUELLA Moodle Integration - https://github.com/equella/moodle-module
+// This file is part of the EQUELLA module - http://git.io/vUuof
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,7 +108,7 @@ class mod_equella_mod_form extends moodleform_mod {
 
             echo equella_select_dialog($args);
 
-            // XXX https://github.com/equella/moodle-module/issues/28
+            // XXX https://github.com/equella/moodle-mod_equella/issues/28
             // This is a hack to make moodle believes certain html element exists.
             // When conditional access is enabled, moodle expects id_availabilityconditionsjson field
             // in standard module form, as we don't use standard form.
