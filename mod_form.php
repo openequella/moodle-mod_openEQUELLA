@@ -22,9 +22,17 @@ require_once ('lib.php');
 require_once ('locallib.php');
 class mod_equella_mod_form extends moodleform_mod {
     var $form;
+
+    private function is_adding_equella_resource() {
+        return isset($this->form->add);
+    }
+
     function definition() {
         global $CFG;
         $mform = & $this->_form;
+        if ($this->is_adding_equella_resource()) {
+            return;
+        }
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -32,7 +40,11 @@ class mod_equella_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
 
-        $this->add_intro_editor();
+        if(method_exists($this, 'standard_intro_elements')) {
+            $this->standard_intro_elements();
+        } else {
+            $this->add_intro_editor();
+        }
 
         $mform->addElement('text', 'url', get_string('location'), array('size' => '80'));
         $mform->setType('url', PARAM_URL);
@@ -86,7 +98,7 @@ class mod_equella_mod_form extends moodleform_mod {
     function display() {
         global $CFG, $USER;
         $form = $this->form;
-        if (isset($form->add)) {
+        if ($this->is_adding_equella_resource()) {
             $args = new stdClass();
             $args->course = $form->course;
             $args->section = $form->section;

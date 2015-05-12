@@ -1,3 +1,8 @@
+2015-05-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	moodleform_mod::add_intro_editor() is deprecated
+	use standard_intro_elements() instead
+
 2015-04-23  Dongsheng Cai  <dongsheng.cai@pearson.com>
 
 	EQ-2124 Web Service: Fixed sorting field name
