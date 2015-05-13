@@ -16,5 +16,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $module->version   = 2015042000;
-$module->requires  = 2012120300;    // Requires this Moodle version
+$module->requires  = 2014041101;    // Requires this Moodle version
 $module->component = 'mod_equella'; // Full name of the plugin (used for diagnostics)
