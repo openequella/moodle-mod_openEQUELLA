@@ -23,7 +23,27 @@ class EQUELLA {
 
     // endpoint is of the form: http://myserver/mysint/services/SoapService41
     public function __construct($endpoint) {
-        $this->client = new SoapClient($endpoint . '?wsdl', array('location' => $endpoint,'cache_wsdl' => WSDL_CACHE_BOTH));
+        global $CFG;
+
+        $endpoint = $endpoint . '?wsdl';
+
+        $options = array(
+            'location' => $endpoint,
+            'cache_wsdl' => WSDL_CACHE_BOTH,
+        );
+
+        if (!empty($CFG->equella_soap_disable_ssl_check)) {
+            $context = stream_context_create(array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            ));
+            $options['stream_context'] = $context;
+        }
+
+        $this->client = new SoapClient($endpoint, $options);
     }
     public function hasMethod($methodname) {
         $methodname = ' ' . $methodname . '(';
