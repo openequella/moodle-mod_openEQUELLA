@@ -442,6 +442,7 @@ function equella_dndupload_handle($uploadinfo) {
         $eqresource->intro = $info->description;
         $eqresource->introformat = FORMAT_HTML;
         $eqresource->mimetype = $mimetype;
+        $eqresource->filename = $file->get_filename();
         $item = array_pop($info->attachments);
         $eqresource->attachmentuuid = $item->uuid;
         $eqresource->url = $item->links->view;
