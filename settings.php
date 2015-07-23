@@ -76,19 +76,20 @@ if ($ADMIN->fulltree) {
 
     $rolearchetypes = get_role_archetypes();
     foreach(get_all_editing_roles() as $role) {
-        $sectionname = 'equella_' . $role->shortname . '_role_group';
-        if (in_array($role->shortname, $rolearchetypes)) {
-            $heading = ecs('group.' . $role->shortname);
+        $shortname = clean_param($role->shortname, PARAM_ALPHANUM);
+        if (in_array($shortname, $rolearchetypes)) {
+            $heading = ecs('group.' . $shortname);
         } else {
-            $heading = ecs('group.noname', $role->shortname);
+            $heading = ecs('group.noname', $shortname);
             if (!empty($role->name)) {
                 $heading = ecs('group', $role->name);
             }
         }
+        $sectionname = 'equella_' . $shortname . '_role_group';
         $settings->add(new equella_setting_left_heading($sectionname, $heading, ''));
 
-        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
-        $settings->add(new admin_setting_configtext("equella_{$role->shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella_{$shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
     }
     // ///////////////////////////////////////////////////////////////////////////////
     //
