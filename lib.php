@@ -31,6 +31,7 @@ define('EQUELLA_CONFIG_SELECT_RESTRICT_PACKAGES_ONLY', 'packageonly');
 define('EQUELLA_CONFIG_INTERCEPT_NONE', 0);
 define('EQUELLA_CONFIG_INTERCEPT_ASK', 1);
 define('EQUELLA_CONFIG_INTERCEPT_FULL', 2);
+define('EQUELLA_CONFIG_INTERCEPT_META', 3); 
 
 define('EQUELLA_ACTION_SELECTORADD', 'selectOrAdd');
 define('EQUELLA_ACTION_STRUCTURED', 'structured');
@@ -392,6 +393,20 @@ function equella_handle_mod_updated($event) {
 if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_ASK) {
     function equella_dndupload_register() {
         return array('files' => array(array('extension' => '*','message' => get_string('dnduploadresource', 'mod_equella'))));
+    }
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads with meta data
+ *
+ * @return array containing details of the files / types the mod can handle
+ */
+if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_META) {
+       
+    function equella_dndupload_register() {
+        return array('files' => array(
+            array('extension' => '*', 'message' => get_string('dnduploadresourcemetadata', 'mod_equella'))
+        ));
     }
 }
 

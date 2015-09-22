@@ -28,6 +28,7 @@ $string['clicktoopen'] = 'Click {$a} link to open resource.';
 $string['crontask'] = 'EQUELLA cron task';
 // Course page drag and drop dialog
 $string['dnduploadresource'] = 'Contribute to EQUELLA';
+$string['dnduploadresourcemetadata'] = 'Contribute to EQUELLA with meta data';
 $string['mustloggintoview'] = 'Please log in to view this page.';
 
 ////////////////////////////////////////////////////////
