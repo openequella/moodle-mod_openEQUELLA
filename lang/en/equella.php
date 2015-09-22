@@ -132,6 +132,7 @@ $string['interceptfilesintro'] = 'Select the action required when dragging and d
 $string['interceptnone'] = 'Don\'t intercept files';
 $string['interceptauto'] = 'Auto contribute files in EQUELLA';
 $string['interceptask']  = 'Display file destination dialog';
+$string['interceptmetadata']  = 'Auto contribute file to EQUELLA with meta data';
 
 ////////////////////////////////////////////////////////
 // EQUELLA Resource Checker
