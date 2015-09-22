@@ -404,6 +404,9 @@ if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files =
 if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_META) {
        
     function equella_dndupload_register() {
+       global $PAGE;
+       $PAGE->requires->yui_module('moodle-mod_equella-dndupload', 'M.mod_equella.dndupload.init');
+       //$PAGE->requires->strings_for_js(array('dndupload_resource', 'dndupload_equella', 'copyright', 'description', 'keyword'), 'mod_equella');
         return array('files' => array(
             array('extension' => '*', 'message' => get_string('dnduploadresourcemetadata', 'mod_equella'))
         ));
