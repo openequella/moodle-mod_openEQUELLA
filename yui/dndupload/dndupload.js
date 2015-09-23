@@ -1,6 +1,5 @@
 YUI.add('moodle-mod_equella-dndupload', function (Y) {
 
-
     var ModulenameNAME = 'equella_drag-n-drop_upload_handler';
     var DndUpload = function () {
         DndUpload.superclass.constructor.apply(this, arguments);
@@ -147,7 +146,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     // Remember this selection for next time
                                     self.lastselected[extension] = module;
                                     // Do the upload
-                                    //self.upload_file(file, section, sectionnumber, module);	//Allison changed to below, to pass on more parameters
                                     M.mod_equella.dndupload.upload_file_with_meta(file, section, sectionnumber, module, dnd_cp, dnd_title, dnd_desc, dnd_kw);
                                 },
                                 section: Y.WidgetStdMod.FOOTER
@@ -166,17 +164,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                 }, el, this);
             }, this);
         },
-        /** Do the file upload: show the dummy element, use an AJAX call to send the data
-         * to the server, update the progress bar for the file, then replace the dummy
-         * element with the real information once the AJAX call completes
-         * @param file the details of the file, taken from the FileList in the drop event
-         * @param section the DOM element representing the selected course section
-         * @param sectionnumber the number of the selected course section
-         * @param cp, copyright flag
-         * @param title, title of the resource
-         * @param desc, descripiton of the resource
-         * @param kw, keyword(s) that may associate with the resource
-         */
         upload_file_with_meta: function (file, section, sectionnumber, module, cp, title, desc, kw) {
 
             // This would be an ideal place to use the Y.io function
@@ -194,7 +181,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
             }
 
             // Add the file to the display
-            var resel = this.add_resource_element(file.name, section, module);
+            var resel = M.course_dndupload.add_resource_element(file.name, section, module);
 
             // Update the progress bar as the file is uploaded
             xhr.upload.addEventListener('progress', function (e) {
@@ -243,8 +230,9 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
             formData.append('dndtitle', title);
             formData.append('dnddesc', desc);
             formData.append('dndkw', kw);
+
             // Send the AJAX call
-            xhr.open("POST", this.url, true);
+            xhr.open("POST", M.cfg.wwwroot + '/mod/equella/dndupload.php', true);
             xhr.send(formData);
         }
     };
@@ -258,7 +246,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
     });
     M.mod_equella = M.mod_equella || {};
     M.mod_equella.dndupload = M.mod_equella.dndupload || {};
-    M.mod_equella.dndupload.file_handler_metadata_dialog = DndUpload.prototype.file_handler_metadata_dialog;
     M.mod_equella.dndupload.upload_file_with_meta = DndUpload.prototype.upload_file_with_meta;
     M.mod_equella.dndupload.init = function (config) { // 'config' contains the parameter values
         //console.log('I am in the javascript module, Yeah!');
