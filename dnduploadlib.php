@@ -40,7 +40,8 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
      * @param string $modulename The name of the module requested to handle this upload
      */
     public function __construct($courseid, $section, $type, $metadata) {
-        //global $DB;
+        global $DB;
+        
         parent::__construct($courseid, $section, $type, 'equella');
         $this->metadata = $metadata;
     }
@@ -53,6 +54,7 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
      */
     public function process($displayname = null, $content = null) {
         require_capability('moodle/course:manageactivities', $this->context);
+        
         if ($this->is_file_upload()) {
             require_capability('moodle/course:managefiles', $this->context);
             if ($content != null) {
@@ -70,6 +72,34 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
         } else {
             throw new coding_exception("Equella drag-n-drop module should not be requested to handle non-file uploads");
         }
+    }
+    
+      /**
+     * Gather together all the details to pass on to the mod, so that it can initialise it's
+     * own database tables
+     *
+     * @param int $draftitemid optional the id of the draft area containing the file (for file uploads)
+     * @param string $content optional the content dropped onto the course (for non-file uploads)
+     * @return object data to pass on to the mod, containing:
+     *              string $type the 'type' as registered with dndupload_handler (or 'Files')
+     *              object $course the course the upload was for
+     *              int $draftitemid optional the id of the draft area containing the files
+     *              int $coursemodule id of the course module that has already been created
+     *              string $displayname the name to use for this activity (can be overriden by the mod)
+     */
+    protected function prepare_module_data($draftitemid = null, $content = null) {
+        $data = new stdClass();
+        $data->type = $this->type;
+        $data->course = $this->course;
+        if ($draftitemid) {
+            $data->draftitemid = $draftitemid;
+        } else if ($content) {
+            $data->content = $content;
+        }
+        $data->coursemodule = $this->cm->id;
+        $data->displayname = $this->displayname;
+        $data->metadata = $this->metadata;
+        return $data;
     }
 
 }
