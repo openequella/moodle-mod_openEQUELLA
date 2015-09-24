@@ -146,7 +146,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     // Remember this selection for next time
                                     self.lastselected[extension] = module;
                                     // Do the upload
-                                    M.mod_equella.dndupload.upload_file_with_meta(file, section, sectionnumber, module, dnd_cp, dnd_title, dnd_desc, dnd_kw);
+                                    self.upload_file_with_meta(file, section, sectionnumber, module, dnd_cp, dnd_title, dnd_desc, dnd_kw);
                                 },
                                 section: Y.WidgetStdMod.FOOTER
                             });
@@ -159,81 +159,81 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                 section: Y.WidgetStdMod.FOOTER
                             });
                         }
+                        M.course_dndupload.upload_file_with_meta = function (file, section, sectionnumber, module, cp, title, desc, kw) {
+
+                            // This would be an ideal place to use the Y.io function
+                            // however, this does not support data encoded using the
+                            // FormData object, which is needed to transfer data from
+                            // the DataTransfer object into an XMLHTTPRequest
+                            // This can be converted when the YUI issue has been integrated:
+                            // http://yuilibrary.com/projects/yui3/ticket/2531274
+                            var xhr = new XMLHttpRequest();
+                            var self = this;
+
+                            if (file.size > this.maxbytes) {
+                                alert("'" + file.name + "' " + M.util.get_string('filetoolarge', 'moodle'));
+                                return;
+                            }
+
+                            // Add the file to the display
+                            var resel = M.course_dndupload.add_resource_element(file.name, section, module);
+
+                            // Update the progress bar as the file is uploaded
+                            xhr.upload.addEventListener('progress', function (e) {
+                                if (e.lengthComputable) {
+                                    var percentage = Math.round((e.loaded * 100) / e.total);
+                                    resel.progress.style.width = percentage + '%';
+                                }
+                            }, false);
+
+                            // Wait for the AJAX call to complete, then update the
+                            // dummy element with the returned details
+                            xhr.onreadystatechange = function () {
+                                if (xhr.readyState == 4) {
+                                    if (xhr.status == 200) {
+                                        var result = JSON.parse(xhr.responseText);
+                                        if (result) {
+                                            if (result.error == 0) {
+                                                // All OK - replace the dummy element.
+                                                resel.li.outerHTML = result.fullcontent;
+                                                if (self.Y.UA.gecko > 0) {
+                                                    // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                                    // log the user out when clicking on the link (before refreshing the page).
+                                                    resel.li.outerHTML = unescape(resel.li.outerHTML);
+                                                }
+                                                self.add_editing(result.elementid);
+                                            } else {
+                                                // Error - remove the dummy element
+                                                resel.parent.removeChild(resel.li);
+                                                alert(result.error);
+                                            }
+                                        }
+                                    } else {
+                                        alert(M.util.get_string('servererror', 'moodle'));
+                                    }
+                                }
+                            };
+                            // Prepare the data to send
+                            var formData = new FormData();
+                            formData.append('repo_upload_file', file);
+                            formData.append('sesskey', M.cfg.sesskey);
+                            formData.append('course', this.courseid);
+                            formData.append('section', sectionnumber);
+                            formData.append('module', module);
+                            formData.append('type', 'Files');
+                            formData.append('dndcopyright', cp);
+                            formData.append('dndtitle', title);
+                            formData.append('dnddesc', desc);
+                            formData.append('dndkw', kw);
+
+                            // Send the AJAX call
+                            xhr.open("POST", M.cfg.wwwroot + '/mod/equella/dndupload.php', true);
+                            xhr.send(formData);
+                        }
                         this.hasOverriddenDndUpload = true;
                     }
                 }, el, this);
             }, this);
-        },
-        upload_file_with_meta: function (file, section, sectionnumber, module, cp, title, desc, kw) {
-
-            // This would be an ideal place to use the Y.io function
-            // however, this does not support data encoded using the
-            // FormData object, which is needed to transfer data from
-            // the DataTransfer object into an XMLHTTPRequest
-            // This can be converted when the YUI issue has been integrated:
-            // http://yuilibrary.com/projects/yui3/ticket/2531274
-            var xhr = new XMLHttpRequest();
-            var self = this;
-
-            if (file.size > this.maxbytes) {
-                alert("'" + file.name + "' " + M.util.get_string('filetoolarge', 'moodle'));
-                return;
-            }
-
-            // Add the file to the display
-            var resel = M.course_dndupload.add_resource_element(file.name, section, module);
-
-            // Update the progress bar as the file is uploaded
-            xhr.upload.addEventListener('progress', function (e) {
-                if (e.lengthComputable) {
-                    var percentage = Math.round((e.loaded * 100) / e.total);
-                    resel.progress.style.width = percentage + '%';
-                }
-            }, false);
-
-            // Wait for the AJAX call to complete, then update the
-            // dummy element with the returned details
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        var result = JSON.parse(xhr.responseText);
-                        if (result) {
-                            if (result.error == 0) {
-                                // All OK - replace the dummy element.
-                                resel.li.outerHTML = result.fullcontent;
-                                if (self.Y.UA.gecko > 0) {
-                                    // Fix a Firefox bug which makes sites with a '~' in their wwwroot
-                                    // log the user out when clicking on the link (before refreshing the page).
-                                    resel.li.outerHTML = unescape(resel.li.outerHTML);
-                                }
-                                self.add_editing(result.elementid);
-                            } else {
-                                // Error - remove the dummy element
-                                resel.parent.removeChild(resel.li);
-                                alert(result.error);
-                            }
-                        }
-                    } else {
-                        alert(M.util.get_string('servererror', 'moodle'));
-                    }
-                }
-            };
-            // Prepare the data to send
-            var formData = new FormData();
-            formData.append('repo_upload_file', file);
-            formData.append('sesskey', M.cfg.sesskey);
-            formData.append('course', this.courseid);
-            formData.append('section', sectionnumber);
-            formData.append('module', module);
-            formData.append('type', 'Files');
-            formData.append('dndcopyright', cp);
-            formData.append('dndtitle', title);
-            formData.append('dnddesc', desc);
-            formData.append('dndkw', kw);
-
-            // Send the AJAX call
-            xhr.open("POST", M.cfg.wwwroot + '/mod/equella/dndupload.php', true);
-            xhr.send(formData);
         }
     };
 
