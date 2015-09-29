@@ -56,9 +56,9 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     content += '<select name="iscopyrighted" id="' + uploadid + 'cp" size="1"><option value="Yes">Yes</option><option value="No" selected>No</option></select><br/>';
                                     content += '<label for="title">Title: </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="title" id="' + uploadid + 'title"/><br/>';
-                                    content += '<label for="description">Description: </label>';
+                                    content += '<label for="description">Description (Optional): </label>';
                                     content += '<textarea cols="90" rows="4" name="desc" id="' + uploadid + 'desc"/></textarea><br/>';
-                                    content += '<label for="keyword">Keyword (optional, multiple keywords are separate with comma): </label>';
+                                    content += '<label for="keyword">Keyword (Optional, multiple keywords are separate with comma): </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="keyword" id="' + uploadid + 'kw"/><br/>';
                                     content += '</label><br/>';
                                 }
@@ -116,6 +116,9 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                         if (input.get('id') === uploadid + "title") {
                                             dnd_title = input.get('value');
                                         }
+                                        if (input.get('id') === uploadid + "desc") {
+                                            dnd_kw = input.get('value');
+                                        }
                                         if (input.get('id') === uploadid + "kw") {
                                             dnd_kw = input.get('value');
                                         }
@@ -126,17 +129,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                         module = false;
                                         return;
                                     }
-
-                                    div.all('textarea').each(function (textarea) {
-                                        if (textarea.get('id') === uploadid + "desc") {
-                                            dnd_desc = textarea.get('value');
-                                            if (dnd_desc.length < 5) {
-                                                alert('The description is too short');
-                                                module = false;
-                                                return;
-                                            }
-                                        }
-                                    });
 
                                     if (!module) {
                                         return;
