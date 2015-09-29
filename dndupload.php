@@ -41,8 +41,7 @@ $metadata->eqdndtitle = optional_param('dndtitle', '', PARAM_TEXT);
 $metadata->eqdnddesc = optional_param('dnddesc', '', PARAM_TEXT);
 $metadata->eqdndkw = optional_param('dndkw', '', PARAM_TEXT);
 
-//$PAGE->set_url('/mod/equella/dndupload.php');
+$PAGE->set_url('/mod/equella/dndupload.php');
 
 $dndproc = new equella_dndupload_ajax_processor($courseid, $section, $type, $metadata);
-
 $dndproc->process($displayname, $contents);

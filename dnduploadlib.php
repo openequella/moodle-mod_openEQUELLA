@@ -30,6 +30,11 @@ require_once($CFG->dirroot . '/course/dnduploadlib.php');
 class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
 
     protected $metadata = null;
+    
+    protected $displayname = null;
+    protected $copyright = null;
+    protected $itemdescription = null; 
+    protected $itemkeyword = null;
 
     /**
      * Set up some basic information needed to handle the upload
@@ -66,7 +71,12 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
             }
         }
         require_sesskey();
-        $this->displayname = $displayname;
+        $this->displayname = $displayname;      
+        
+        $this->copyright = $this->metadata->eqdndcopyright;
+        $this->itemdescription = $this->metadata->eqdnddesc;
+        $this->itemkeyword = $this->metadata->eqdndkw;
+        
         if ($this->is_file_upload()) {
             $this->handle_file_upload();
         } else {
@@ -98,7 +108,10 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
         }
         $data->coursemodule = $this->cm->id;
         $data->displayname = $this->displayname;
-        $data->metadata = $this->metadata;
+        $data->copyright = $this->copyright;
+        $data->itemdescription = $this->itemdescription;
+        $data->itemkeyword = $this->itemkeyword;
+        
         return $data;
     }
 

@@ -440,6 +440,20 @@ function equella_dndupload_handle($uploadinfo) {
         $params['moodlecourseidnumber'] = $uploadinfo->course->idnumber;
         $params['filesize'] = $file->get_filesize();
         $mimetype = $file->get_mimetype();
+        
+        if (isset($uploadinfo->copyright)){
+        	$params['copyrightflag'] = $uploadinfo->copyright;
+        }
+        if (isset($uploadinfo->itemdescription)) { 
+        	$params['itemdescription'] = $uploadinfo->itemdescription; 
+        }
+   	 	if (isset($uploadinfo->displayname)) { 
+        	$params['displayname'] = $uploadinfo->displayname;
+        }
+    	if (isset($uploadinfo->itemkeyword)) { 
+        	$params['itemkeyword'] = $uploadinfo->itemkeyword; 
+        }
+        
         $info = equella_rest_api::contribute_file_with_shared_secret($file->get_filename(), $handle, $params);
         if (isset($info->error)) {
             throw new equella_exception($info->error_description);
