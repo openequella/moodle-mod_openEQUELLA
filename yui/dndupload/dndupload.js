@@ -18,7 +18,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
             sections.each(function (el) {
                 Y.on('drop', function (el) {
                     if (!this.hasOverriddenDndUpload) {
-                        M.course_dndupload.do_upload_file = M.course_dndupload.upload_file;
                         M.course_dndupload.core_file_handler_dialog = M.course_dndupload.file_handler_dialog;
                         self = this;
                         M.course_dndupload.file_handler_dialog = function (handlers, extension, file, section, sectionnumber) {
@@ -108,16 +107,16 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                      }
                                      });*/
                                     div.all('select').each(function (select) {
-                                        if (select.get('id') == uploadid + "cp") {
+                                        if (select.get('id') === uploadid + "cp") {
                                             dnd_cp = select.get('value');
                                         }
                                     });
 
                                     div.all('input').each(function (input) {
-                                        if (input.get('id') == uploadid + "title") {
+                                        if (input.get('id') === uploadid + "title") {
                                             dnd_title = input.get('value');
                                         }
-                                        if (input.get('id') == uploadid + "kw") {
+                                        if (input.get('id') === uploadid + "kw") {
                                             dnd_kw = input.get('value');
                                         }
                                     });
@@ -129,7 +128,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     }
 
                                     div.all('textarea').each(function (textarea) {
-                                        if (textarea.get('id') == uploadid + "desc") {
+                                        if (textarea.get('id') === uploadid + "desc") {
                                             dnd_desc = textarea.get('value');
                                             if (dnd_desc.length < 5) {
                                                 alert('The description is too short');
@@ -246,7 +245,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
     });
     M.mod_equella = M.mod_equella || {};
     M.mod_equella.dndupload = M.mod_equella.dndupload || {};
-    M.mod_equella.dndupload.upload_file_with_meta = DndUpload.prototype.upload_file_with_meta;
+    //M.mod_equella.dndupload.upload_file_with_meta = DndUpload.prototype.upload_file_with_meta;
     M.mod_equella.dndupload.init = function (config) { // 'config' contains the parameter values
         //console.log('I am in the javascript module, Yeah!');
         return new DndUpload(config); // 'config' contains the parameter values
