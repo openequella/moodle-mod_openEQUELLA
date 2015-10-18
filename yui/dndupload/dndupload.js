@@ -56,7 +56,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     content += '<input type="radio" name="iscopyright" value="Yes">Yes <input type="radio" name="iscopyright" value="No">No<br />';
                                     content += '<label for="title">Title:* </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="title" id="' + uploadid + 'title"/><br/>';
-                                    content += '<label for="description">Description:* </label>';
+                                    content += '<label for="description">Description: </label>';
                                     content += '<textarea cols="90" rows="4" name="desc" id="' + uploadid + 'desc"/></textarea><br/>';
                                     content += '<label for="keyword">Keyword (Separate multiple keywords with commas): </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="keyword" id="' + uploadid + 'kw"/><br/>';
@@ -68,7 +68,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                             var Y = this.Y;
                             var self = this;
                             var panel = new M.core.dialogue({
-                                headerContent: '<img src="../mod/equella/pix/equella-blue.png" width="20px" /> Equella Contribution Tool - Contributing a resource stores in on Equella',
+                                headerContent: '<img src="../mod/equella/pix/equella-blue.png" width="20px" /> <b>Equella Contribution Tool - Contributing a resource stores it on Equella</b>',
                                 bodyContent: content,
                                 width: '700px',
                                 modal: true,
