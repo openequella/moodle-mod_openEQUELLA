@@ -56,9 +56,9 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     content += '<input type="radio" name="iscopyright" value="Yes">Yes <input type="radio" name="iscopyright" value="No">No<br />';
                                     content += '<label for="title">Title:* </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="title" id="' + uploadid + 'title"/><br/>';
-                                    content += '<label for="description">Description: </label>';
+                                    content += '<label for="description">Description:* </label>';
                                     content += '<textarea cols="90" rows="4" name="desc" id="' + uploadid + 'desc"/></textarea><br/>';
-                                    content += '<label for="keyword">Keyword (Separate multiple keywords with commas): </label>';
+                                    content += '<label for="keyword">Keyword (Separate keywords or phrases with commas): </label>';
                                     content += '<input type="text" size=100 style="width:650px" name="keyword" id="' + uploadid + 'kw"/><br/>';
                                     content += '</label><br/>';
                                 }
@@ -68,8 +68,8 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                             var Y = this.Y;
                             var self = this;
                             var panel = new M.core.dialogue({
-                                headerContent: '<img src="../mod/equella/pix/equella-blue.png" width="20px" /> <b>Equella Contribution Tool - Contributing a resource stores it on Equella</b>',
-                                bodyContent: content,
+                              headerContent: '<img src="../mod/equella/pix/equella-blue.png" width="20px" /> <b>Equella Contribution Tool</b><br /> This adds the resource to Equella',
+                              bodyContent: content,
                                 width: '700px',
                                 modal: true,
                                 visible: true,
@@ -98,7 +98,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     var dnd_cp =  document.getElementsByName("iscopyright");
                                     var dnd_cp_value = '';
                                     var dnd_title = '';
-                                    var dnd_desc = '';
+                                    var dnd_desc = document.getElementById(uploadid + "desc");
                                     var dnd_kw = '';
                                     var div = Y.one('#dndupload_handlers' + uploadid);
                                     /* replaced component value fetching
@@ -112,9 +112,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                         if (input.get('id') === uploadid + "title") {
                                             dnd_title = input.get('value');
                                         }
-                                        if (input.get('id') === uploadid + "desc") {
-                                            dnd_kw = input.get('value');
-                                        }
                                         if (input.get('id') === uploadid + "kw") {
                                             dnd_kw = input.get('value');
                                         }
@@ -125,13 +122,19 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     } else if (dnd_cp[1].checked) {
                                       dnd_cp_value = dnd_cp[1].value;
                                     } else {
-                                      alert("Is this copyrighted material?");
+                                      alert("Please indicate whether your resource contains copyright material.");
                                       module = false;
                                       return;
                                     }
 
-                                    if (dnd_title.length < 5) {
-                                        alert('The title is too short');
+                                    if (dnd_title.length < 6) {
+                                        alert('Your title needs to be at least six characters long.');
+                                        module = false;
+                                        return;
+                                    }
+
+                                    if (dnd_desc.value.length < 2) {
+                                        alert('Please describe the content of your resource.');
                                         module = false;
                                         return;
                                     }
@@ -143,7 +146,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                     // Remember this selection for next time
                                     self.lastselected[extension] = module;
                                     // Do the upload
-                                    self.upload_file_with_meta(file, section, sectionnumber, module, dnd_cp_value, dnd_title, dnd_desc, dnd_kw);
+                                    self.upload_file_with_meta(file, section, sectionnumber, module, dnd_cp_value, dnd_title, dnd_desc.value, dnd_kw);
                                 },
                                 section: Y.WidgetStdMod.FOOTER
                             });
