@@ -30,10 +30,10 @@ require_once($CFG->dirroot . '/course/dnduploadlib.php');
 class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
 
     protected $metadata = null;
-    
+
     protected $displayname = null;
     protected $copyright = null;
-    protected $itemdescription = null; 
+    protected $itemdescription = null;
     protected $itemkeyword = null;
 
     /**
@@ -46,7 +46,7 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
      */
     public function __construct($courseid, $section, $type, $metadata) {
         global $DB;
-        
+
         parent::__construct($courseid, $section, $type, 'equella');
         $this->metadata = $metadata;
     }
@@ -59,7 +59,7 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
      */
     public function process($displayname = null, $content = null) {
         require_capability('moodle/course:manageactivities', $this->context);
-        
+
         if ($this->is_file_upload()) {
             require_capability('moodle/course:managefiles', $this->context);
             if ($content != null) {
@@ -71,19 +71,18 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
             }
         }
         require_sesskey();
-        $this->displayname = $displayname;      
-        
+        $this->displayname = $this->metadata->eqdndtitle;
         $this->copyright = $this->metadata->eqdndcopyright;
         $this->itemdescription = $this->metadata->eqdnddesc;
         $this->itemkeyword = $this->metadata->eqdndkw;
-        
+
         if ($this->is_file_upload()) {
             $this->handle_file_upload();
         } else {
             throw new coding_exception("Equella drag-n-drop module should not be requested to handle non-file uploads");
         }
     }
-    
+
       /**
      * Gather together all the details to pass on to the mod, so that it can initialise it's
      * own database tables
@@ -111,7 +110,7 @@ class equella_dndupload_ajax_processor extends dndupload_ajax_processor {
         $data->copyright = $this->copyright;
         $data->itemdescription = $this->itemdescription;
         $data->itemkeyword = $this->itemkeyword;
-        
+
         return $data;
     }
 
