@@ -17,7 +17,12 @@ defined('MOODLE_INTERNAL') || die();
 require_once ($CFG->dirroot . '/mod/equella/common/lib.php');
 require_once ($CFG->dirroot . '/lib/filelib.php');
 require_once ($CFG->dirroot . '/course/lib.php');
+require_once ($CFG->libdir.'/gradelib.php');
 require_once (dirname(__FILE__) . '/equella_rest_api.php');
+
+define('EQUELLA_ITEM_TYPE', 'mod');
+define('EQUELLA_ITEM_MODULE', 'equella');
+define('EQUELLA_SOURCE', 'mod/equella');
 
 // This must be FALSE in released code
 define('EQUELLA_DEV_DEBUG_MODE', false);
@@ -67,9 +72,9 @@ function equella_supports($feature) {
             return true;
 
         case FEATURE_GRADE_HAS_GRADE:
-            return false;
+            return true;
         case FEATURE_GRADE_OUTCOMES:
-            return false;
+            return true;
 
         default:
             return null;
@@ -548,4 +553,58 @@ function equella_get_recent_mod_activity(&$activities, &$index, $timestart, $cou
 
 
     return;
+}
+
+/**
+ * Create grade item for given equella.
+ *
+ * @param stdClass $equella record
+ * @param array $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
+ */
+function equella_grade_item_update($eq, $grades=null) {
+    global $CFG;
+
+    if (!isset($eq->courseid)) {
+        $eq->courseid = $eq->course;
+    }
+
+    $params = array('itemname'=>$eq->name, 'idnumber'=>$eq->cmidnumber);
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = null;
+    }
+    return grade_update(EQUELLA_SOURCE,
+                        $eq->courseid,
+                        EQUELLA_ITEM_TYPE,
+                        EQUELLA_ITEM_MODULE,
+                        $eq->id,
+                        0,
+                        $grades,
+                        $params);
+}
+
+function equella_get_user_grades($equella, $userid = 0) {
+    $grades = grade_get_grades($equella->course, EQUELLA_ITEM_TYPE, EQUELLA_ITEM_MODULE,
+        $equella->id, $userid);
+
+    if (isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
+        foreach($grades->items[0]->grades as $agrade) {
+            $grade = $agrade->grade;
+            return $grade;
+            break;
+        }
+    }
+    return null;
+}
+
+/**
+ * delete all grades
+ */
+function equella_grade_item_delete($eq) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    return grade_update(EQUELLA_SOURCE, $eq->courseid, EQUELLA_ITEM_TYPE, EQUELLA_ITEM_MODULE, $eq->id, 0, NULL, array('deleted'=>1));
 }

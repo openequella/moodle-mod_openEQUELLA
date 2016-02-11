@@ -19,10 +19,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 require_once ($CFG->libdir . '/oauthlib.php');
+require_once ($CFG->dirroot . '/mod/equella/lib.php');
 
-define('EQUELLA_ITEM_TYPE', 'mod');
-define('EQUELLA_ITEM_MODULE', 'equella');
-define('EQUELLA_SOURCE', 'mod/equella');
 function equella_get_course_contents($courseid, $sectionid) {
     global $DB, $CFG;
 
@@ -268,6 +266,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
 
     return new moodle_url($CFG->equella_url, $equrlparams);
 }
+
 function equella_lti_params($equella, $course, $extra = array()) {
     global $USER, $CFG;
 
@@ -593,37 +592,21 @@ XML;
     private function transform_grade($rawgrade) {
         return $rawgrade * self::LTI_LIS_GRADE_FACTOR;
     }
+
     private function update_grade($equella, $data) {
-        global $CFG, $DB;
-        require_once ($CFG->libdir . '/gradelib.php');
-
-        $item = array();
-        $item['itemname'] = $equella->name;
-
         $grade = new stdClass();
         $grade->userid = $data->userid;
         $grade->rawgrade = $this->transform_grade($data->rawgrade);
 
-        $status = grade_update(EQUELLA_SOURCE, $equella->course, EQUELLA_ITEM_TYPE, EQUELLA_ITEM_MODULE, $equella->id, 0, $grade, $item);
+        $status = equella_grade_item_update($equella, $grade);
 
         return $status == GRADE_UPDATE_OK;
     }
+
     private function read_grade($equella, $data) {
-        global $CFG;
-        require_once ($CFG->libdir . '/gradelib.php');
-
-        $grades = grade_get_grades($equella->course, EQUELLA_ITEM_TYPE, EQUELLA_ITEM_MODULE, $equella->id, $data->userid);
-
-        if (isset($grades) && isset($grades->items[0]) && is_array($grades->items[0]->grades)) {
-            foreach($grades->items[0]->grades as $agrade) {
-                $grade = $agrade->grade;
-                return $grade;
-                break;
-            }
-        }
-
-        return null;
+        return equella_get_user_grades($equella, $data->userid);
     }
+
     private function delete_grade($equella, $data) {
         global $CFG;
         require_once ($CFG->libdir . '/gradelib.php');
