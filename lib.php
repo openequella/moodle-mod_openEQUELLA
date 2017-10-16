@@ -276,20 +276,20 @@ function equella_guess_icon($equella, $size = 24) {
 function equella_capture_files($event) {
     global $CFG, $DB;
     $fs = get_file_storage();
-    if (!$cm = get_coursemodule_from_id($event->modulename, $event->cmid)) {
+    if (!$cm = get_coursemodule_from_id($event->other['modulename'], $event->objectid)) {
         return array();
     }
     if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
     }
     $context = context_module::instance($cm->id);
-    if ($event->modulename != 'folder' && $event->modulename != 'resource') {
+    if ($event->other['modulename'] != 'folder' && $event->other['modulename'] != 'resource') {
         return array();
     }
 
-    require_once ($CFG->dirroot . '/mod/' . $event->modulename . '/lib.php');
+    require_once ($CFG->dirroot . '/mod/' . $event->other['modulename'] . '/lib.php');
     // find out all supported areas
-    $functionname = 'mod_' . $event->modulename . '_get_file_areas';
-    $functionname_old = $event->modulename . '_get_file_areas';
+    $functionname = 'mod_' . $event->other['modulename'] . '_get_file_areas';
+    $functionname_old = $event->other['modulename'] . '_get_file_areas';
 
     if (function_exists($functionname)) {
         $areas = $functionname($course, $cm, $context);
@@ -301,7 +301,7 @@ function equella_capture_files($event) {
 
     $files = array();
     foreach($areas as $area => $name) {
-        $area_files = $fs->get_area_files($context->id, 'mod_' . $event->modulename, $area, false, 'sortorder, itemid', false);
+        $area_files = $fs->get_area_files($context->id, 'mod_' . $event->other['modulename'], $area, false, 'sortorder, itemid', false);
         $files = array_merge($files, $area_files);
     }
     return $files;
@@ -357,9 +357,9 @@ function equella_module_event_handler($event) {
     }
     $course = $DB->get_record('course', array('id' => $event->courseid));
     $params = array();
-    $params['moodlemoduletype'] = $event->modulename;
-    $params['moodlemodulename'] = $event->name;
-    $params['moodlemoduleid'] = $event->cmid;
+    $params['moodlemoduletype'] = $event->other['modulename'];
+    $params['moodlemodulename'] = $event->other['name'];
+    $params['moodlemoduleid'] = $event->objectid;
     $params['moodlecoursefullname'] = $course->fullname;
     $params['moodlecourseshortname'] = $course->shortname;
     $params['moodlecourseid'] = $course->id;

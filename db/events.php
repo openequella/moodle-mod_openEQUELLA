@@ -21,18 +21,15 @@
  */
 
 /* List of handlers */
-$handlers = array(
-    'mod_updated' => array(
-        'handlerfile' => '/mod/equella/lib.php',
-        'handlerfunction' => 'equella_handle_mod_updated',
-        'schedule' => 'instant',
-        'internal' => 1
+$observers = array(
+    array(
+      'eventname' => '\core\event\course_module_updated',
+      'callback'    => 'equella_handle_mod_updated',
+      'includefile' => '/mod/equella/lib.php'
     ),
-
-    'mod_created' => array(
-        'handlerfile' => '/mod/equella/lib.php',
-        'handlerfunction' => 'equella_handle_mod_created',
-        'schedule' => 'instant',
-        'internal' => 1
-    )
+    array(
+        'eventname' => '\core\event\course_module_updated',
+        'callback'    => 'equella_handle_mod_created',
+        'includefile' => '/mod/equella/lib.php'
+    ),
 );
