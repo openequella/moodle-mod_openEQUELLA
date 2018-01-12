@@ -59,6 +59,7 @@ if ($action == 'view') {
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
+
 } elseif ($action == 'select') {
     $args = new stdClass();
     $args->course = required_param('course', PARAM_INT);
@@ -78,6 +79,8 @@ if ($action == 'view') {
         $extraparams['structure'] = $json;
     }
 
+    $extraparams['itemXml'] = get_item_xml($course, $args->section);
+
     $equella = new stdClass();
     $equella->id = 0;
     $equella->course = $args->course;
@@ -87,4 +90,53 @@ if ($action == 'view') {
     echo '<html><body>';
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
+}
+
+// This is the same data as equella_add_lmsinfo_parameters
+function get_item_xml($course, $sectionid) {
+    global $USER, $DB;
+
+    $xml = new SimpleXMLElement('<xml />');
+    $integxml = $xml->addChild('integration');
+    $integxml->addChild('lms', 'Moodle');
+    $integxml->addChild('contributiontype', 'integration');
+    $integmoodlexml = $integxml->addChild('moodle');
+
+    // User
+    $integuserxml = $integxml->addChild('user');
+    $integuserxml->addChild('username', $USER->username);
+    $integuserxml->addChild('firstname', $USER->firstname);
+    $integuserxml->addChild('lastname', $USER->lastname);
+
+    // Generic course info
+    $integcoursexml = $integxml->addChild('course');
+    $integcoursexml->addChild('fullname', $course->fullname);
+    $integcoursexml->addChild('shortname', $course->shortname);
+    $integcoursexml->addChild('code', $course->idnumber);
+
+    // Moodle specific course info
+    $integmoodlecoursexml = $integmoodlexml->addChild('course');
+    $integmoodlecoursexml->addChild('idnumber', $course->idnumber);
+    $integmoodlecoursexml->addChild('id', $course->id);
+
+    // Moodle section info
+    $integmoodlexml->addChild('section', get_section_name($course, $sectionid));
+
+    // Moodle specific course categories (there is probably a more optimal way to do this)
+    $catparentxml = $integmoodlexml;
+    $catid = $course->category;
+    while ($catid !== 0){
+        if ($category = $DB->get_record('course_categories', array('id' => $catid))){
+            $catxml = $catparentxml->addChild('category');
+            $catxml->addChild('name', $category->name);
+
+            $catparentxml = $catxml;
+            $catid = $category->parent;
+        }
+        else {
+            $catid = 0;
+        }
+    }
+
+    return str_replace(array("\r", "\n"),'',$xml->asXML());
 }
