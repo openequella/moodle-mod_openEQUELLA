@@ -22,9 +22,9 @@ require_once ($CFG->libdir . '/oauthlib.php');
 require_once ($CFG->dirroot . '/mod/equella/lib.php');
 
 function equella_get_course_contents($courseid, $sectionid) {
-    global $DB, $CFG;
+    global $CFG;
 
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = equella_get_course($courseid);
 
     if ($course->format != 'site') {
         if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
@@ -188,6 +188,7 @@ EOF;
 
     return $html;
 }
+
 function equella_lti_launch_form($endpoint, $params) {
     $attributes = array('method' => 'post','action' => $endpoint,'id' => 'eqLaunchForm','enctype' => 'application/x-www-form-urlencoded','name' => 'eqLaunchForm');
     $html = html_writer::start_tag('form', $attributes);
@@ -203,6 +204,7 @@ function equella_lti_launch_form($endpoint, $params) {
     $html .= html_writer::script('document.eqLaunchForm.submit();');
     return $html;
 }
+
 function equella_parse_query($str) {
     $op = array();
     $pairs = explode("&", $str);
@@ -212,8 +214,9 @@ function equella_parse_query($str) {
     }
     return $op;
 }
+
 function equella_build_integration_url($args, $appendtoken = true) {
-    global $USER, $CFG, $DB;
+    global $USER, $CFG;
 
     $callbackurlparams = array('course' => $args->course,'section' => $args->section);
 
@@ -253,8 +256,12 @@ function equella_build_integration_url($args, $appendtoken = true) {
         'cancelurl' => $cancelurl->out(false),
     );
 
+    if (!empty($args->itemXml)) {
+        $equrlparams['itemXml'] = $args->itemXml;
+    }
+
     if ($appendtoken) {
-        $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
+        $course = equella_get_course($args->course);
         $equrlparams['token'] = equella_getssotoken($course);
     }
     if (!empty($CFG->equella_options)) {
@@ -325,10 +332,51 @@ function equella_lti_params($equella, $course, $extra = array()) {
 
     return $params;
 }
-function equella_is_instructor($user, $cm, $courseid) {
-    global $CFG, $DB;
 
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+function equella_add_lmsinfo_parameters(&$params, $course, $contributiontype) {
+    global $USER, $DB;
+
+    $params['lms'] = 'Moodle';
+    $params['contributiontype'] = $contributiontype;
+    $params['moodle/course/idnumber'] = $course->idnumber;
+    $params['moodle/course/id'] = $course->id;
+    $params['course/fullname'] = $course->fullname;
+    $params['course/shortname'] = $course->shortname;
+    $params['course/code'] = $course->idnumber;
+    $params['user/username'] = $USER->username;
+    $params['user/firstname'] = $USER->firstname;
+    $params['user/lastname'] = $USER->lastname;
+    //$params['moodle/section'] = get_section_name($course, $sectionid));
+
+    // Moodle specific course categories (there is probably a more optimal way to do this)
+    $catparent = 'moodle/category';
+    $catid = $course->category;
+    while ($catid !== 0){
+        if ($category = $DB->get_record('course_categories', array('id' => $catid))){
+            $params[$catparent.'/name'] = $category->name;
+            $catparent = $catparent.'/category';
+            $catid = $category->parent;
+        }
+        else {
+            $catid = 0;
+        }
+    }
+}
+
+function equella_add_fileinfo_parameters(&$params, $file) {
+    $size = $file->get_filesize();
+    $params['file/size'] = $size;
+    $params['file/filename'] = $file->get_filename();
+    //$params['file/displayname'] = $file->get_filename() . " (" . equella_human_file_size($size) . ")";
+    $params['file/mimetype'] = $file->get_mimetype();
+    // Legacy. Deprecated
+    $params['filesize'] = $size;
+}
+
+function equella_is_instructor($user, $cm, $courseid) {
+    global $CFG;
+
+    $course = equella_get_course($courseid);
 
     $context_sys = context_system::instance();
     $context_cc = null;
@@ -354,6 +402,7 @@ function equella_is_instructor($user, $cm, $courseid) {
     }
     return false;
 }
+
 function equella_lti_roles($user, $cmid, $courseid) {
     global $USER, $CFG, $COURSE;
     $roles = array();
@@ -370,9 +419,9 @@ function equella_lti_roles($user, $cmid, $courseid) {
 
     return join(',', $roles);
 }
+
 function equella_lti_build_sourcedid($instanceid, $userid, $launchid = null) {
-    global $DB;
-    $equella = $DB->get_record('equella', array('id' => $instanceid));
+    $equella = equella_get_activity($instanceid);
 
     $data = new stdClass();
     $data->instanceid = $instanceid;
@@ -393,6 +442,7 @@ function equella_lti_build_sourcedid($instanceid, $userid, $launchid = null) {
 
     return $container;
 }
+
 function equella_debug_log($data) {
     global $CFG;
     if (defined('EQUELLA_DEV_DEBUG_MODE') && EQUELLA_DEV_DEBUG_MODE == true) {
@@ -400,17 +450,52 @@ function equella_debug_log($data) {
     }
 }
 
+function equella_get_activity($id, $must_exist = true) {
+    global $DB;
+    if ($must_exist) {
+        return $DB->get_record('equella', array('id' => $id), '*', MUST_EXIST);
+    }
+    return $DB->get_record('equella', array('id' => $id));
+}
+
+function equella_get_course($id, $must_exist = true) {
+    global $DB;
+    if ($must_exist) {
+        return get_course($id);
+    }
+    return $DB->get_record('equella', array('id' => $id));
+}
+
+/*
+function equella_human_file_size($size, $unit = '', $decimals = 2) {
+    if( (!$unit && $size >= 1<<40) || $unit == 'TB') {
+        return number_format($size/(1<<40), 2).'TB';
+    }
+    if( (!$unit && $size >= 1<<30) || $unit == 'GB') {
+        return number_format($size/(1<<30), 2).'GB';
+    }
+    if( (!$unit && $size >= 1<<20) || $unit == 'MB') {
+        return number_format($size/(1<<20), 2).'MB';
+    }
+    if( (!$unit && $size >= 1<<10) || $unit == 'KB') {
+        return number_format($size/(1<<10), 2).'KB';
+    }
+    return number_format($size).' bytes';
+}*/
+
 /**
  * Signing and verifying
  */
 class equella_lti_oauth extends oauth_helper {
     private static $instance = null;
+
     public static function get_instance($key, $secret) {
         if (self::$instance == null) {
             self::$instance = new equella_lti_oauth($key, $secret);
         }
         return self::$instance;
     }
+
     public function __construct($key, $secret) {
         $args = array();
         $args['oauth_consumer_key'] = $key;
@@ -418,6 +503,7 @@ class equella_lti_oauth extends oauth_helper {
         parent::__construct($args);
         $this->sign_secret = $this->consumer_secret . '&';
     }
+
     public function sign($http_method, $url, $params, $secret) {
         // Remove query from URL to build basestring
         $baseurl = strtok($url, '?');
@@ -434,6 +520,7 @@ class equella_lti_oauth extends oauth_helper {
         $sig = base64_encode(hash_hmac('sha1', $basestring, $secret, true));
         return $sig;
     }
+
     public static function sign_params($url, $params, $method) {
         global $CFG;
         $key = $CFG->equella_lti_oauth_key;
@@ -443,6 +530,7 @@ class equella_lti_oauth extends oauth_helper {
         }
         return self::get_instance($key, $secret)->prepare_oauth_parameters($url, $params, $method);
     }
+
     public static function verify_message($message) {
         global $CFG;
         require_once dirname(__FILE__) . '/' . 'oauthlocallib.php';
@@ -463,9 +551,11 @@ class equella_lti_grading {
     private $messagetype;
     private $messageid;
     const LTI_LIS_GRADE_FACTOR = 100;
+
     public function __construct($xml) {
         $this->xml = new SimpleXMLElement($xml);
     }
+
     private function get_response_xml($codemajor, $description = null) {
         $messageid = uniqid('mod_equella');
         if (empty($description)) {
@@ -493,6 +583,7 @@ XML;
 
         return new SimpleXMLElement($xml);
     }
+
     private function get_message_type() {
         $body = $this->xml->imsx_POXBody;
         foreach($body->children() as $child) {
@@ -500,16 +591,19 @@ XML;
         }
         return $this->messagetype;
     }
+
     private function get_message_id() {
         $this->messageid = (string)$this->xml->imsx_POXHeader->imsx_POXRequestHeaderInfo->imsx_messageIdentifier;
         return $this->messageid;
     }
+
     private function read_sourcedid() {
         $sourcedid = $this->xml->imsx_POXBody->{$this->messagetype}->resultRecord->sourcedGUID->sourcedId;
         $sourcedid = html_entity_decode($sourcedid);
         $entity = json_decode($sourcedid);
         return $entity;
     }
+
     private function verify_sourcedid($equella, $data) {
         $sourcedid = equella_lti_build_sourcedid($data->instanceid, $data->userid, $data->launchid);
         if ($sourcedid->hash != $data->sourcedidhash) {
@@ -543,9 +637,9 @@ XML;
 
         return $data;
     }
+
     private function handle_replace_message($data) {
-        global $DB;
-        $equella = $DB->get_record('equella', array('id' => $data->instanceid));
+        $equella = equella_get_activity($data->instanceid);
         $this->verify_sourcedid($equella, $data);
 
         $status = $this->update_grade($equella, $data);
@@ -554,9 +648,9 @@ XML;
         $responsexml->imsx_POXBody->addChild($this->messagetype);
         echo $responsexml->asXML();
     }
+
     private function handle_delete_message($data) {
-        global $DB;
-        $equella = $DB->get_record('equella', array('id' => $data->instanceid));
+        $equella = equella_get_activity($data->instanceid);
         $this->verify_sourcedid($equella, $data);
 
         $gradestatus = $this->delete_grade($equella, $data);
@@ -565,9 +659,10 @@ XML;
         $responsexml->imsx_POXBody->addChild($this->messagetype);
         echo $responsexml->asXML();
     }
+
     private function handle_read_message($data) {
-        global $DB, $PAGE;
-        $equella = $DB->get_record('equella', array('id' => $data->instanceid));
+        global $PAGE;
+        $equella = equella_get_activity($data->instanceid);
 
         $context = context_course::instance($equella->course);
         $PAGE->set_context($context);
