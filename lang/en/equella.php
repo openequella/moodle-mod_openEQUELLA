@@ -14,29 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'EQUELLA Resource';
-$string['pluginadministration'] = 'EQUELLA module administration';
-$string['modulename'] = 'EQUELLA Resource';
-$string['modulename_help'] = 'The EQUELLA module enables a teacher to link to content stored in an EQUELLA repository. Users are automatically authenticated to the EQUELLA repository when they choose a resource.';
-$string['modulenameplural'] = 'EQUELLA Resources';
+$string['pluginname'] = 'openEQUELLA Resource';
+$string['pluginadministration'] = 'openEQUELLA module administration';
+$string['modulename'] = 'openEQUELLA Resource';
+$string['modulename_help'] = 'The openEQUELLA module enables a teacher to link to content stored in an openEQUELLA repository. Users are automatically authenticated to the openEQUELLA repository when they choose a resource.';
+$string['modulenameplural'] = 'openEQUELLA Resources';
 $string['description'] = 'Content';
-$string['chooseeqeullaresources'] = 'Choose EQUELLA resources';
-$string['noinstances'] = 'There are no EQUELLA Resources in this course';
-$string['modulenameplural'] = 'EQUELLA Resources';
-$string['notsubmittedyet'] = 'EQUELLA resource not submitted yet';
+$string['chooseeqeullaresources'] = 'Choose openEQUELLA resources';
+$string['noinstances'] = 'There are no openEQUELLA Resources in this course';
+$string['modulenameplural'] = 'openEQUELLA Resources';
+$string['notsubmittedyet'] = 'openEQUELLA resource not submitted yet';
 $string['clicktoopen'] = 'Click {$a} link to open resource.';
-$string['crontask'] = 'EQUELLA cron task';
+$string['crontask'] = 'openEQUELLA cron task';
 // Course page drag and drop dialog
-$string['dnduploadresource'] = 'Contribute to EQUELLA';
-$string['dnduploadresourcemetadata'] = 'Contribute to EQUELLA with meta data';
+$string['dnduploadresource'] = 'Contribute to openEQUELLA';
+$string['dnduploadresourcemetadata'] = 'Contribute to openEQUELLA with meta data';
 $string['mustloggintoview'] = 'Please log in to view this page.';
 
 ////////////////////////////////////////////////////////
 // Permissions
-$string['equella:addinstance'] = 'Add a new EQUELLA resource';
-$string['equella:manage'] = 'Manage an EQUELLA resource';
-$string['equella:view'] = 'View EQUELLA resource';
-$string['equella:manage'] = 'Manage EQUELLA resource';
+$string['equella:addinstance'] = 'Add a new openEQUELLA resource';
+$string['equella:manage'] = 'Manage an openEQUELLA resource';
+$string['equella:view'] = 'View openEQUELLA resource';
+$string['equella:manage'] = 'Manage openEQUELLA resource';
 
 ////////////////////////////////////////////////////////
 // OPTIONS
@@ -60,13 +60,13 @@ $string['option.popup.status'] = 'Show the status bar';
 $string['config.general.heading'] = 'General Settings';
 
 $string['config.changelog.title'] = 'View change log';
-$string['config.changelog.desc'] = 'View bug fixes, new features added to current EQUELLA module release.';
+$string['config.changelog.desc'] = 'View bug fixes, new features added to current openEQUELLA module release.';
 
-$string['config.url.title'] = 'EQUELLA URL';
-$string['config.url.desc'] = 'The URL to EQUELLA. Should end with /signon.do (e.g. http://lcms.institution.edu.au/signon.do)';
+$string['config.url.title'] = 'openEQUELLA URL';
+$string['config.url.desc'] = 'The URL to openEQUELLA. Should end with /signon.do (e.g. http://lcms.institution.edu.au/signon.do)';
 
-$string['config.action.title'] = 'EQUELLA action';
-$string['config.action.desc'] = 'The action string for EQUELLA. Please note:
+$string['config.action.title'] = 'openEQUELLA action';
+$string['config.action.desc'] = 'The action string for openEQUELLA. Please note:
    1. Use "selectOrAdd" for EQUELLA 6.0 and older, for EQUELLA 6.1 onward please use "structured"
    2. There should not be a ? or a & at the start or end of the string.';
 
@@ -78,20 +78,20 @@ $string['config.restriction.itemsonly'] = 'Items only';
 $string['config.restriction.attachmentsonly'] = 'Attachments only';
 $string['config.restriction.packagesonly'] = 'Packages only';
 
-$string['config.options.title'] = 'EQUELLA options';
-$string['config.options.desc'] = 'The options string for EQUELLA (e.g. allPowerSearches=true&contributionCollectionIds=uuid1,uuid2). Please note that there should not be a ? or a & at the start or end of the string.  This field is optional.';
+$string['config.options.title'] = 'openEQUELLA options';
+$string['config.options.desc'] = 'The options string for openEQUELLA (e.g. allPowerSearches=true&contributionCollectionIds=uuid1,uuid2). Please note that there should not be a ? or a & at the start or end of the string.  This field is optional.';
 
-$string['config.adminuser.title'] = 'EQUELLA administrator username';
-$string['config.adminuser.desc'] = 'The username of an administrative account in EQUELLA.  This account is used by high-level admin functions such as the Backup Course To EQUELLA block, and also for background tasks that don\'t have a user session such as EQUELLA Resource Checker.  When an activity requires an session with this user, they will be logged in using the Default shared secret values configured below.';
+$string['config.adminuser.title'] = 'openEQUELLA administrator username';
+$string['config.adminuser.desc'] = 'The username of an administrative account in openEQUELLA.  This account is used by high-level admin functions such as the Backup Course To openEQUELLA block, and also for background tasks that don\'t have a user session such as openEQUELLA Resource Checker.  When an activity requires an session with this user, they will be logged in using the Default shared secret values configured below.';
 
-$string['config.open.newwindow'] = 'Open EQUELLA resource in new window';
+$string['config.open.newwindow'] = 'Open openEQUELLA resource in new window';
 $string['config.window.width'] = 'Default window width';
 $string['config.window.height'] = 'Default window height';
 
 ////////////////////////////////////////////////////////
 // CONFIGURATION: LTI
 $string['config.enablelti'] = 'Enable LTI';
-$string['config.enablelti.desc'] = 'When LTI is enabled, Shared secrets are disabled for EQUELLA selection sessions. LTI must be enabled to store QTI quiz scores in the Moodle gradebook when QTI 2.1 quizzes linked to courses from EQUELLA are launched. If this functionality is not required, LTI doesn’t have to be enabled, and shared secrets can still be used. Shared secrets are stored regardless, as they are still used for the Moodle blocks and Drag and Drop functions.';
+$string['config.enablelti.desc'] = 'When LTI is enabled, Shared secrets are disabled for openEQUELLA selection sessions. LTI must be enabled to store QTI quiz scores in the Moodle gradebook when QTI 2.1 quizzes linked to courses from openEQUELLA are launched. If this functionality is not required, LTI doesn’t have to be enabled, and shared secrets can still be used. Shared secrets are stored regardless, as they are still used for the Moodle blocks and Drag and Drop functions.';
 $string['config.lti.heading'] = 'LTI Settings';
 $string['config.lti_oauth_heading'] = 'LTI OAuth client settings';
 $string['config.lti.help'] =  '';
@@ -105,7 +105,7 @@ $string['config.lti.liscallback.title'] = 'Outcome callback URL';
 // CONFIGURATION: Shared Secrets
 
 $string['config.sharedsecrets.heading'] = 'Shared Secret Settings';
-$string['config.sharedsecrets.help'] =  '<p>Below you can set a default EQUELLA shared secret for single signing-on users.  You can configure different shared secrets for general (read) usage, and a specialised role based shared secret for each <em>write</em> role in your Moodle site.  If a shared secret ID is not configured for a role then the default shared secret ID and shared secret are used.</p><p>All shared secret IDs and shared secrets must also be configured within EQUELLA and the shared secret module enabled.  This configuration is found in the EQUELLA Administration Console under User Management > Shared Secrets.</p>';
+$string['config.sharedsecrets.help'] =  '<p>Below you can set a default openEQUELLA shared secret for single signing-on users.  You can configure different shared secrets for general (read) usage, and a specialised role based shared secret for each <em>write</em> role in your Moodle site.  If a shared secret ID is not configured for a role then the default shared secret ID and shared secret are used.</p><p>All shared secret IDs and shared secrets must also be configured within openEQUELLA and the shared secret module enabled.  This configuration is found in the openEQUELLA Administration Console under User Management > Shared Secrets.</p>';
 
 $string['config.group'] = '{$a} role settings';
 $string['config.group.default'] = 'Default';
@@ -130,15 +130,15 @@ $string['config.dnd.help'] = '';
 $string['interceptfiles'] = 'Intercept drag and drop files';
 $string['interceptfilesintro'] = 'Select the action required when dragging and dropping files onto the course page';
 $string['interceptnone'] = 'Don\'t intercept files';
-$string['interceptauto'] = 'Auto contribute files in EQUELLA';
+$string['interceptauto'] = 'Auto contribute files in openEQUELLA';
 $string['interceptask']  = 'Display file destination dialog';
-$string['interceptmetadata']  = 'Auto contribute file to EQUELLA with meta data';
+$string['interceptmetadata']  = 'Auto contribute file to openEQUELLA with meta data';
 
 ////////////////////////////////////////////////////////
 // EQUELLA Resource Checker
 
-$string['checker.subject'] = 'EQUELLA Resource Checker';
-$string['checker.message'] = 'The URL for one of the EQUELLA resources was found to be unavailable:<br>
+$string['checker.subject'] = 'openEQUELLA Resource Checker';
+$string['checker.message'] = 'The URL for one of the openEQUELLA resources was found to be unavailable:<br>
 <br>
 <a href="{$a->url}">{$a->url}</a><br>
 Name: {$a->name}<br>
