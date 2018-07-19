@@ -1,4 +1,4 @@
-Moodle module for EQUELLA integration
+Moodle module for openEQUELLA integration
 =====================================
 
 Requirements
