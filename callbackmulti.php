@@ -33,12 +33,11 @@ $module = $DB->get_record('modules', array('name' => $mod->modulename));
 $mod->module = $module->id;
 
 foreach($links as $link) {
-
     $mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
-    $mod->intro = $link['description'];
+    $mod->intro = htmlspecialchars($link['description']);
     $mod->introformat = FORMAT_HTML;
-    $mod->attachmentuuid = $link['attachmentUuid'];
-    $mod->url = $link['url'];
+    $mod->attachmentuuid = clean_param($link['attachmentUuid'], PARAM_ALPHAEXT);
+    $mod->url = clean_param($link['url'], PARAM_URL);
     $mod->metadata = serialize($link);
     $targetsection = $sectionnum;
 
@@ -52,13 +51,13 @@ foreach($links as $link) {
     }
 
     if (isset($link['mimetype'])) {
-        $mod->mimetype = $link['mimetype'];
+        $mod->mimetype = clean_param($link['mimetype'], PARAM_TEXT);
     } else {
         $mod->mimetype = mimeinfo('type', $mod->url);
     }
 
     if (isset($link['activationUuid'])) {
-        $mod->activation = $link['activationUuid'];
+        $mod->activation = clean_param($link['activationUuid'], PARAM_ALPHAEXT);
     }
 
     $equellaid = equella_add_instance($mod);
