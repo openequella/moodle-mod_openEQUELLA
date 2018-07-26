@@ -165,3 +165,7 @@ $string['push.attachment'] = 'Selected attachment';
 */
 
 $string['webserviceerror'] = '{$a}';
+/*
+ * GDPR compliant
+ */
+$string['privacy:no_data_reason'] = "The Equella plugin doesn't store any personal data on Moodle. Data are stored by the service provided by Equella";
