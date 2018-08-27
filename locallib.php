@@ -133,7 +133,7 @@ EOT;
 
         $code = <<<EOT
 <div class="resourcecontent resourcegeneral">
-  <object id="resourceobject" data="$url" width="800" height="600">
+  <object id="resourceobject" data="$url" style="width:100%; min-height:450px">
     $param
     $clicktoopen
   </object>
@@ -142,7 +142,7 @@ EOT;
     }
 
     // the size is hardcoded in the object above intentionally because it is adjusted by the following function on-the-fly
-    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
+//    $PAGE->requires->js_init_call('M.util.init_maximised_embed', array('resourceobject'), true);
 
     return $code;
 }
