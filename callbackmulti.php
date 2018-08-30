@@ -53,7 +53,7 @@ foreach($links as $link) {
     if (isset($link['mimeType'])) {
         $mod->mimetype = clean_param($link['mimeType'], PARAM_TEXT);
     } else {
-        $mod->mimetype = mimeinfo('type', $mod->url);
+        $mod->mimetype = mimeinfo('type', $mod->filename);
     }
 
     if (isset($link['activationUuid'])) {
