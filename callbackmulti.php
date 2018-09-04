@@ -50,10 +50,10 @@ foreach($links as $link) {
         $mod->filename = clean_param($link['filename'], PARAM_FILE);
     }
 
-    if (isset($link['mimetype'])) {
-        $mod->mimetype = clean_param($link['mimetype'], PARAM_TEXT);
+    if (isset($link['mimeType'])) {
+        $mod->mimetype = clean_param($link['mimeType'], PARAM_TEXT);
     } else {
-        $mod->mimetype = mimeinfo('type', $mod->url);
+        $mod->mimetype = mimeinfo('type', $mod->filename);
     }
 
     if (isset($link['activationUuid'])) {

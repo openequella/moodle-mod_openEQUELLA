@@ -91,7 +91,6 @@ class equella_external extends external_api {
     }
     public static function add_item_to_course_parameters() {
         return new external_function_parameters(array(
-
             'user' => new external_value(PARAM_RAW, 'Username'),
             'courseid' => new external_value(PARAM_RAW, 'Course ID'),
             'sectionid' => new external_value(PARAM_RAW, 'Section ID'),
@@ -100,7 +99,10 @@ class equella_external extends external_api {
             'url' => new external_value(PARAM_RAW, 'URL'),
             'title' => new external_value(PARAM_RAW, 'Title'),
             'description' => new external_value(PARAM_RAW, 'Description'),
-            'attachmentUuid' => new external_value(PARAM_RAW, 'Attachment UUID')));
+            'attachmentUuid' => new external_value(PARAM_RAW, 'Attachment UUID'),
+            'filename' => new external_value(PARAM_RAW, 'Filename', VALUE_DEFAULT, null),
+            'mimetype' => new external_value(PARAM_RAW, 'Mimetype', VALUE_DEFAULT, null)
+        ));
     }
     public static function test_connection_parameters() {
         return new external_function_parameters(array(
@@ -486,11 +488,13 @@ class equella_external extends external_api {
      * @param unknown $title
      * @param unknown $description
      * @param unknown $attachmentUuid
+     * @param unknown $filename
+     * @param unknown $mimetype
      * @return array
      */
-    public static function add_item_to_course($username, $courseid, $sectionnum, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid) {
+    public static function add_item_to_course($username, $courseid, $sectionnum, $itemUuid, $itemVersion, $url, $title, $description, $attachmentUuid, $filename, $mimetype) {
         global $DB, $USER;
-
+        
         $params = self::validate_parameters(self::add_item_to_course_parameters(), array(
             'user' => $username,
             'courseid' => $courseid,
@@ -500,7 +504,9 @@ class equella_external extends external_api {
             'url' => $url,
             'title' => $title,
             'description' => $description,
-            'attachmentUuid' => $attachmentUuid
+            'attachmentUuid' => $attachmentUuid,
+            'filename' => $filename,
+            'mimetype' => $mimetype
         ));
 
         self::check_modify_permissions($username, $courseid);
@@ -518,7 +524,13 @@ class equella_external extends external_api {
         $eq->url = $url;
         $eq->uuid = $itemUuid;
         $eq->version = $itemVersion;
-        $eq->mimetype = mimeinfo('type', $title);
+        if ($mimetype!=null) {
+            $eq->mimetype = $mimetype;
+        } elseif ($filename!=null) {
+            $eq->mimetype = mimeinfo('type', $filename);
+        } else {
+            $eq->mimetype = mimeinfo('type', $title);
+        }
         if (!empty($attachmentUuid)) {
             $eq->filename = $title;
             $eq->attachmentuuid = $attachmentUuid;
