@@ -770,7 +770,7 @@ class equella_rest_api {
         if ($useoauth) {
             $curl->setHeader(array('X-Authorization: access_token=' . $CFG->equella_oauth_access_token));
         }
-        $result = $curl->put($quickcontributeurl->out(false), array('filehandle' => $fp,'filesize' => $params['filesize']));
+        $result = $curl->put($quickcontributeurl->out(false), array('filehandle' => $fp,'filesize' => $params['file/size']));
         fclose($fp);
 
         if (!empty($result)) {
