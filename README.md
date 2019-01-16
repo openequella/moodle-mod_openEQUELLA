@@ -22,7 +22,7 @@ Docker Installation For Testing Purposes
 Clone [this link](https://github.com/jmhjjardison/docker-moodle) to get a docker instance of Moodle.
 Then use Docker to build it.
 
-```
+```sh
 git clone https://github.com/jmhardison/docker-moodle
 cd docker-moodle
 docker build -t moodle
@@ -30,13 +30,13 @@ docker build -t moodle
 
 Then setup and run the MYSQL database for use with the docker Moodle.
  
-```
+```sh
 docker run -d --name DB -p 3306:3306 -e MYSQL_DATABASE=moodle -e MYSQL_ROOT_PASSWORD=moodle -e MYSQL_USER=moodle -e MYSQL_PASSWORD=moodle mysql
 ```
 
 Then, run the Moodle instance. Give it a URL  and a matching port. 
 
-```
+```sh
 docker run -d -P --name moodle --link DB:DB -e MOODLE_URL=http://localhost:8099 -p 8099:80 jhardison/moodle
 ```
 
@@ -48,14 +48,14 @@ and follow the installation process.
  
 You can access the Terminal of your Moodle if you so wish with the following command:
 
-```
+```sh
 docker exec -it moodle bash
 ```
 
 This project folder should be copied into the Moodle at `/var/www/html/mod`. It must be renamed from `moodle-mod_equella`
 to simply `equella` in order to work properly. From your machine terminal in the folder that contains the `moodle-mod_equella` directory:
 
-```
+```sh
 docker cp  moodle-mod_equella/ moodle:/var/www/html/mod/
 docker exec -it moodle bash
 cd ./var/www/html/mod/
