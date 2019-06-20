@@ -36,7 +36,7 @@ foreach($links as $link) {
     $mod->name = htmlspecialchars($link['name'], ENT_COMPAT, 'UTF-8');
     $mod->intro = htmlspecialchars($link['description']);
     $mod->introformat = FORMAT_HTML;
-    $mod->attachmentuuid = clean_param($link['attachmentUuid'], PARAM_ALPHAEXT);
+    $mod->attachmentuuid = clean_param($link['attachmentUuid'], PARAM_ALPHANUMEXT);
     $mod->url = clean_param($link['url'], PARAM_URL);
     $mod->metadata = serialize($link);
     $targetsection = $sectionnum;
@@ -57,7 +57,7 @@ foreach($links as $link) {
     }
 
     if (isset($link['activationUuid'])) {
-        $mod->activation = clean_param($link['activationUuid'], PARAM_ALPHAEXT);
+        $mod->activation = clean_param($link['activationUuid'], PARAM_ALPHANUMEXT);
     }
 
     $equellaid = equella_add_instance($mod);
