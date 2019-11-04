@@ -409,6 +409,13 @@ if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files =
     }
 }
 
+//https://github.com/equella/moodle-mod_equella/issues/60
+if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_NONE) {
+    function equella_dndupload_register() {
+        return null;
+    }
+}
+
 /**
  * Handle a file that has been uploaded
  *
