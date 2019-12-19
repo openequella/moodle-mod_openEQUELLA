@@ -1,3 +1,11 @@
+2019-12-01  Troy Williams
+
+	Add check for -1 maxbytes value in JS.
+
+2019-05-08 	Nick Charles 	<nick.charles@gmail.com>
+	
+	Never register an openEquella drag and drop handler if it's not configured
+
 2018-01-05  Aaron Holland
 
 	Add LMS data to Equella integration session
