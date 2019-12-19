@@ -9,7 +9,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
         hasOverriddenDndUpload: false,
         initializer: function (config) {
             var self = this;
-
             // Horribly nasty hack, since nothing in the dndupload chain fires any events we can listen for.
             // Since the dndupload module isn't there when we initialise, override its add_editing function
             // when we first see a "drop" on a section.
@@ -139,6 +138,12 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                                         return;
                                     }
 
+                                    // A -1 maxbytes value indicates unlimited.
+                                    if (file.size > this.maxbytes && this.maxbytes != -1) {
+                                        alert('The file ' + file.name + ' is too large and cannot be uploaded');
+                                        return;
+                                    }
+
                                     if (!module) {
                                         return;
                                     }
@@ -169,11 +174,6 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
                             // http://yuilibrary.com/projects/yui3/ticket/2531274
                             var xhr = new XMLHttpRequest();
                             var self = this;
-
-                            if (file.size > this.maxbytes) {
-                                alert("'" + file.name + "' " + M.util.get_string('filetoolarge', 'moodle'));
-                                return;
-                            }
 
                             // Add the file to the display
                             var resel = M.course_dndupload.add_resource_element(file.name, section, module);
@@ -247,7 +247,7 @@ YUI.add('moodle-mod_equella-dndupload', function (Y) {
     M.mod_equella = M.mod_equella || {};
     M.mod_equella.dndupload = M.mod_equella.dndupload || {};
     //M.mod_equella.dndupload.upload_file_with_meta = DndUpload.prototype.upload_file_with_meta;
-    M.mod_equella.dndupload.init = function (config) { // 'config' contains the parameter values
+    M.mod_equella.dndupload.init = function (config) {
         //console.log('I am in the javascript module, Yeah!');
         return new DndUpload(config); // 'config' contains the parameter values
     };
