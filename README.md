@@ -4,7 +4,7 @@ Moodle Module For openEQUELLA Integration
 Requirements
 ------------
 
-- This module requires EQUELLA 4.1 QA3 or higher.
+- This module requires openEQUELLA 4.1 QA3 or higher.
 - The master branch works with the Moodle 2.7 and up.
 
 For Moodle earlier versions, choose the appropriate git branches.
@@ -14,7 +14,7 @@ Support
 
 Feel free to fork this and send back Pull Requests for any defects or features
 that you want to contribute back. Opening issues
-[here](https://github.com/equella/moodle-mod_equella/issues) is also recommended.
+[here](https://github.com/openequella/moodle-mod_equella/issues) is also recommended.
 
 Docker Installation For Testing Purposes
 ----------------------------------------
@@ -74,5 +74,5 @@ You're done! You now have a Moodle instance and an openEQUELLA instance integrat
 More Information
 ----------------
 
-For any more information regarding integration with Moodle from openEQUELLA, visit [this documentation page.](http://equella.github.io/guides/MoodleIntegrationGuide.html)
+For any more information regarding integration with Moodle from openEQUELLA, visit [this documentation page.](http://openequella.github.io/guides/MoodleIntegrationGuide.html)
 
