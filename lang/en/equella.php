@@ -165,3 +165,9 @@ $string['push.attachment'] = 'Selected attachment';
 */
 
 $string['webserviceerror'] = '{$a}';
+
+////////////////////////////////////////////////////////
+// Privacy endpoint
+$string['privacy:metadata:resourcename'] = 'Name of resource added from openEQUELLA instance';
+$string['privacy:metadata:resourcedescription'] = 'Description of resource added from openEQUELLA instance';
+$string['privacy:metadata:courseid'] = 'ID of course that openEQUELLA reasource was added';
