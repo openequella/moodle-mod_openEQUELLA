@@ -165,14 +165,3 @@ $string['push.attachment'] = 'Selected attachment';
 */
 
 $string['webserviceerror'] = '{$a}';
-
-////////////////////////////////////////////////////////
-// GDPR compliance
-
-$string['privacy:metadata:lti_client'] = 'In order to integrate with a remote openEQUELLA LTI service, user data needs to be exchanged with that service. Contact your openEQUELLA administrator for more information';
-$string['privacy:metadata:lti_client:userid'] = 'The userid is sent from Moodle to allow you to access your data on the remote system.';
-$string['privacy:metadata:lti_client:givenname'] = 'Your given name is sent to the openEQUELLA system for SSO login';
-$string['privacy:metadata:lti_client:familyname'] = 'Your family name is sent to the openEQUELLA system for SSO login';
-$string['privacy:metadata:lti_client:fullname'] = 'Your full name is sent to the openEQUELLA system for SSO login';
-$string['privacy:metadata:lti_client:email'] = 'Your email address is sent to the openEQUELLA system for SSO login';
-$string['privacy:metadata:lti_client:roles'] = 'Your moodle roles are sent to the openEQUELLA system, which allows to allow you to access your data on the remote system.';
