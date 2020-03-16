@@ -12,7 +12,8 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	title, redirecturl) {
     var bodyNode = Y.one('body');
     var iframeid = 'resourceobject';
-    var initialheight = Y.one('body').get('winHeight') * 0.9;
+	var initialheight = Y.one('body').get('winHeight') * 0.9;
+	var initialwidth = Y.one('body').get('winWidth') * 0.8;
     bodyNode.addClass('equella-page');
 
     var generate_html = function(append) {
@@ -52,6 +53,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	obj.setStyle('width', '0px');
 	obj.setStyle('height', '0px');
 	var newwidth = get_htmlelement_size(parentContainer, 'width') - 25;
+	
 
 	if (newwidth > 500) {
 	    obj.setStyle('width', newwidth + 'px');
@@ -90,11 +92,11 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	generate_html(true);
 	var panel = new Y.Panel({
 	    srcNode : '#' + equellaContainer,
-	    width : width,
+	    width : initialwidth,
 	    height : initialheight,
 	    zIndex : 4031,
 	    xy : [ x, y ],
-	    centered : false,
+	    centered : true,
 	    modal : true,
 	    visible : true,
 	    render : true,
