@@ -8,11 +8,12 @@ M.mod_equella.submitform = function(Y, formid) {
     frm.submit();
 };
 
-M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
+M.mod_equella.display_equella = function(Y, equellaContainer, minwidth, minheight,
 	title, redirecturl) {
     var bodyNode = Y.one('body');
     var iframeid = 'resourceobject';
     var initialheight = Y.one('body').get('winHeight') * 0.9;
+    var initialwidth = Y.one('body').get('winWidth') * 0.8;
     bodyNode.addClass('equella-page');
 
     var generate_html = function(append) {
@@ -52,6 +53,7 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	obj.setStyle('width', '0px');
 	obj.setStyle('height', '0px');
 	var newwidth = get_htmlelement_size(parentContainer, 'width') - 25;
+	
 
 	if (newwidth > 500) {
 	    obj.setStyle('width', newwidth + 'px');
@@ -62,14 +64,21 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	var headerheight = get_htmlelement_size('page-header', 'height');
 	var footerheight = get_htmlelement_size('page-footer', 'height');
 	var newheight;
+	var newwidth;
 	if (initialize) {
             if (initialheight < minheight) {
                 newheight = minheight;
             } else {
                 newheight = initialheight;
+            }	
+            if (initialwidth < minwidth) {
+                newwidth = minwidth;
+            } else {
+                newwidth = initialwidth;
             }
 	} else {
 	    newheight = get_htmlelement_size(parentContainer, 'height');
+	    newwidth = get_htmlelement_size(parentContainer, 'width');
 	}
         newheight = newheight - 50;
 	obj.setStyle('height', newheight + 'px');
@@ -84,17 +93,17 @@ M.mod_equella.display_equella = function(Y, equellaContainer, width, minheight,
 	    bodywidth = body.getComputedStyle('width');
 	}
 	bodywidth = parseInt(bodywidth);
-	var x = (bodywidth - width) / 2;
+	var x = (bodywidth - minwidth) / 2;
 	var y = 20;
 
 	generate_html(true);
 	var panel = new Y.Panel({
 	    srcNode : '#' + equellaContainer,
-	    width : width,
+	    width : initialwidth,
 	    height : initialheight,
 	    zIndex : 4031,
 	    xy : [ x, y ],
-	    centered : false,
+	    centered : true,
 	    modal : true,
 	    visible : true,
 	    render : true,
