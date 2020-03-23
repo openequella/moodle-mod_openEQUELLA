@@ -77,8 +77,8 @@ M.mod_equella.display_equella = function(Y, equellaContainer, minwidth, minheigh
                 newwidth = initialwidth;
             }
 	} else {
-		newheight = get_htmlelement_size(parentContainer, 'height');
-		newwidth = get_htmlelement_size(parentContainer, 'width');
+	    newheight = get_htmlelement_size(parentContainer, 'height');
+	    newwidth = get_htmlelement_size(parentContainer, 'width');
 	}
         newheight = newheight - 50;
 	obj.setStyle('height', newheight + 'px');
