@@ -230,24 +230,31 @@ class equella_external extends external_api {
     public static function list_courses_for_user($username, $modifiable, $archived) {
         global $DB, $CFG;
 
-        $courselist = array();
-        $params = self::validate_parameters(self::list_courses_for_user_parameters(), array('user' => $username,'modifiable' => $modifiable,'archived' => $archived));
+        $params = self::validate_parameters(self::list_courses_for_user_parameters(),
+            array('user' => $username, 'modifiable' => $modifiable, 'archived' => $archived));
+        $userobj = self::get_user_by_username($params['user']);
+
+        $fields = 'fullname, visible, idnumber';
 
         if ($modifiable) {
-            $userobj = self::get_user_by_username($params['user']);
+            $courses = get_user_capability_course(self::WRITE_PERMISSION, $userobj->id, true, $fields);
         } else {
-            $userobj = null;
-        }
-        $coursefields = "c.id,c.fullname,c.visible,c.idnumber";
-        $contextfields = "ctx.id AS contextid,ctx.contextlevel,ctx.instanceid,ctx.path,ctx.depth";
-        $sql = "SELECT $coursefields,$contextfields
-                  FROM {context} ctx
-                       JOIN {course} c ON c.id=ctx.instanceid
-                 WHERE ctx.contextlevel=? ";
+            // The courses enrolled within.
+            $enrolledcourses = enrol_get_users_courses($userobj->id, true, $fields);
 
-        $courses = $DB->get_recordset_sql($sql, array(CONTEXT_COURSE));
-        foreach($courses as $course) {
-            // Ignore site level course
+            // The courses viewable without participation.
+            $viewcourses = get_user_capability_course(self::READ_PERMISSION, $userobj->id, true, $fields);
+            if ($viewcourses === false) {
+                $viewcourses = array();
+            } else {
+                // Reindex with the course id.
+                $viewcourses = array_column($viewcourses, null, 'id');
+            }
+
+            $courses = $enrolledcourses + $viewcourses;
+        }
+	$courselist = array();
+	foreach ($courses as $course) {
             if ($course->id == SITEID) {
                 continue;
             }
@@ -270,7 +277,7 @@ class equella_external extends external_api {
                     'courseid' => $course->id,
                     'coursecode' => $course->idnumber,
                     'coursename' => $course->fullname,
-                    'archived' => !($course->visible)
+                    'archived' => !($course->visible),
                 );
             }
         }
