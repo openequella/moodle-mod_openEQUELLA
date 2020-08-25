@@ -248,5 +248,16 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015041401, 'equella');
     }
 
+    if ($oldversion < 2020082500) {
+        $table = new xmldb_table('equella');
+        $field = new xmldb_field('uuid');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '40', null, null, null, null);
+
+        // Update uuid column to use CHAR instead of TEXT.
+        $dbman->change_field_type($table, $field, $continue = true, $feedback = true);
+        // Equella savepoint reached.
+        upgrade_mod_savepoint(true, 2020082500, 'equella');
+    }
+
     return true;
 }
