@@ -260,14 +260,8 @@ class equella_external extends external_api {
             }
 
             if ($modifiable) {
-                $contextrecord = new stdclass();
-                $contextrecord->id = $course->contextid;
-                $contextrecord->contextlevel = CONTEXT_COURSE;
-                $contextrecord->instanceid = $course->id;
-                $contextrecord->path = $course->path;
-                $contextrecord->depth = $course->depth;
-                $coursecontext = eq_context_course::get_from_record($contextrecord);
-                if (!has_capability(self::WRITE_PERMISSION, $coursecontext, $userobj)) {
+                $ctx = context_course::instance($course->id);
+                if (!has_capability(self::WRITE_PERMISSION, $ctx, $userobj)) {
                     continue;
                 }
             }
