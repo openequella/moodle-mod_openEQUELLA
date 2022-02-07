@@ -25,7 +25,7 @@ Then use Docker to build it.
 ```sh
 git clone https://github.com/jmhardison/docker-moodle
 cd docker-moodle
-docker build -t moodle
+docker build -t moodle .
 ```
 
 Then setup and run the MYSQL database for use with the docker Moodle.
