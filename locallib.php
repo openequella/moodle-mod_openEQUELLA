@@ -279,7 +279,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
 //In order to align newline characters between serverside and client side, and make sure the signature is matched,
 //we should convert all "\n" to "\r\n".
 function convert_newline_characters($content) {
-    return str_replace("\n", "\r\n", $content);
+    return preg_replace("/\r?\n/", "\r\n", $content);
 }
 
 function equella_lti_params($equella, $course, $extra = array()) {
