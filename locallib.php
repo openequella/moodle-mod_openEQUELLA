@@ -274,6 +274,14 @@ function equella_build_integration_url($args, $appendtoken = true) {
     return new moodle_url($CFG->equella_url, $equrlparams);
 }
 
+//Based on w3c standard, line breaks, as in multi-line text field values, are represented as CR LF pairs, i.e. `%0D%0A'
+//which represents "\r\n".
+//In order to align newline characters between serverside and client side, and make sure the signature is matched,
+//we should convert all "\n" to "\r\n".
+function convert_newline_characters($content) {
+    return preg_replace("/\r?\n/", "\r\n", $content);
+}
+
 function equella_lti_params($equella, $course, $extra = array()) {
     global $USER, $CFG;
 
@@ -289,7 +297,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
 
     $role = equella_lti_roles($USER, $equella->cmid, $equella->course);
 
-    $requestparams = array('resource_link_id' => $CFG->siteidentifier . ':mod_equella:' . $equella->cmid,'resource_link_title' => $equella->name,'resource_link_description' => $equella->intro,'user_id' => $USER->id,'roles' => $role,'context_id' => $course->id,'context_label' => $course->shortname,
+    $requestparams = array('resource_link_id' => $CFG->siteidentifier . ':mod_equella:' . $equella->cmid,'resource_link_title' => convert_newline_characters($equella->name),'resource_link_description' => convert_newline_characters($equella->intro),'user_id' => $USER->id,'roles' => $role,'context_id' => $course->id,'context_label' => $course->shortname,
         'context_title' => $course->fullname,'launch_presentation_locale' => current_language());
     if (!empty($equella->popup)) {
         $requestparams['launch_presentation_document_target'] = 'window';
