@@ -102,6 +102,11 @@ $string['config.lti.secret.help'] = 'Client secret is required if LTI is enabled
 $string['config.lti.liscallback.title'] = 'Outcome callback URL';
 
 ////////////////////////////////////////////////////////
+// LTI 1.3 migration
+$string['config.lti13.migration.title'] = 'LTI 1.3 Migration';
+$string['config.lti13.migration.description'] = 'Migrate openEquella resources to use LTI 1.3';
+
+////////////////////////////////////////////////////////
 // CONFIGURATION: Shared Secrets
 
 $string['config.sharedsecrets.heading'] = 'Shared Secret Settings';
