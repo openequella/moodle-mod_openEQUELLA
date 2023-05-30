@@ -13,15 +13,28 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
  echo "
-  <h2>Update oEQ resource links to use LTI 1.3</h2>
-  <div>
-    <div>
-      Click <a href='?action=download'>here</a> to download the CSV of courses that will be affected by the migration.
-    </div>
-    <div>
-      Click <a href='?action=migrate'  onclick='return confirm(\"Please make sure you have done backed up the Moodle database.\")'>here</a> to start the migration.
-    </div>
-  </div>
+   <body>
+      <h1>Update oEQ resource links to use LTI 1.3</h1>
+
+      <p>
+        Before starting the migration, you can download a CSV which will list all courses which contain items that will be affected by the migration.
+        This CSV can be used for review, and no system modifications will occur.
+      </p>
+      <form method='GET'>
+        <input type='hidden' value='download' name='action'>
+        <input type='submit' value='Download CSV'>
+      </form>
+
+      <p>
+        This migration will enable existing openEQUELLA links to be opened using LTI 1.3 technology. openEQUELLA items shown in courses may display slightly differently
+        (e.g. use different thumbnails) after the migration. Please ensure that you have backed up your Moodle data before proceeding.
+      </p>
+      <form method='GET'>
+        <input type='hidden' value='migrate' name='action'>
+        <input type='submit' value='Start migration'  onclick='return confirm(\"Please ensure that you have backed up your Moodle data before proceeding.\")'>
+      </form>
+   </body>
 ";
 
