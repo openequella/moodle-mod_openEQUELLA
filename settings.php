@@ -111,6 +111,6 @@ if ($ADMIN->fulltree) {
     // LTI 1.3 migration
     //
     $settings->add(new admin_setting_heading('equella_lti_migration', ecs('lti13.migration.title'), ''));
-    $lti13MigrationUrl = new moodle_url('/mod/equella/lti13migration.php');
+    $lti13MigrationUrl = new moodle_url('/mod/equella/lti13migration/main.php');
     $settings->add(new admin_setting_openlink('lti13migration', ecs('lti13.migration.title'), ecs('lti13.migration.description'), $lti13MigrationUrl->out()));
 }

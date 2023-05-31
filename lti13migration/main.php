@@ -29,8 +29,7 @@ echo "
     Before starting the migration, you can download a CSV which will list all courses which contain items that will be
     affected by the migration. This CSV can be used for review, and no system modifications will occur.
   </p>
-  <form method='GET'>
-    <input type='hidden' value='download' name='action'>
+  <form method='GET' action='downloadcsv.php'>
     <input type='submit' value='Download CSV'>
   </form>
 
