@@ -22,6 +22,12 @@ along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 <body>
 
 <?php
+require_once('../../../config.php');
+global $DB;
+
+$ltiToolNames = $DB->get_fieldset_sql("SELECT name FROM {lti_types} WHERE ltiversion='1.3.0'");
+$options = implode(array_map(function ($name) { return "<option value='$name'>$name</option>"; }, $ltiToolNames));
+
 echo "
   <h1>Update oEQ resource links to use LTI 1.3</h1>
 
@@ -38,8 +44,10 @@ echo "
     in courses may display slightly differently (e.g. use different thumbnails) after the migration. Please ensure that 
     you have backed up your Moodle data before proceeding.
   </p>
-  <form method='GET'>
-    <input type='hidden' value='migrate' name='action'>
+  <form method='GET' action='migrate.php'>
+
+    <label for=\"ltiTypeName\">Please select the LTI 1.3 tool you want to use in the migration</label>
+    <select name='ltiTypeName'> $options </select> 
     <input type='submit' value='Start migration'  onclick='return confirm(\"Please ensure that you have backed up your Moodle data before proceeding.\")'>
   </form>"
 ?>
