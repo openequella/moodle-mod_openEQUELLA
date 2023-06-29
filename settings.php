@@ -105,4 +105,12 @@ if ($ADMIN->fulltree) {
     $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
 
     $settings->add($intercepttype);
+
+    // ///////////////////////////////////////////////////////////////////////////////
+    //
+    // LTI 1.3 migration
+    //
+    $settings->add(new admin_setting_heading('equella_lti_migration', ecs('lti13.migration.title'), ''));
+    $lti13MigrationUrl = new moodle_url('/mod/equella/lti13migration/main.php');
+    $settings->add(new admin_setting_openlink('lti13migration', ecs('lti13.migration.title'), ecs('lti13.migration.description'), $lti13MigrationUrl->out()));
 }
