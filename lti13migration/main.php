@@ -1,3 +1,7 @@
+<?php
+require_once('../../../config.php');
+?>
+
 <!--
 This file is part of the EQUELLA module - http://git.io/vUuof
 
@@ -22,7 +26,6 @@ along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 <body>
 
 <?php
-require_once('../../../config.php');
 global $DB;
 
 $ltiToolNames = $DB->get_fieldset_sql("SELECT name FROM {lti_types} WHERE ltiversion='1.3.0'");
