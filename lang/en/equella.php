@@ -70,6 +70,10 @@ $string['config.action.desc'] = 'The action string for openEQUELLA. Please note:
    1. Use "selectOrAdd" for EQUELLA 6.0 and older, for EQUELLA 6.1 onward please use "structured"
    2. There should not be a ? or a & at the start or end of the string.';
 
+$string['config.userfield.title'] = 'User field to use';
+$string['config.userfield.desc'] = 'Choose the user field to be used instead of username';
+$string['config.userfield.username'] = 'Username';
+
 $string['config.restriction.title'] = 'Restrict selections';
 $string['config.restriction.desc'] = 'Choose whether course editors should only be able to select items, attachments, packages or anything. Please note that the restrictions only working for EQUELLA 6.0 and higher.';
 $string['config.restriction.none'] = 'No restrictions';

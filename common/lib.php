@@ -85,7 +85,7 @@ function equella_getssotoken($course = null) {
             // see if the user has a role that is linked to an equella role
             $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
             if (!empty($shareid)) {
-                return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
+                return equella_getssotoken_raw($USER->equellauser, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
             }
         }
     }
@@ -93,7 +93,7 @@ function equella_getssotoken($course = null) {
     // no roles found, use the default shareid and secret
     $shareid = $CFG->equella_shareid;
     if (!empty($shareid)) {
-        return equella_getssotoken_raw($USER->username, $shareid, $CFG->equella_sharedsecret);
+        return equella_getssotoken_raw($USER->equellauser, $shareid, $CFG->equella_sharedsecret);
     }
 }
 

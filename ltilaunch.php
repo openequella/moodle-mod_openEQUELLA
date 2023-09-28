@@ -104,7 +104,7 @@ function get_item_xml($course, $sectionid) {
 
     // User
     $integuserxml = $integxml->addChild('user');
-    $integuserxml->addChild('username', $USER->username);
+    $integuserxml->addChild('username', $USER->equellauser);
     $integuserxml->addChild('firstname', $USER->firstname);
     $integuserxml->addChild('lastname', $USER->lastname);
 
