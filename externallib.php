@@ -134,7 +134,7 @@ class equella_external extends external_api {
                 'visible' => new external_value(PARAM_BOOL, 'Whether the content is visible.  False if either the content itself or the course is not visible.'),
                 'attributes' => new external_multiple_structure(new external_single_structure(array(
 
-                'key' => new external_value(PARAM_RAW, 'Attribute key'),'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', false))))));
+                'key' => new external_value(PARAM_RAW, 'Attribute key'),'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', VALUE_DEFAULT))))));
     }
     public static function find_all_usage_returns() {
         return new external_single_structure(array(
@@ -162,7 +162,7 @@ class equella_external extends external_api {
                 'visible' => new external_value(PARAM_BOOL, 'Whether the content is visible.  False if either the content itself or the course is not visible.'),
                 'attributes' => new external_multiple_structure(new external_single_structure(array(
 
-                'key' => new external_value(PARAM_RAW, 'Attribute key'),'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', false))))));
+                'key' => new external_value(PARAM_RAW, 'Attribute key'),'value' => new external_value(PARAM_RAW, 'Attribute value'))), '', VALUE_DEFAULT))))));
     }
     public static function unfiltered_usage_count_returns() {
         return new external_single_structure(array(
