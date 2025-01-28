@@ -1,0 +1,788 @@
+2020-03-16 Nick Charles
+
+	Make selection session window 80% of window width
+
+2020-03-13 Nick Charles
+
+	GDPR compliance
+
+2020-03-11 Nick Charles
+
+	Replace starburst icons with open sourced versions
+
+2019-12-01  Troy Williams
+
+	Add check for -1 maxbytes value in JS.
+
+2019-05-08 	Nick Charles 	<nick.charles@gmail.com>
+	
+	Never register an openEquella drag and drop handler if it's not configured
+
+2018-01-05  Aaron Holland
+
+	Add LMS data to Equella integration session
+
+2015-07-23  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2277 Add capability requirements to equella web service definition
+
+2015-07-20  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2269 Add filename to module db record
+
+2015-06-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Ability to disable self signed ssl certificate check
+
+2015-05-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	New release requires 2.7 and up.
+
+2015-05-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Clean up cancel.php and github url
+
+	moodleform_mod::add_intro_editor() is deprecated
+	use standard_intro_elements() instead
+
+2015-04-23  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2124 Web Service: Fixed sorting field name
+
+	EQ-2121 Web Service: Fix records count for paging
+
+2015-04-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix data records missing error in webservice
+
+2015-04-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2097 Store resource info sent from EQUELLA
+
+	EQ-2097 Hack to display mp4 icon in moodle
+
+	EQ-2073 Assign mimetype when using push-to-lms
+
+2015-03-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-2067 "options" field uses larger textarea
+
+2015-03-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	fix is_https()
+
+2015-01-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1931 Set mimetype for drag and drop resources
+
+	EQ-1465 Show recent equella modules in moodle recent report page
+
+2015-01-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix generator url
+
+	Add a tool to generate module instances
+
+2015-01-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1862 Integrated LTI testing tools
+
+	Add css style to LTI messages
+
+2015-01-07  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1862 Fix lti outcome parsing library
+
+	equella module cron
+
+2014-09-27  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1583 Moodle 2.7 Event APIs #33
+	Replace deprecated APIs
+
+2014-12-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Escape ltilaunch.php url parameters
+
+2014-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1676 list_courses_for_user returns course id number
+
+2014-10-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix redirect url
+
+2014-10-21  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1663 Load iframe after resizing
+
+2014-10-15  Alex Rowe  <arowe@studygroup.com>
+
+	Add required functions for the completion library
+	fixes #34 #35
+
+2014-09-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1607 Remove intercept files option
+
+2014-09-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1599 Add missing module title in find_all_usage.
+
+	Description in webservice should be plain text.
+
+2014-09-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Output detailed webservice error message
+
+	EQ-1598 Fix webservice error in moodle 2.5
+
+2014-09-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fix EQUELLA delete instance webservice
+
+2014-09-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Rename equellaopeninnewwindow option
+
+2014-09-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1582 Only intercept files when auto contribute selected
+
+	fix fullname() warning
+
+2014-09-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Cleanup linkcheck.php code
+
+2014-09-05  Alex Rowe  <arowe@studygroup.com>
+
+	Add mimetype and ltisalt on backup / restore
+
+2014-09-03  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1576 Fix SQL for Oracle DB
+
+2014-09-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1576 Avoid using DISTINCT in SQL
+
+	EQ-1574 fix js error when conditional access enabled #28
+
+2014-08-21  Luke Rossiter  <lukerossiter@hotmail.com>
+
+	Add EQUELLA views to moodle logs when using LTI
+	When LTI authentication is enabled, viewing an EQUELLA resource set to open in a new window did not add an entry to the moodle logs. Log entry added just before the redirect (similar to view.php).
+
+2014-08-03  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1450 improve find_all_usage
+
+2014-07-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	coding style fix
+
+2014-07-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Check if coursemodule exists
+
+	EQ-1444 Improve list_courses_for_user()
+
+	EQ-1450 find_usage_for_item performance improvements
+
+2014-08-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1052 Dynamic window size
+
+2014-08-01  Larry Cook  <larry.cook@equella.com>
+
+	EQ-1462 Provide SELECT COUNT(...) in find_all_usages
+
+2014-07-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Declare $CFG in exception class
+
+2014-06-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1373 Fix courseid in mdl_equella table
+
+2014-06-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improve find_item_usage to ignore items with invalid courseid
+
+	Fix coding style
+
+2014-06-12  Holland, Aaron  <Aaron.Holland@Pearson.com>
+
+	Fixes EQ-1317 send username as lis_person_sourcedid
+
+2014-06-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Issue #24 bump module version
+
+	Issue #24 Fix custome roles' lang strings issue
+
+2014-06-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Clean up get_all_editing_roles()
+
+	More checks on course category
+
+2014-06-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Add ChangeLog file & fix hard-coded category id
+
+2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Merge pull request #23 from agrowe/unique_db_call
+	Add DISTINCT to the SQL call to remove duplicate ID numbers
+
+2014-06-04  Alex Rowe  <arowe@studygroup.com>
+
+	Add DISTINCT to the SQL call to remove duplicate ID numbers
+
+2014-06-04  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Merge pull request #22 from agrowe/2.6
+	Update Equella Module to not show errors in 2.6
+
+2014-06-04  Alex Rowe  <arowe@studygroup.com>
+
+	Update get_context instance to context_xxx::instance() as it has been deprecated since Moodle 2.2
+
+	Update coding style and update some formatting
+
+	Remove tabs and remove with 4 spaces plus fix tab formatting
+
+2014-04-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Implement reporting callbacks
+	Implement equella_get_view_actions() and equella_get_post_actions()
+
+2014-03-20  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Merge pull request #20 from tlock/master
+	db/upgrade.php: Use more recordsets to handle large amounts of equella r...
+
+2014-03-20  Tim Lock  <tim.lock@netspot.com.au>
+
+	db/upgrade.php: Use more recordsets to handle large amounts of equella resources
+
+2014-03-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-1012 More urlencode() fixes
+
+	EQ-1012 Fix wrongly encoded filename
+
+2014-03-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-832 Adding require_login() all over the place
+
+2014-03-07  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-832 site course format issue
+
+2014-02-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Show description in course page when the option is enabled
+
+2014-02-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Merge pull request #18 from aolley/nsfixes
+	A couple fixes for debug warnings and improvement to upgrade script
+
+2014-02-25  Adam Olley  <adam.olley@netspot.com.au>
+
+	db/upgrade.php: Use recordset to handle large amounts of equella resources
+	Additionally, only clear the course cache rather than rebuild it.
+	Courses with more than one EQUELLA resource would get this called multiple
+	times. Rebuilding the course cache for a large amount of courses will take
+	a LONG time if theres enough of them. Its better to simply clear the cache
+	and just let it be regenerated the next time a user needs the course.
+
+2014-02-25  Tim Lock  <tim.lock@netspot.com.au>
+
+	Add missing string for mod/equella:manage cap and missing setType calls
+
+2014-02-06  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	fixed html attribute
+
+2014-01-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-877 Improve find_all_usage performance
+
+2014-01-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-779 Fixed IE9 issue
+
+2013-12-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Update db/install.xml
+
+	EQ-789 Fixed db/install.xml
+
+	Update help text
+
+2013-12-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-785 Remove X button in selection session
+
+2013-12-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	soap.php unix format
+
+	Format SQL
+
+	Roles should respect sortorder
+
+	EQ-771 resource_link_id uses cmid not instanceid
+
+	EQ-139 Quick contribute uses shared secret
+
+2013-12-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-777 fixed typo
+
+	EQ-771 Make resource_link_id unique
+
+2013-12-03  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improve list section web service
+
+	Clean up debugging code in externalib.php
+
+	EQ-448 enrollments and instructor should be set
+
+	EQ-757 LTI Basei outcomes use other namespace
+	namespace: http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0
+
+2013-11-28  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Check context variables
+
+	Supports groups
+
+2013-11-27  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Coding style fix
+
+	Remove unused code
+
+	Refs EQ-738 Fixed target section
+
+2013-11-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs EQ-735 Improved LTI oauth client and secret help texts
+
+2013-11-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs EQ-730 Store equella resource mimetype in db
+
+2013-11-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-703 Use equella's curl library
+
+	Don't try to modify modinfo
+
+2013-11-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Close ltireturn window
+
+2013-11-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-671 Dont sign request if key and secret are empty
+
+2013-11-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Version shouldn't be empty
+
+2013-11-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-659 cached mod info should use popup.php
+
+	Added options desctiptions
+
+2013-11-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Enable LTI option should be off by default
+
+2013-11-06  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Assign course id to $equella
+
+2013-10-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Added filesize to curl put method
+
+2013-10-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	don't escape popup url
+
+	Refs EQ563
+	1. Add [x] button in dialog
+	2. Use iframe instead of <object>
+
+2013-10-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs EQ-559 boolean param should be string
+
+2013-10-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-545 Default window size is configurable
+	1. Increase default window width
+	2. Window size is configurable
+	3. Append resizable=1 to existing popup option
+
+2013-09-27  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs EQ-541 Add LTI "launch_presentation_document_target" parameter
+
+2013-09-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Hide LTI outcome callback url
+
+2013-09-24  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-520 Fixed grade scale
+
+2013-09-20  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #17 section id fix
+
+	Merge pull request #17 from aolley/master
+	callbackmulti: The section passed to course_add_cm_to_section is the relative section number
+
+2013-09-20  Adam Olley  <adam.olley@netspot.com.au>
+
+	callbackmulti: The section passed to course_add_cm_to_section is the relative section number
+
+2013-09-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-489 filename urls migrate to uuid urls
+
+2013-09-16  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-497 Fixed section id conflicts
+
+2013-09-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-489 Added attachmentUuidUrls param to integration url
+
+2013-09-09  Tim Lock  <dongsheng.cai@pearson.com>
+
+	common/soap.php: Removed blank line breaking some Moodle functionally.
+
+2013-08-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-393 Fixed param value encoded issue
+
+	EQ-393 dots in param name shouldn't be replaced with underscores
+
+	EQ-392 Send course structure to EQUELLA
+
+2013-08-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Code improvement
+
+2013-08-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs EQ-106 Fixed url encoding
+
+2013-08-13  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-392 Launch the selection session with LTI
+
+2013-08-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Check array index
+
+2013-08-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-366 Launch EQUELLA resource in LTI
+
+2013-08-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQ-102 Moodle course no longer targetable
+
+2013-07-02  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Clean up common/lib.php
+	Drop $readwrite parameter from get token function
+	Clean up code
+
+	Unix file format
+
+	Upgrade shouldn't overwrite popup settings
+
+2013-06-26  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Roll back to dropdown menu
+
+2013-06-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Module name shouldn't be empty
+
+	Added extra space between radiobutton and label
+
+2013-06-24  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Added class name to radio buttons
+
+2013-06-20  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8178 Some help text explains restrictions
+
+2013-06-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8178 Added full stop
+
+	Refs #8178 Language string updated
+
+	Refs #8178 Added packageonly option, replace select control with radio buttons
+
+2013-05-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8170 $CFG->equella_intercept_files should be checked
+
+	Refs #8169 Fixed option header language string
+
+2013-05-10  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8150 Defaut action should be empty
+
+2013-05-09  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8150 Use structured as default EQUELLA action
+
+2013-04-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Remove buttons on header
+
+	Make IE8 happy
+
+2013-04-12  aholland  <aaron.holland@equella.com>
+
+	Fix typo of moodlecourseidnumber
+
+2013-04-11  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #8011 width 880px to display [X] button
+
+	Refs #8011 reduced width and height should be 90%
+
+2013-04-08  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7987, move 'X' button in dialog
+
+2013-03-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fixed &amp;
+
+	Refs #7938 Don't add prefix to courseid
+
+2013-03-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Issue #14 Update module code to conform new moodle API
+
+	Refs #7897 JS improvement
+
+2013-03-19  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Issue #10 css prefix to prevent overwrite moodle style
+
+	Fixed cancel button
+
+	Refs #7897 replace old embeded UI
+
+	Refs #7897 Moveable and resizable equella selector in moodle
+
+2013-03-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7850 Added prefix to courseid
+	See comment: http://dev.equella.com/issues/7850#note-12
+
+	Issue #5 UNIX line ending
+
+	Updated README.md
+
+	Issue #9 fixed deprecated function
+
+	Merge pull request #8 from agrowe/2.4_DEV
+	Merge @agrowe patch into mod_equella master branch
+
+2013-03-18  Alex Rowe  <arowe@studygroup.com>
+
+	Updated equella_guess_icon to allow 24x24 icon size in Moodle 2.4 plus added new images to pix and added version required to 2.4
+
+2013-03-18  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7850 Fixed section id
+
+2013-03-14  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	change parameter type
+
+2013-03-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7850 New integration screen for moodle
+
+2013-03-07  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	lib.php line ending DOS->UNIX
+
+2013-03-05  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	EQUELLA error handing
+
+	Refs #7843: Sending course information to EQUELLA
+
+2013-01-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #6: Fixed existing equella records
+
+2013-01-25  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #6 Fixed typo
+
+2012-12-13  William Bowling  <william.bowling@equella.com>
+
+	Rename conflicting variable
+
+2012-11-28  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7534 ignore site level course
+
+2012-11-22  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Display more error message in debug mode
+
+2012-11-21  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Dump response from EQUELLA in debugging mode
+
+	Replace mktime() with time()
+
+2012-11-20  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Added sort field
+
+2012-11-16  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improve find_useage_for_item webservice
+
+	Fixed hard coded log path
+
+	Format php code
+
+2012-11-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7591, fixed shared secret label
+
+2012-11-12  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Make equella_intercept_files option visible
+
+2012-11-01  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #4 added a global new window/same window setting
+
+2012-10-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Fixed setting options
+
+2012-10-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7465 Fixed larger image viewer display in moodle
+
+	Error checking rest api response
+
+2012-10-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Improved option texts
+
+2012-10-16  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7070 Tweak admin settings
+
+2012-08-31  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7070: Change help text
+
+	Refs #7070: Improved exception message
+
+2012-08-30  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7070: Improved activity settings
+
+2012-08-29  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7070: Improved admin settings
+
+	Issue #4: Use new window option when create new EQUELLA instance
+
+2012-08-28  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Refs #7070: Option to enable DnD hook
+
+	Refs #7070: Removed dnd hook, fixed function call
+
+	Refs #7070: Instantly upload files to EQUELLA
+
+	Refs #7070: Added option to turn off file inteception
+
+	Refs #7070: Drag & drop into moodle course
+	Files will be intecepted by EQUELLA
+
+2012-10-15  Dongsheng Cai  <dongsheng.cai@pearson.com>
+
+	Initialise PHP object before assign properties
+
+2012-07-10  Nick Read  <nick@deadlymite.com>
+
+	Merge pull request #3 from aolley/master
+	Change to use print_error instead of deprecated error function
+
+2012-07-09  Adam Olley  <adam.olley@netspot.com.au>
+
+	Change to use print_error instead of deprecated error function
+
+2012-06-27  nread  <nick@equella.com>
+
+	Update required Moodle version to 2.3
+
+2012-06-25  nread  <nick@equella.com>
+
+	Use the correct icons for Moodle 2.3 - see 559276b153640 in Moodle repo
+
+2012-06-21  nread  <nick@equella.com>
+
+	Merge branch 'VersionIncrease'
+
+	Closes #1 - Increase version number to ensure new permission is registered
+
+2012-06-13  nread  <nick@equella.com>
+
+	Merge branch 'UpdateCopyright'
+
+	Update copyright notice for move to Github
+
+2012-06-05  nread  <nick@equella.com>
+
+	Closes #2 - removes custom location code, plus adds a help string for the new 'Add an activity or resource' dialog
+
+	Closes #1 - add mod/equella:view and mod/equella:addinstance capabilities
+
+2012-05-03  nread  <nick@equella.com>
+
+	Viewing should mean completion
+
+2012-05-01  nread  <nick@equella.com>
+
+	Update the readme with some interesting info
+
+	Initial commit of the Moodle 2.x module
+
+2012-05-01  Nick Read  <nick@deadlymite.com>
+
+	initial commit
