@@ -257,7 +257,8 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
         $ok = openssl_sign($base_string, $signature, $privatekeyid);
 
         // Release the key resource
-        openssl_free_key($privatekeyid);
+        if(PHP_VERSION_ID < 80000)
+            openssl_free_key($privatekeyid); // this function is deprecated from PHP v8.0 onwards, no manual cleanup required - handles by PHP garbage collector
 
         return base64_encode($signature);
     }
@@ -277,7 +278,8 @@ class OAuthSignatureMethod_RSA_SHA1 extends OAuthSignatureMethod {
         $ok = openssl_verify($base_string, $decoded_sig, $publickeyid);
 
         // Release the key resource
-        openssl_free_key($publickeyid);
+        if(PHP_VERSION_ID < 80000)
+            openssl_free_key($publickeyid); // this function is deprecated from PHP v8.0 onwards, no manual cleanup required - handles by PHP garbage collector
 
         return $ok == 1;
     }
