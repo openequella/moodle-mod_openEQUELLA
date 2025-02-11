@@ -248,5 +248,14 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015041401, 'equella');
     }
 
+    if($oldversion < 2025021101){
+        foreach ($CFG as $x => $y){
+            if(strpos($x, 'equella')!==false){
+                set_config($x, $y, 'equella');
+                unset_config($x);
+            }
+        }
+    }
+
     return true;
 }
