@@ -857,8 +857,11 @@ class equella_external extends external_api {
     static private function get_instructors($courseid) {
         global $DB;
 
-        // XXX get_all_user_name_fields() exists 2.6 onward
-        if (function_exists('get_all_user_name_fields')) {
+        if (class_exists('core_user\\fields')) {
+            // Class core_user\fields exists from 3.11 onward.
+            $ufields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+        } else if (function_exists('get_all_user_name_fields')) {
+            // Function get_all_user_name_fields() exists 2.6 onward.
             $ufields = get_all_user_name_fields(true, 'u');
         } else {
             $ufields = 'u.firstname,u.lastname';
