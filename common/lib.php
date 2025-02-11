@@ -82,7 +82,7 @@ function equella_getssotoken($course = null) {
 
         if ($hassystemrole || $hascategoryrole || $hascourserole) {
             // see if the user has a role that is linked to an equella role
-            $shareid = $CFG->get_config('equella', "equella_{$role->shortname}_shareid");
+            $shareid = get_config('equella', "equella_{$role->shortname}_shareid");
             if (!empty($shareid)) {
                 return equella_getssotoken_raw($USER->username, $shareid, get_config('equella', "equella_{$role->shortname}_sharedsecret"));
             }
