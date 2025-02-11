@@ -255,6 +255,8 @@ function xmldb_equella_upgrade($oldversion) {
                 unset_config($x);
             }
         }
+
+        upgrade_mod_savepoint(true, 2025021101, 'equella');
     }
 
     return true;
