@@ -81,15 +81,14 @@ function equella_supports($feature) {
     }
 }
 function equella_get_window_options() {
-    global $CFG;
     $width = EQUELLA_DEFAULT_WINDOW_WIDTH;
-    if (!empty($CFG->equella_default_window_width)) {
-        $width = $CFG->equella_default_window_width;
+    if (!empty(get_config('equella', 'equella_default_window_width'))) {
+        $width = get_config('equella', 'equella_default_window_width');
     }
 
     $height = EQUELLA_DEFAULT_WINDOW_HEIGHT;
-    if (!empty($CFG->equella_default_window_height)) {
-        $height = $CFG->equella_default_window_height;
+    if (!empty(get_config('equella', 'equella_default_window_height'))) {
+        $height = get_config('equella', 'equella_default_window_height');
     }
 
     return array('width' => $width,'height' => $height,'resizable' => 1,'scrollbars' => 1,'directories' => 0,'location' => 0,'menubar' => 0,'toolbar' => 0,'status' => 0);
@@ -112,7 +111,7 @@ function equella_add_instance($equella, $mform = null) {
     global $DB, $CFG;
     $equella->timecreated = time();
     $equella->timemodified = time();
-    if (!empty($CFG->equella_open_in_new_window)) {
+    if (!empty(get_config('equella', 'equella_open_in_new_window'))) {
         $equella->windowpopup = 1;
     }
     $equella = equella_postprocess($equella);
@@ -179,7 +178,7 @@ function equella_delete_instance($id) {
     }
 
     if ($equella->activation) {
-        $url = str_replace("signon.do", "access/activationwebservice.do", $CFG->equella_url);
+        $url = str_replace("signon.do", "access/activationwebservice.do", get_config('equella', 'equella_url'));
         $url = equella_appendtoken($url) . "&activationUuid=" . rawurlencode($equella->activation);
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -294,7 +293,7 @@ function equella_find_repository() {
     require_once ($CFG->dirroot . '/repository/lib.php');
     $instances = repository::get_instances(array('type' => 'equella'));
     foreach($instances as $e) {
-        if ($e->get_option('equella_url') == $CFG->equella_url) {
+        if ($e->get_option('equella_url') == get_config('equella', 'equella_url')) {
             return $e;
         }
     }
@@ -334,10 +333,10 @@ function equella_module_event_handler($event) {
     global $CFG;
     require_once ($CFG->dirroot . '/mod/equella/locallib.php');
 
-    if (empty($CFG->equella_intercept_files)) {
+    if (empty(get_config('equella', 'equella_intercept_files'))) {
         return;
     }
-    if ((int)$CFG->equella_intercept_files != EQUELLA_CONFIG_INTERCEPT_FULL) {
+    if ((int)get_config('equella', 'equella_intercept_files') != EQUELLA_CONFIG_INTERCEPT_FULL) {
         return;
     }
     $course = equella_get_course($event->courseid);
@@ -387,7 +386,7 @@ function equella_handle_mod_updated($event) {
  *
  * @return array containing details of the files / types the mod can handle
  */
-if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_ASK) {
+if ((int)get_config('equella', 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_ASK) {
     function equella_dndupload_register() {
         return array('files' => array(array('extension' => '*','message' => get_string('dnduploadresource', 'mod_equella'))));
     }
@@ -398,7 +397,7 @@ if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files =
  *
  * @return array containing details of the files / types the mod can handle
  */
-if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_META) {
+if ((int)get_config('equella', 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_META) {
     function equella_dndupload_register() {
         global $PAGE, $CFG, $COURSE;
         $config = [
@@ -415,7 +414,7 @@ if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files =
 }
 
 //https://github.com/equella/moodle-mod_equella/issues/60
-if (isset($CFG->equella_intercept_files) && (int)$CFG->equella_intercept_files == EQUELLA_CONFIG_INTERCEPT_NONE) {
+if ((int)get_config('equella', 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_NONE) {
     function equella_dndupload_register() {
         return null;
     }
