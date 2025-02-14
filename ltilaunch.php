@@ -73,7 +73,7 @@ if ($action == 'view') {
 
     $url = equella_build_integration_url($args, false);
     $extraparams = $url->params();
-    if (get_config('equella', 'equella_action') == EQUELLA_ACTION_STRUCTURED) {
+    if (equella_get_config('equella_action') == EQUELLA_ACTION_STRUCTURED) {
         $contents = equella_get_course_contents($course->id, $args->section);
         $json = json_encode($contents);
         $extraparams['structure'] = $json;
@@ -84,7 +84,7 @@ if ($action == 'view') {
     $equella = new stdClass();
     $equella->id = 0;
     $equella->course = $args->course;
-    $equella->url = get_config('equella', 'equella_url');
+    $equella->url = equella_get_config('equella_url');
     $params = equella_lti_params($equella, $course, $extraparams);
 
     echo '<html><body>';

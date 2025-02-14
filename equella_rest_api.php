@@ -714,7 +714,7 @@ class equella_rest_api {
     const OAUTH_URI = 'oauth/authorise';
     const TOKEN_URI = 'oauth/access_token';
     public static function get_end_point() {
-        $eq_url = get_config('equella', 'equella_url');
+        $eq_url = equella_get_config('equella_url');
         if (empty($eq_url)) {
             throw new moodle_exception('equella url not set');
         }
