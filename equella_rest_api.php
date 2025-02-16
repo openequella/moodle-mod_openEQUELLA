@@ -714,11 +714,11 @@ class equella_rest_api {
     const OAUTH_URI = 'oauth/authorise';
     const TOKEN_URI = 'oauth/access_token';
     public static function get_end_point() {
-        global $CFG;
-        if (empty($CFG->equella_url)) {
+        $eq_url = equella_get_config('equella_url');
+        if (empty($eq_url)) {
             throw new moodle_exception('equella url not set');
         }
-        $url = substr($CFG->equella_url, 0, strlen($CFG->equella_url) - strlen('signon.do'));
+        $url = substr($eq_url, 0, strlen($eq_url) - strlen('signon.do'));
         $url = rtrim($url, '/') . '/';
         return $url;
     }

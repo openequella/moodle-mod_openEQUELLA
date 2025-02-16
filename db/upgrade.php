@@ -248,5 +248,26 @@ function xmldb_equella_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015041401, 'equella');
     }
 
+    if($oldversion < 2025021101){
+        // These keys are not part of admin settings but are stored in $CFG
+        $excluded_keys = [
+            'equella_soap_disable_ssl_check',
+            'equella_oauth_access_token',
+            'equella_lti_lis_callback',
+            'equella_oauth_client_id'
+        ];
+        foreach ($CFG as $x => $y){
+            if(strpos($x, 'equella')!==false){
+                if (!in_array($x, $excluded_keys, true)) {
+                    set_config($x, $y, 'equella');
+                    unset_config($x);
+                }
+
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2025021101, 'equella');
+    }
+
     return true;
 }

@@ -35,31 +35,31 @@ if ($ADMIN->fulltree) {
     $changelogurl = new moodle_url('/mod/equella/changelog.php');
     $settings->add(new admin_setting_openlink('changelog', ecs('changelog.title'), ecs('changelog.desc'), $changelogurl->out()));
 
-    $settings->add(new admin_setting_configtext('equella_url', ecs('url.title'), ecs('url.desc'), ''));
-    $settings->add(new admin_setting_configtext('equella_action', ecs('action.title'), ecs('action.desc'), ''));
+    $settings->add(new admin_setting_configtext('equella/equella_url', ecs('url.title'), ecs('url.desc'), ''));
+    $settings->add(new admin_setting_configtext('equella/equella_action', ecs('action.title'), ecs('action.desc'), ''));
 
     $restrictionOptions = array(EQUELLA_CONFIG_SELECT_RESTRICT_NONE => trim(ecs('restriction.none')),EQUELLA_CONFIG_SELECT_RESTRICT_ITEMS_ONLY => trim(ecs('restriction.itemsonly')),EQUELLA_CONFIG_SELECT_RESTRICT_ATTACHMENTS_ONLY => trim(ecs('restriction.attachmentsonly')),
         EQUELLA_CONFIG_SELECT_RESTRICT_PACKAGES_ONLY => trim(ecs('restriction.packagesonly')));
 
-    $settings->add(new admin_setting_configselect('equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
+    $settings->add(new admin_setting_configselect('equella/equella_select_restriction', ecs('restriction.title'), ecs('restriction.desc'), EQUELLA_CONFIG_SELECT_RESTRICT_NONE, $restrictionOptions));
 
-    $settings->add(new admin_setting_configtextarea('equella_options', ecs('options.title'), ecs('options.desc'), ''));
+    $settings->add(new admin_setting_configtextarea('equella/equella_options', ecs('options.title'), ecs('options.desc'), ''));
 
-    $settings->add(new admin_setting_configtext('equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
-    $settings->add(new admin_setting_configcheckbox('equella_open_in_new_window', ecs('open.newwindow'), '', 1));
+    $settings->add(new admin_setting_configtext('equella/equella_admin_username', ecs('adminuser.title'), ecs('adminuser.desc'), ''));
+    $settings->add(new admin_setting_configcheckbox('equella/equella_open_in_new_window', ecs('open.newwindow'), '', 1));
 
-    $settings->add(new admin_setting_configtext('equella_default_window_width', ecs('window.width'), '', EQUELLA_DEFAULT_WINDOW_WIDTH));
+    $settings->add(new admin_setting_configtext('equella/equella_default_window_width', ecs('window.width'), '', EQUELLA_DEFAULT_WINDOW_WIDTH));
 
-    $settings->add(new admin_setting_configtext('equella_default_window_height', ecs('window.height'), '', EQUELLA_DEFAULT_WINDOW_HEIGHT));
+    $settings->add(new admin_setting_configtext('equella/equella_default_window_height', ecs('window.height'), '', EQUELLA_DEFAULT_WINDOW_HEIGHT));
 
     // ///////////////////////////////////////////////////////////////////////////////
     //
     // LTI
     //
     $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
-    $settings->add(new admin_setting_configcheckbox('equella_enable_lti', ecs('enablelti'), ecs('enablelti.desc'), 0));
-    $settings->add(new admin_setting_configtext('equella_lti_oauth_key', ecs('lti.key.title'), ecs('lti.key.help'), ''));
-    $settings->add(new admin_setting_configtext('equella_lti_oauth_secret', ecs('lti.secret.title'), ecs('lti.secret.help'), ''));
+    $settings->add(new admin_setting_configcheckbox('equella/equella_enable_lti', ecs('enablelti'), ecs('enablelti.desc'), 0));
+    $settings->add(new admin_setting_configtext('equella/equella_lti_oauth_key', ecs('lti.key.title'), ecs('lti.key.help'), ''));
+    $settings->add(new admin_setting_configtext('equella/equella_lti_oauth_secret', ecs('lti.secret.title'), ecs('lti.secret.help'), ''));
 
     // ///////////////////////////////////////////////////////////////////////////////
     //
@@ -71,8 +71,8 @@ if ($ADMIN->fulltree) {
     $description = '';
 
     $settings->add(new equella_setting_left_heading('equella_default_group', ecs('group', ecs('group.default')), ''));
-    $settings->add(new admin_setting_configtext('equella_shareid', ecs('sharedid.title'), $description, $defaultvalue));
-    $settings->add(new admin_setting_configtext('equella_sharedsecret', ecs('sharedsecret.title'), $description, $defaultvalue));
+    $settings->add(new admin_setting_configtext('equella/equella_shareid', ecs('sharedid.title'), $description, $defaultvalue));
+    $settings->add(new admin_setting_configtext('equella/equella_sharedsecret', ecs('sharedsecret.title'), $description, $defaultvalue));
 
     $rolearchetypes = get_role_archetypes();
     foreach(get_all_editing_roles() as $role) {
@@ -88,8 +88,8 @@ if ($ADMIN->fulltree) {
         $sectionname = 'equella_' . $shortname . '_role_group';
         $settings->add(new equella_setting_left_heading($sectionname, $heading, ''));
 
-        $settings->add(new admin_setting_configtext("equella_{$shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
-        $settings->add(new admin_setting_configtext("equella_{$shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
+        $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
     }
     // ///////////////////////////////////////////////////////////////////////////////
     //
@@ -102,7 +102,7 @@ if ($ADMIN->fulltree) {
         EQUELLA_CONFIG_INTERCEPT_META => get_string('interceptmetadata', 'equella')
         //EQUELLA_CONFIG_INTERCEPT_FULL => get_string('interceptauto', 'equella')
     );
-    $intercepttype = new admin_setting_configselect('equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
+    $intercepttype = new admin_setting_configselect('equella/equella_intercept_files', get_string('interceptfiles', 'equella'), get_string('interceptfilesintro', 'equella'), 0, $choices);
 
     $settings->add($intercepttype);
 

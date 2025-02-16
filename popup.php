@@ -19,7 +19,7 @@ require_login();
 
 $cmid = required_param('cmid', PARAM_INT);
 
-if ($CFG->equella_enable_lti) {
+if (equella_get_config('equella_enable_lti')) {
     $url = new moodle_url('/mod/equella/ltilaunch.php', array('cmid' => $cmid));
 } else {
     $url = new moodle_url('/mod/equella/view.php', array('id' => $cmid,'inpopup' => true));

@@ -92,8 +92,8 @@ function equella_get_course_contents($courseid, $sectionid) {
  * @return string html
  */
 function equella_embed_general($equella) {
-    global $CFG, $PAGE;
-    if ($CFG->equella_enable_lti) {
+    global $PAGE;
+    if (equella_get_config('equella_enable_lti')) {
         $launchurl = new moodle_url('/mod/equella/ltilaunch.php', array('cmid' => $equella->cmid,'action' => 'view'));
         $url = $launchurl->out();
     } else {
@@ -116,7 +116,7 @@ function equella_embed_general($equella) {
         $ie5 = check_browser_version($vendor, $version);
     }
 
-    if ($ie5 || $CFG->equella_enable_lti) {
+    if ($ie5 || equella_get_config('equella_enable_lti')) {
         $iframe = true;
     }
 
@@ -156,16 +156,16 @@ EOT;
  * @return string html
  */
 function equella_select_dialog($args) {
-    global $CFG, $PAGE;
+    global $PAGE;
 
     $equrl = equella_build_integration_url($args);
 
-    if ($CFG->equella_enable_lti) {
+    if (equella_get_config('equella_enable_lti')) {
         $args->action = 'select';
         $launchurl = new moodle_url('/mod/equella/ltilaunch.php', (array)$args);
         $objecturl = $launchurl->out(false);
     } else {
-        if ($CFG->equella_action == EQUELLA_ACTION_STRUCTURED) {
+        if (equella_get_config('equella_action') == EQUELLA_ACTION_STRUCTURED) {
             $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl' => $equrl->out(false),'courseid' => $args->course,'sectionid' => $args->section));
             $objecturl = $redirecturl->out(false);
         } else {
@@ -216,8 +216,7 @@ function equella_parse_query($str) {
 }
 
 function equella_build_integration_url($args, $appendtoken = true) {
-    global $USER, $CFG;
-
+    global $USER;
     $callbackurlparams = array('course' => $args->course,'section' => $args->section);
 
     if (!empty($args->cmid)) {
@@ -249,7 +248,7 @@ function equella_build_integration_url($args, $appendtoken = true) {
         'template' => 'standard',
         'courseId' => $args->course,
         'courseCode' => $coursecode,
-        'action' => $CFG->equella_action,
+        'action' => equella_get_config('equella_action'),
         'selectMultiple' => 'true',
         'cancelDisabled' => 'true',
         'returnurl' => $callbackurl->out(false),
@@ -264,14 +263,15 @@ function equella_build_integration_url($args, $appendtoken = true) {
         $course = equella_get_course($args->course);
         $equrlparams['token'] = equella_getssotoken($course);
     }
-    if (!empty($CFG->equella_options)) {
-        $equrlparams['options'] = $CFG->equella_options;
+    if (!empty(equella_get_config('equella_options'))) {
+        $equrlparams['options'] = equella_get_config('equella_options');
     }
-    if ($CFG->equella_select_restriction && $CFG->equella_select_restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE) {
-        $equrlparams[$CFG->equella_select_restriction] = 'true';
+    $restriction = equella_get_config('equella_select_restriction');
+    if ($restriction && $restriction != EQUELLA_CONFIG_SELECT_RESTRICT_NONE) {
+        $equrlparams[$restriction] = 'true';
     }
 
-    return new moodle_url($CFG->equella_url, $equrlparams);
+    return new moodle_url(equella_get_config('equella_url'), $equrlparams);
 }
 
 //Based on w3c standard, line breaks, as in multi-line text field values, are represented as CR LF pairs, i.e. `%0D%0A'
@@ -530,9 +530,8 @@ class equella_lti_oauth extends oauth_helper {
     }
 
     public static function sign_params($url, $params, $method) {
-        global $CFG;
-        $key = $CFG->equella_lti_oauth_key;
-        $secret = $CFG->equella_lti_oauth_secret;
+        $key = equella_get_config('equella_lti_oauth_key');
+        $secret = equella_get_config('equella_lti_oauth_secret');
         if (empty($key) || empty($secret)) {
             return $params;
         }
@@ -540,10 +539,9 @@ class equella_lti_oauth extends oauth_helper {
     }
 
     public static function verify_message($message) {
-        global $CFG;
         require_once dirname(__FILE__) . '/' . 'oauthlocallib.php';
         try {
-            moodle\mod\equella\handle_oauth_body_post($CFG->equella_lti_oauth_key, $CFG->equella_lti_oauth_secret, $message);
+            moodle\mod\equella\handle_oauth_body_post(equella_get_config('equella_lti_oauth_key'), equella_get_config('equella_lti_oauth_secret'), $message);
         } catch(Exception $e) {
             return false;
         }

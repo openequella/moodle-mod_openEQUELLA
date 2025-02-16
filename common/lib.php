@@ -33,8 +33,7 @@ function get_block_configdata($blockname) {
  * @return string
  */
 function equella_full_url($urlpart) {
-    global $CFG;
-    return str_ireplace('signon.do', $urlpart, $CFG->equella_url);
+    return str_ireplace('signon.do', $urlpart, equella_get_config('equella_url'));
 }
 
 /**
@@ -83,17 +82,17 @@ function equella_getssotoken($course = null) {
 
         if ($hassystemrole || $hascategoryrole || $hascourserole) {
             // see if the user has a role that is linked to an equella role
-            $shareid = $CFG->{"equella_{$role->shortname}_shareid"};
+            $shareid = equella_get_config("equella_{$role->shortname}_shareid");
             if (!empty($shareid)) {
-                return equella_getssotoken_raw($USER->username, $shareid, $CFG->{"equella_{$role->shortname}_sharedsecret"});
+                return equella_getssotoken_raw($USER->username, $shareid, equella_get_config("equella_{$role->shortname}_sharedsecret"));
             }
         }
     }
 
     // no roles found, use the default shareid and secret
-    $shareid = $CFG->equella_shareid;
+    $shareid = equella_get_config('equella_shareid');
     if (!empty($shareid)) {
-        return equella_getssotoken_raw($USER->username, $shareid, $CFG->equella_sharedsecret);
+        return equella_getssotoken_raw($USER->username, $shareid, equella_get_config('equella_sharedsecret'));
     }
 }
 
@@ -138,8 +137,7 @@ function equella_appendtoken($url, $token = null) {
     return $url;
 }
 function equella_getssotoken_api() {
-    global $CFG;
-    return equella_getssotoken_raw($CFG->equella_admin_username, $CFG->equella_shareid, $CFG->equella_sharedsecret);
+    return equella_getssotoken_raw(equella_get_config('equella_admin_username'), equella_get_config('equella_shareid'), equella_get_config('equella_sharedsecret'));
 }
 
 /**
