@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('equella_general_settings', ecs('general.heading'), ''));
 
     $changelogurl = new moodle_url('/mod/equella/changelog.php');
-    $settings->add(new admin_setting_openlink('changelog', ecs('changelog.title'), ecs('changelog.desc'), $changelogurl->out()));
+    $settings->add(new equella_admin_setting_openlink('changelog', ecs('changelog.title'), ecs('changelog.desc'), $changelogurl->out()));
 
     $settings->add(new admin_setting_configtext('equella/equella_url', ecs('url.title'), ecs('url.desc'), ''));
     $settings->add(new admin_setting_configtext('equella/equella_action', ecs('action.title'), ecs('action.desc'), ''));
@@ -112,5 +112,5 @@ if ($ADMIN->fulltree) {
     //
     $settings->add(new admin_setting_heading('equella_lti_migration', ecs('lti13.migration.title'), ''));
     $lti13MigrationUrl = new moodle_url('/mod/equella/lti13migration/main.php');
-    $settings->add(new admin_setting_openlink('lti13migration', ecs('lti13.migration.title'), ecs('lti13.migration.description'), $lti13MigrationUrl->out()));
+    $settings->add(new equella_admin_setting_openlink('lti13migration', ecs('lti13.migration.title'), ecs('lti13.migration.description'), $lti13MigrationUrl->out()));
 }

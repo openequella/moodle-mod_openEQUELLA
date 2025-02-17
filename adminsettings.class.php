@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 require_once ($CFG->libdir . '/adminlib.php');
-class admin_setting_statictext extends admin_setting {
+class equella_admin_setting_statictext extends admin_setting {
     public $text;
     public function __construct($name, $visiblename, $description, $text) {
         parent::__construct($name, $visiblename, $description, null);
@@ -31,7 +31,7 @@ class admin_setting_statictext extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $this->text, $this->description, true);
     }
 }
-class admin_setting_radiobuttons extends admin_setting {
+class equella_admin_setting_radiobuttons extends admin_setting {
     public $text;
     private $options;
     public function __construct($name, $visiblename, $description, $defaultsetting, $options) {
@@ -78,7 +78,7 @@ class admin_setting_radiobuttons extends admin_setting {
         return format_admin_setting($this, $this->visiblename, $selecthtml, $this->description, true);
     }
 }
-class admin_setting_openlink extends admin_setting {
+class equella_admin_setting_openlink extends admin_setting {
     public $url;
     public function __construct($name, $visiblename, $description, $url) {
         parent::__construct($name, $visiblename, $description, null);
