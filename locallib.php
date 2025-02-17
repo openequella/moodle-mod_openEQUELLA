@@ -387,7 +387,7 @@ function equella_is_instructor($user, $cm, $courseid) {
     $context_c = context_course::instance($courseid);
 
     // roles are ordered by shortname
-    $editingroles = get_all_editing_roles();
+    $editingroles = equella_get_all_editing_roles();
     $isinstructor = false;
     foreach($editingroles as $role) {
         $hassystemrole = user_has_role_assignment($user->id, $role->id, $context_sys->id);

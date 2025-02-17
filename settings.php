@@ -75,7 +75,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('equella/equella_sharedsecret', ecs('sharedsecret.title'), $description, $defaultvalue));
 
     $rolearchetypes = get_role_archetypes();
-    foreach(get_all_editing_roles() as $role) {
+    foreach(equella_get_all_editing_roles() as $role) {
         $shortname = clean_param($role->shortname, PARAM_ALPHANUM);
         if (in_array($shortname, $rolearchetypes)) {
             $heading = ecs('group.' . $shortname);
