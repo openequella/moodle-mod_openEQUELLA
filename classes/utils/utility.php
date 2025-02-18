@@ -2,6 +2,8 @@
 
 namespace mod_equella\utils;
 
+defined('MOODLE_INTERNAL') || die();
+
 class utility
 {
     /**
