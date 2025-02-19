@@ -643,3 +643,28 @@ function equella_grade_item_delete($eq) {
 function equella_get_config($configname){
     return get_config('equella', $configname);
 }
+
+/**
+ * Retrieve the userfield/username for a current user.
+ *
+ * @return string
+ */
+function mod_equella_get_userfield_value(): string {
+    global $USER;
+
+    // Fall back to username.
+    $fieldvalue = $USER->username;
+
+    // Figuring out user field from the configuration.
+    $userfield = equella_get_config('equella_userfield');
+    if (\mod_equella\user_field::is_custom_profile_field($userfield)) {
+        $shortname = mod_equella\user_field::get_field_short_name($userfield);
+        if (!empty($USER->profile[$shortname])) {
+            $fieldvalue = $USER->profile[$shortname];
+        }
+    } else if (!empty($USER->$userfield)) {
+        $fieldvalue = $USER->$userfield;
+    }
+
+    return $fieldvalue;
+}
