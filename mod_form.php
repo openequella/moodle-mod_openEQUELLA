@@ -112,7 +112,7 @@ class mod_equella_mod_form extends moodleform_mod {
             // This is a hack to make moodle believes certain html element exists.
             // When conditional access is enabled, moodle expects id_availabilityconditionsjson field
             // in standard module form, as we don't use standard form.
-            // When conditional access is enabled, moodle expects id_availabilityconditionsjson field, fitem_id_availabilityconditionsjson and availabilityconditions-loading in standard module form, as we don't use standard form.
+            // When restricted access is enabled, moodle expects id_availabilityconditionsjson field, fitem_id_availabilityconditionsjson and availabilityconditions-loading in standard module form, as we don't use standard form.
             if(!empty($CFG->enableavailability)){
                 echo html_writer::start_tag('form', array('style'=>'display:none'));
                 echo html_writer::tag('div', '', array('id' => 'fitem_id_availabilityconditionsjson'));
