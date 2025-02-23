@@ -64,47 +64,47 @@ class EQUELLA {
         $this->client->logout();
     }
     public function getItem($uuid, $version) {
-        return new XMLWrapper($this->client->getItem(array('in0' => $uuid,'in1' => $version,'in2' => '*'))->out);
+        return new mod_equella_XMLWrapper($this->client->getItem(array('in0' => $uuid,'in1' => $version,'in2' => '*'))->out);
     }
 
     /**
      *
-     * @return XMLWrapper
+     * @return mod_equella_XMLWrapper
      */
     public function searchItems($query, $collectionUuids, $where, $onlylive, $sorttype, $reversesort, $offset, $maxresults) {
-        return new XMLWrapper($this->client->searchItems(array('in0' => $query,'in1' => $collectionUuids,'in2' => $where,'in3' => $onlylive,'in4' => $sorttype,'in5' => $reversesort,'in6' => $offset,'in7' => $maxresults))->out);
+        return new mod_equella_XMLWrapper($this->client->searchItems(array('in0' => $query,'in1' => $collectionUuids,'in2' => $where,'in3' => $onlylive,'in4' => $sorttype,'in5' => $reversesort,'in6' => $offset,'in7' => $maxresults))->out);
     }
 
     /**
      *
-     * @return XMLWrapper
+     * @return mod_equella_XMLWrapper
      */
     public function searchableCollections() {
-        return new XMLWrapper($this->client->getSearchableCollections()->out);
+        return new mod_equella_XMLWrapper($this->client->getSearchableCollections()->out);
     }
 
     /**
      *
-     * @return XMLWrapper
+     * @return mod_equella_XMLWrapper
      */
     public function contributableCollections() {
-        return new XMLWrapper($this->client->getContributableCollections()->out);
+        return new mod_equella_XMLWrapper($this->client->getContributableCollections()->out);
     }
     public function getTaskFilterCounts($ignoreZero = false) {
-        return new XMLWrapper($this->client->getTaskFilterCounts(array('in0' => $ignoreZero))->out);
+        return new mod_equella_XMLWrapper($this->client->getTaskFilterCounts(array('in0' => $ignoreZero))->out);
     }
 
     /**
      *
-     * @return XMLWrapper
+     * @return mod_equella_XMLWrapper
      */
     public function newItem($collectionUuid) {
-        return new XMLWrapper($this->client->newItem(array('in0' => $collectionUuid))->out);
+        return new mod_equella_XMLWrapper($this->client->newItem(array('in0' => $collectionUuid))->out);
     }
 
     /**
      *
-     * @param XMLWrapper
+     * @param mod_equella_XMLWrapper
      * @param int (boolean)
      */
     public function saveItem($item, $submit) {
@@ -119,10 +119,10 @@ class EQUELLA {
         $this->client->uploadFile(array('in0' => $stagingUuid,'in1' => $serverFilename,'in2' => $base64Data,'in3' => '1'));
     }
     public function getCollection($collectionUuid) {
-        return new XMLWrapper($this->client->getCollection(array('in0' => $collectionUuid))->out);
+        return new mod_equella_XMLWrapper($this->client->getCollection(array('in0' => $collectionUuid))->out);
     }
     public function getSchema($schemaUuid) {
-        return new XMLWrapper($this->client->getSchema(array('in0' => $schemaUuid))->out);
+        return new mod_equella_XMLWrapper($this->client->getSchema(array('in0' => $schemaUuid))->out);
     }
 }
 
@@ -130,7 +130,7 @@ class EQUELLA {
  * A wrapper around the DOMDocument and DOMXPath classes.
  * It is provided for convenience.
  */
-class XMLWrapper {
+class mod_equella_XMLWrapper {
     private $domDoc;
     private $xpathDoc;
     public function __construct($xmlString) {

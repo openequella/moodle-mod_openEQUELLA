@@ -65,7 +65,7 @@ function equella_getssotoken($course = null) {
     $context_c = context_course::instance($course->id);
 
     // roles are ordered by shortname
-    $editingroles = get_all_editing_roles();
+    $editingroles = equella_get_all_editing_roles();
     foreach($editingroles as $role) {
         $hassystemrole = false;
         if (!empty($context_sys)) {
@@ -145,7 +145,7 @@ function equella_getssotoken_api() {
  *
  * @return array
  */
-function get_all_editing_roles() {
+function equella_get_all_editing_roles() {
     global $DB;
     $sql = "SELECT r.id,r.shortname,r.name,r.sortorder,r.archetype,r.description
               FROM {role} r
