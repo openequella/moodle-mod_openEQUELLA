@@ -103,8 +103,10 @@ function get_item_xml($course, $sectionid) {
     $integmoodlexml = $integxml->addChild('moodle');
 
     // User
+    $equellauserfield = mod_equella_get_userfield_value();
+
     $integuserxml = $integxml->addChild('user');
-    $integuserxml->addChild('username', $USER->username);
+    $integuserxml->addChild('username', $equellauserfield);
     $integuserxml->addChild('firstname', $USER->firstname);
     $integuserxml->addChild('lastname', $USER->lastname);
 
