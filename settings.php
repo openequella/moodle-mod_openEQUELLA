@@ -54,6 +54,15 @@ if ($ADMIN->fulltree) {
 
     // ///////////////////////////////////////////////////////////////////////////////
     //
+    // SSO settings
+    //
+    $settings->add(new admin_setting_heading('equella_sso_settings', ecs('sso.heading'), ''));
+
+    $userfieldoptions = \mod_equella\user_field::get_supported_fields();
+    $settings->add(new admin_setting_configselect('equella/equella_userfield', ecs('userfield.title'), ecs('userfield.desc'), 'username', $userfieldoptions));
+
+    // ///////////////////////////////////////////////////////////////////////////////
+    //
     // LTI
     //
     $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
