@@ -54,15 +54,6 @@ if ($ADMIN->fulltree) {
 
     // ///////////////////////////////////////////////////////////////////////////////
     //
-    // SSO settings
-    //
-    $settings->add(new admin_setting_heading('equella_sso_settings', ecs('sso.heading'), ''));
-
-    $userfieldoptions = \mod_equella\user_field::get_supported_fields();
-    $settings->add(new admin_setting_configselect('equella/equella_userfield', ecs('userfield.title'), ecs('userfield.desc'), 'username', $userfieldoptions));
-
-    // ///////////////////////////////////////////////////////////////////////////////
-    //
     // LTI
     //
     $settings->add(new admin_setting_heading('equella_lti_settings', ecs('lti.heading'), ecs('lti.help')));
@@ -100,6 +91,16 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
         $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
     }
+
+    // ///////////////////////////////////////////////////////////////////////////////
+    //
+    // SSO settings
+    //
+    $settings->add(new admin_setting_heading('equella_sso_settings', ecs('sso.heading'), ''));
+
+    $userfieldoptions = \mod_equella\user_field::get_supported_fields();
+    $settings->add(new admin_setting_configselect('equella/equella_userfield', ecs('userfield.title'), ecs('userfield.desc'), 'username', $userfieldoptions));
+
     // ///////////////////////////////////////////////////////////////////////////////
     //
     // Drag and drop
