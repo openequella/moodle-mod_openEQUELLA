@@ -20,6 +20,19 @@ require_login();
 $cmid = required_param('cmid', PARAM_INT);
 
 if (equella_get_config('equella_enable_lti')) {
+    if(empty(mod_equella_get_userfield_value())){
+        $PAGE->set_url(new moodle_url('/mod/equella/popup.php', array('cmid' => $cmid)));
+        $context = context_module::instance($cmid);
+        $PAGE->set_context($context);
+        $PAGE->set_pagelayout('popup');
+
+        echo $OUTPUT->header();
+        $errparams = new stdClass();
+        $errparams->field = \mod_equella\user_field::get_equella_userfield_short_name();
+        echo $OUTPUT->notification(get_string('erroruserfieldempty', 'mod_equella', $errparams), 'notifyproblem');
+        echo $OUTPUT->footer();
+        exit;
+    }
     $url = new moodle_url('/mod/equella/ltilaunch.php', array('cmid' => $cmid));
 } else {
     $url = new moodle_url('/mod/equella/view.php', array('id' => $cmid,'inpopup' => true));
