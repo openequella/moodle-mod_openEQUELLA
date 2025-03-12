@@ -115,4 +115,18 @@ class user_field {
 
         return $fieldname;
     }
+
+    /**
+     * Get shortname for the current equella_userfield.
+     *
+     * @return string
+     */
+    public static function get_equella_userfield_short_name(): string {
+        $userfield = equella_get_config('equella_userfield');
+        if (self::is_custom_profile_field($userfield)) {
+            $userfield = substr($userfield, strlen(self::PROFILE_FIELD_PREFIX), strlen($userfield));
+        }
+
+        return $userfield;
+    }
 }
