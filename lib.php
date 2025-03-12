@@ -656,7 +656,7 @@ function mod_equella_get_userfield_value(): string {
     $userfield = equella_get_config('equella_userfield');
     if (\mod_equella\user_field::is_custom_profile_field($userfield)) {
         $shortname = mod_equella\user_field::get_field_short_name($userfield);
-        return $USER->profile[$shortname];
+        return $USER->profile[$shortname] ?? "";
     } else {
         return $USER->$userfield;
     }
