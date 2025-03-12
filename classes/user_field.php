@@ -121,12 +121,9 @@ class user_field {
      *
      * @return string
      */
-    public static function get_equella_userfield_short_name(): string {
+    public static function get_equella_userfield_display_name(): string {
         $userfield = equella_get_config('equella_userfield');
-        if (self::is_custom_profile_field($userfield)) {
-            $userfield = substr($userfield, strlen(self::PROFILE_FIELD_PREFIX), strlen($userfield));
-        }
-
-        return $userfield;
+        $options = self::get_supported_fields();
+        return $options[$userfield] ?? '';
     }
 }

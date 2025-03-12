@@ -28,7 +28,7 @@ if (equella_get_config('equella_enable_lti')) {
 
         echo $OUTPUT->header();
         $errparams = new stdClass();
-        $errparams->field = \mod_equella\user_field::get_equella_userfield_short_name();
+        $errparams->field = \mod_equella\user_field::get_equella_userfield_display_name();
         echo $OUTPUT->notification(get_string('erroruserfieldempty', 'mod_equella', $errparams), 'notifyproblem');
         echo $OUTPUT->footer();
         exit;
