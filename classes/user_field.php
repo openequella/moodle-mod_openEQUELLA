@@ -21,18 +21,17 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/user/profile/lib.php');
 
 /**
- * User field class.
+ * This class handles the retrieval and management of user fields that are used
+ * for Single Sign-On (SSO) identification.
  *
  * @package    mod_equella
- * @copyright  2025 Catalyst IT
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_field {
 
     /**
-     * A list of supported fields from {user} table
+     * A list of supported fields from {user} table which are default name fields to be used
      */
-    const SUPPORTED_FIELDS_FROM_USER_TABLE = [
+    const DEFAULT_SUPPORTED_FIELDS = [
         'username',
         'idnumber',
         'email',
@@ -46,34 +45,31 @@ class user_field {
     ];
 
     /**
-     * Prefix for profile fields in the config.
+     * Prefix used for custom profile fields in the conf.
      */
-    const PROFILE_FIELD_PREFIX = 'profile_field_';
+    const CUSTOM_FIELD_PREFIX = 'profile_field_';
 
     /**
-     * Get a list of supported fields.
+     * Return an associative array of supported user fields (default and custom)
      *
      * @return string[]
      */
     public static function get_supported_fields(): array {
         $supportedfields = [];
 
-        foreach (self::SUPPORTED_FIELDS_FROM_USER_TABLE as $name) {
+        foreach (self::DEFAULT_SUPPORTED_FIELDS as $name) {
             $supportedfields[$name] = get_string($name);
         }
 
         $customfields = profile_get_custom_fields(true);
 
         if (!empty($customfields)) {
-            $result = array_filter($customfields, function($customfield) {
-                return in_array($customfield->datatype, self::SUPPORTED_PROFILE_FIELDS_TYPES);
-            });
-
-            $customfieldoptions = array_column($result, 'name', 'shortname');
-
-            foreach ($customfieldoptions as $key => $value) {
-                $customfieldoptions[self::prefix_custom_profile_field($key)] = $value;
-                unset($customfieldoptions[$key]);
+            $customfieldoptions = [];
+            foreach ($customfields as $customfield) {
+                if (in_array($customfield->datatype, self::SUPPORTED_PROFILE_FIELDS_TYPES)) {
+                    $prefixedKey = self::prefix_custom_profile_field($customfield->shortname);
+                    $customfieldoptions[$prefixedKey] = $customfield->name;
+                }
             }
 
             $supportedfields = array_merge($supportedfields, $customfieldoptions);
@@ -83,41 +79,41 @@ class user_field {
     }
 
     /**
-     * Build setting value for a user profile field.
+     * Prefix the custom profile field shortname with CUSTOM_FIELD_PREFIX
      *
      * @param string $shortname Short name of the profile field.
      * @return string
      */
     protected static function prefix_custom_profile_field(string $shortname): string {
-        return self::PROFILE_FIELD_PREFIX . $shortname;
+        return self::CUSTOM_FIELD_PREFIX . $shortname;
     }
 
     /**
-     * Check if provided field name is considered as profile field.
+     * Check if a given field name is a custom profile field.
      *
      * @param string $fieldname User field name.
      * @return bool
      */
     public static function is_custom_profile_field(string $fieldname): bool {
-        return strpos($fieldname, self::PROFILE_FIELD_PREFIX) === 0;
+        return strpos($fieldname, self::CUSTOM_FIELD_PREFIX) === 0;
     }
 
     /**
-     * Get shortname from the profile field.
+     * Retrieve the base shortname from a profile field name (without prefix)
      *
      * @param string $fieldname Profile field name from config.
      * @return string
      */
     public static function get_field_short_name(string $fieldname): string {
         if (self::is_custom_profile_field($fieldname)) {
-            $fieldname = substr($fieldname, strlen(self::PROFILE_FIELD_PREFIX), strlen($fieldname));
+            $fieldname = substr($fieldname, strlen(self::CUSTOM_FIELD_PREFIX), strlen($fieldname));
         }
 
         return $fieldname;
     }
 
     /**
-     * Get shortname for the current equella_userfield.
+     * Get the display name for the user field used by oEQ for SSO
      *
      * @return string
      */

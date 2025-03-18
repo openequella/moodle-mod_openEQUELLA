@@ -158,7 +158,7 @@ You have received this email because you have sufficient permission to fix this.
 ////////////////////////////////////////////////////////
 // Errors and stuff
 $string['restapinolocation'] = 'No location returned';
-$string['erroruserfieldempty'] = 'Your {$a->field} field is empty. You must provide a valid {$a->field} to add or view openEQUELLA resource. Please update your profile or contact your administrator to ensure your {$a->field} is properly configured for single sign-on.';
+$string['erroruserfieldempty'] = 'Your {$a->field} field is empty. You must provide a valid {$a->field} to add or view openEQUELLA resources. Please update your profile or contact your administrator to ensure your {$a->field} is properly configured for single sign-on.';
 
 ////////////////////////////////////////////////////////
 // EQUELLA LMS PUSH

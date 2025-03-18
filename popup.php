@@ -20,7 +20,7 @@ require_login();
 $cmid = required_param('cmid', PARAM_INT);
 
 if (equella_get_config('equella_enable_lti')) {
-    if(empty(mod_equella_get_userfield_value())){
+    if(empty(mod_equella_get_sso_userfield_value())){
         $PAGE->set_url(new moodle_url('/mod/equella/popup.php', array('cmid' => $cmid)));
         $context = context_module::instance($cmid);
         $PAGE->set_context($context);

@@ -645,11 +645,13 @@ function equella_get_config($configname){
 }
 
 /**
- * Retrieve the userfield/username for a current user.
+ * Get the user field value to be used for SSO identification.
+ *
+ * Returns the custom profile field value (if applicable) or the standard user field.
  *
  * @return string
  */
-function mod_equella_get_userfield_value(): string {
+function mod_equella_get_sso_userfield_value(): string {
     global $USER;
 
     // Figuring out user field from the configuration.

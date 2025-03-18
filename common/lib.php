@@ -66,7 +66,7 @@ function equella_getssotoken($course = null) {
     }
     $context_c = context_course::instance($course->id);
 
-    $equellauserfield = mod_equella_get_userfield_value();
+    $ssoUserFieldVal = mod_equella_get_sso_userfield_value();
 
     // roles are ordered by shortname
     $editingroles = equella_get_all_editing_roles();
@@ -88,7 +88,7 @@ function equella_getssotoken($course = null) {
             // see if the user has a role that is linked to an equella role
             $shareid = equella_get_config("equella_{$role->shortname}_shareid");
             if (!empty($shareid)) {
-                return equella_getssotoken_raw($equellauserfield, $shareid, equella_get_config("equella_{$role->shortname}_sharedsecret"));
+                return equella_getssotoken_raw($ssoUserFieldVal, $shareid, equella_get_config("equella_{$role->shortname}_sharedsecret"));
             }
         }
     }
@@ -96,7 +96,7 @@ function equella_getssotoken($course = null) {
     // no roles found, use the default shareid and secret
     $shareid = equella_get_config('equella_shareid');
     if (!empty($shareid)) {
-        return equella_getssotoken_raw($equellauserfield, $shareid, equella_get_config('equella_sharedsecret'));
+        return equella_getssotoken_raw($ssoUserFieldVal, $shareid, equella_get_config('equella_sharedsecret'));
     }
 }
 

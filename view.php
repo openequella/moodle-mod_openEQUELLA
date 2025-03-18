@@ -78,7 +78,7 @@ if (trim(strip_tags($equella->intro))) {
     echo format_module_intro('equella', $equella, $cm->id);
     echo $OUTPUT->box_end();
 }
-if (equella_get_config('equella_enable_lti') && empty(mod_equella_get_userfield_value())){
+if (equella_get_config('equella_enable_lti') && empty(mod_equella_get_sso_userfield_value())){
     $errparams = new stdClass();
     $errparams->field = \mod_equella\user_field::get_equella_userfield_display_name();
     echo $OUTPUT->notification(get_string('erroruserfieldempty', 'mod_equella', $errparams), 'notifyproblem');
