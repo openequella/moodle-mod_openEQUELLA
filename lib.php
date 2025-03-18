@@ -643,3 +643,23 @@ function equella_grade_item_delete($eq) {
 function equella_get_config($configname){
     return get_config('equella', $configname);
 }
+
+/**
+ * Get the user field value to be used for SSO identification.
+ *
+ * Returns the custom profile field value (if applicable) or the standard user field.
+ *
+ * @return string
+ */
+function mod_equella_get_sso_userfield_value(): string {
+    global $USER;
+
+    // Figuring out user field from the configuration.
+    $userfield = equella_get_config('equella_userfield');
+    if (\mod_equella\user_field::is_custom_profile_field($userfield)) {
+        $shortname = mod_equella\user_field::get_field_short_name($userfield);
+        return $USER->profile[$shortname] ?? "";
+    } else {
+        return $USER->$userfield;
+    }
+}

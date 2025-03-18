@@ -289,6 +289,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     }
 
     $role = equella_lti_roles($USER, $equella->cmid, $equella->course);
+    $ssoUserFieldVal = mod_equella_get_sso_userfield_value();
 
     $requestparams = array('resource_link_id' => $CFG->siteidentifier . ':mod_equella:' . $equella->cmid,'resource_link_title' => utility::convert_newline_characters($equella->name),'resource_link_description' => utility::convert_newline_characters($equella->intro),'user_id' => $USER->id,'roles' => $role,'context_id' => $course->id,'context_label' => $course->shortname,
         'context_title' => $course->fullname,'launch_presentation_locale' => current_language());
@@ -303,7 +304,7 @@ function equella_lti_params($equella, $course, $extra = array()) {
     $requestparams['lis_person_name_family'] = $USER->lastname;
     $requestparams['lis_person_name_full'] = fullname($USER);
     $requestparams['lis_person_contact_email_primary'] = $USER->email;
-    $requestparams['lis_person_sourcedid'] = $USER->username;
+    $requestparams['lis_person_sourcedid'] = $ssoUserFieldVal;
     $requestparams["ext_lms"] = "moodle-2";
     $requestparams['tool_consumer_info_product_family_code'] = 'moodle';
     $requestparams['tool_consumer_info_version'] = strval($CFG->version);
@@ -337,6 +338,8 @@ function equella_lti_params($equella, $course, $extra = array()) {
 function equella_add_lmsinfo_parameters(&$params, $course, $contributiontype) {
     global $USER, $DB;
 
+    $ssoUserFieldVal = mod_equella_get_sso_userfield_value();
+
     $params['lms'] = 'Moodle';
     $params['contributiontype'] = $contributiontype;
     $params['moodle/course/idnumber'] = $course->idnumber;
@@ -344,7 +347,7 @@ function equella_add_lmsinfo_parameters(&$params, $course, $contributiontype) {
     $params['course/fullname'] = $course->fullname;
     $params['course/shortname'] = $course->shortname;
     $params['course/code'] = $course->idnumber;
-    $params['user/username'] = $USER->username;
+    $params['user/username'] = $ssoUserFieldVal;
     $params['user/firstname'] = $USER->firstname;
     $params['user/lastname'] = $USER->lastname;
     //$params['moodle/section'] = get_section_name($course, $sectionid));

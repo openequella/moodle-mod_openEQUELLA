@@ -93,6 +93,15 @@ class mod_equella_mod_form extends moodleform_mod {
                 }
             }
         }
+        if ($this->is_adding_equella_resource() && equella_get_config('equella_enable_lti') && empty(mod_equella_get_sso_userfield_value())) {
+            $errparams = new stdClass();
+            $errparams->field = \mod_equella\user_field::get_equella_userfield_display_name();
+            redirect(new moodle_url('/course/view.php', ['id' => $defaults['course']]),
+                get_string('erroruserfieldempty', 'mod_equella', $errparams),
+                null,
+                \core\output\notification::NOTIFY_ERROR);
+        }
+
     }
     function display() {
         global $CFG, $USER;

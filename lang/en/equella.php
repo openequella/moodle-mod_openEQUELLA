@@ -70,6 +70,10 @@ $string['config.action.desc'] = 'The action string for openEQUELLA. Please note:
    1. Use "selectOrAdd" for EQUELLA 6.0 and older, for EQUELLA 6.1 onward please use "structured"
    2. There should not be a ? or a & at the start or end of the string.';
 
+$string['config.sso.heading'] = 'SSO identification';
+$string['config.userfield.title'] = 'User field for SSO identification';
+$string['config.userfield.desc'] = 'Choose which User field to be used for SSO identification';
+
 $string['config.restriction.title'] = 'Restrict selections';
 $string['config.restriction.desc'] = 'Choose whether course editors should only be able to select items, attachments, packages or anything. Please note that the restrictions only working for EQUELLA 6.0 and higher.';
 $string['config.restriction.none'] = 'No restrictions';
@@ -154,6 +158,7 @@ You have received this email because you have sufficient permission to fix this.
 ////////////////////////////////////////////////////////
 // Errors and stuff
 $string['restapinolocation'] = 'No location returned';
+$string['erroruserfieldempty'] = 'Your {$a->field} field is empty. You must provide a valid {$a->field} to add or view openEQUELLA resources. Please update your profile or contact your administrator to ensure your {$a->field} is properly configured for single sign-on.';
 
 ////////////////////////////////////////////////////////
 // EQUELLA LMS PUSH

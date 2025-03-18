@@ -91,6 +91,25 @@ if ($ADMIN->fulltree) {
         $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_shareid", ecs('sharedid.title'), $description, $defaultvalue, PARAM_TEXT));
         $settings->add(new admin_setting_configtext("equella/equella_{$shortname}_sharedsecret", ecs('sharedsecret.title'), $description, $defaultvalue, PARAM_TEXT));
     }
+
+    // ///////////////////////////////////////////////////////////////////////////////
+    //
+    // SSO settings
+    //
+    $settings->add(new admin_setting_heading('equella_sso_settings', ecs('sso.heading'), ''));
+
+    $userfieldoptions = \mod_equella\user_field::get_supported_fields();
+
+    // Current setting value.
+    $currentvalue = equella_get_config('equella_userfield');
+
+    // If the current setting value is a deleted custom user field, fall back to a safe default (e.g., 'username').
+    if (!array_key_exists($currentvalue, $userfieldoptions)) {
+        set_config('equella_userfield', 'username', 'equella');
+    }
+
+    $settings->add(new admin_setting_configselect('equella/equella_userfield', ecs('userfield.title'), ecs('userfield.desc'), 'username', $userfieldoptions));
+
     // ///////////////////////////////////////////////////////////////////////////////
     //
     // Drag and drop
