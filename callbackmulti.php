@@ -67,15 +67,15 @@ foreach($links as $link) {
     // course_modules and course_sections each contain a reference
     // to each other, so we have to update one of them twice.
     if (!$mod->coursemodule = add_course_module($mod)) {
-        print_error('cannotaddcoursemodule');
+        throw new \moodle_exception('cannotaddcoursemodule');
     }
 
     if (!$addedsectionid = course_add_cm_to_section($mod->course, $mod->coursemodule, $targetsection)) {
-        print_error('cannotaddcoursemoduletosection');
+        throw new \moodle_exception('cannotaddcoursemoduletosection');
     }
 
     if (!$DB->set_field('course_modules', 'section', $addedsectionid, array('id' => $mod->coursemodule))) {
-        print_error('Could not update the course module with the correct section');
+        throw new \moodle_exception('Could not update the course module with the correct section');
     }
 
     set_coursemodule_visible($mod->coursemodule, true);
