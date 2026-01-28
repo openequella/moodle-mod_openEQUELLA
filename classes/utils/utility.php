@@ -21,7 +21,8 @@ class utility
 
     /**
      * Sanitize a string by decoding HTML entities and escaping special characters.
-     *
+     * The `htmlspecialchars` function is used with the `double_encode` parameter set to `false`, ensuring that already-encoded entities are not re-encoded.
+     * 
      * @param string $input The input string to sanitize.
      * @return string The sanitized string.
      */
