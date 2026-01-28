@@ -25,9 +25,8 @@ class utility
      * @param string $input The input string to sanitize.
      * @return string The sanitized string.
      */
-    public static function sanitize_text(string $input): string
-    {
-        $decoded = html_entity_decode($input, ENT_QUOTES, 'UTF-8');
+    public static function sanitize_text(string $input): string {
+        $decoded = self::decode_html_entities($input);
         return htmlspecialchars($decoded, ENT_QUOTES, 'UTF-8', false);
     }
 
@@ -37,8 +36,7 @@ class utility
      * @param string $input The input string to decode.
      * @return string The decoded string.
      */
-    public static function decode_html_entities(string $input): string
-    {
+    public static function decode_html_entities(string $input): string {
         return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
     }
 }
