@@ -30,4 +30,15 @@ class utility
         $decoded = html_entity_decode($input, ENT_QUOTES, 'UTF-8');
         return htmlspecialchars($decoded, ENT_QUOTES, 'UTF-8', false);
     }
+
+    /**
+     * Decode HTML entities in a string.
+     *
+     * @param string $input The input string to decode.
+     * @return string The decoded string.
+     */
+    public static function decode_html_entities(string $input): string
+    {
+        return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
+    }
 }

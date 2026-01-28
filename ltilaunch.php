@@ -111,6 +111,7 @@ function get_item_xml($course, $sectionid) {
     $integuserxml->addChild('lastname', $USER->lastname);
 
     // Generic course info
+    // Sanitize names to prevent the XML parser from crashing
     $courseFullname = utility::sanitize_text($course->fullname);
     $courseShortname = utility::sanitize_text($course->shortname);
     
@@ -125,8 +126,9 @@ function get_item_xml($course, $sectionid) {
     $integmoodlecoursexml->addChild('id', $course->id);
 
     // Moodle section info
-    $safeSectionName = utility::sanitize_text(get_section_name($course, $sectionid));
-    $integmoodlexml->addChild('section', $safeSectionName);
+    // Sanitize names to prevent the XML parser from crashing
+    $sectionName = utility::sanitize_text(get_section_name($course, $sectionid));
+    $integmoodlexml->addChild('section', $sectionName);
 
     // Moodle specific course categories (there is probably a more optimal way to do this)
     $catparentxml = $integmoodlexml;
@@ -145,7 +147,7 @@ function get_item_xml($course, $sectionid) {
     }
 
     $xmlString = $xml->asXML();
-    $rawXml = html_entity_decode($xmlString, ENT_QUOTES, 'UTF-8');
+    $rawXml = utility::decode_html_entities($xmlString);
 
     return str_replace(array("\r", "\n"), '', $rawXml);
 }
