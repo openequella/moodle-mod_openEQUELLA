@@ -75,7 +75,7 @@ if ($action == 'view') {
     $extraparams = $url->params();
     if (equella_get_config('equella_action') == EQUELLA_ACTION_STRUCTURED) {
         $contents = equella_get_course_contents($course->id, $args->section);
-        $json = json_encode($contents, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $json = json_encode($contents);
         $extraparams['structure'] = $json;
     }
 
