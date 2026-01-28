@@ -13,6 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+use mod_equella\utils\utility;
+
 require_once ('../../config.php');
 require_once ('lib.php');
 require_once ('locallib.php');
@@ -92,8 +94,6 @@ if ($action == 'view') {
     echo '</body></html>';
 }
 
-use mod_equella\utils\utility;
-
 // This is the same data as equella_add_lmsinfo_parameters
 function get_item_xml($course, $sectionid) {
     global $USER, $DB;
@@ -114,7 +114,6 @@ function get_item_xml($course, $sectionid) {
     // Sanitize names to prevent the XML parser from crashing
     $courseFullname = utility::sanitize_text($course->fullname);
     $courseShortname = utility::sanitize_text($course->shortname);
-    
     $integcoursexml = $integxml->addChild('course');
     $integcoursexml->addChild('fullname', $courseFullname);
     $integcoursexml->addChild('shortname', $courseShortname);
