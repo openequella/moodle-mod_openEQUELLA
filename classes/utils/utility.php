@@ -18,4 +18,16 @@ class utility
     public static function convert_newline_characters($content) {
         return preg_replace("/\r?\n/", "\r\n", $content);
     }
+
+    /**
+     * Sanitize a string by decoding HTML entities and escaping special characters.
+     *
+     * @param string $input The input string to sanitize.
+     * @return string The sanitized string.
+     */
+    public static function sanitize_text(string $input): string
+    {
+        $decoded = html_entity_decode($input, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($decoded, ENT_QUOTES, 'UTF-8', false);
+    }
 }

@@ -75,7 +75,7 @@ if ($action == 'view') {
     $extraparams = $url->params();
     if (equella_get_config('equella_action') == EQUELLA_ACTION_STRUCTURED) {
         $contents = equella_get_course_contents($course->id, $args->section);
-        $json = json_encode($contents);
+        $json = json_encode($contents, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $extraparams['structure'] = $json;
     }
 
@@ -91,6 +91,8 @@ if ($action == 'view') {
     echo equella_lti_launch_form($equella->url, $params);
     echo '</body></html>';
 }
+
+use mod_equella\utils\utility;
 
 // This is the same data as equella_add_lmsinfo_parameters
 function get_item_xml($course, $sectionid) {
@@ -109,9 +111,12 @@ function get_item_xml($course, $sectionid) {
     $integuserxml->addChild('lastname', $USER->lastname);
 
     // Generic course info
+    $courseFullname = utility::sanitize_text($course->fullname);
+    $courseShortname = utility::sanitize_text($course->shortname);
+    
     $integcoursexml = $integxml->addChild('course');
-    $integcoursexml->addChild('fullname', $course->fullname);
-    $integcoursexml->addChild('shortname', $course->shortname);
+    $integcoursexml->addChild('fullname', $courseFullname);
+    $integcoursexml->addChild('shortname', $courseShortname);
     $integcoursexml->addChild('code', $course->idnumber);
 
     // Moodle specific course info
@@ -120,7 +125,8 @@ function get_item_xml($course, $sectionid) {
     $integmoodlecoursexml->addChild('id', $course->id);
 
     // Moodle section info
-    $integmoodlexml->addChild('section', get_section_name($course, $sectionid));
+    $safeSectionName = utility::sanitize_text(get_section_name($course, $sectionid));
+    $integmoodlexml->addChild('section', $safeSectionName);
 
     // Moodle specific course categories (there is probably a more optimal way to do this)
     $catparentxml = $integmoodlexml;
@@ -138,5 +144,8 @@ function get_item_xml($course, $sectionid) {
         }
     }
 
-    return str_replace(array("\r", "\n"),'',$xml->asXML());
+    $xmlString = $xml->asXML();
+    $rawXml = html_entity_decode($xmlString, ENT_QUOTES, 'UTF-8');
+
+    return str_replace(array("\r", "\n"), '', $rawXml);
 }

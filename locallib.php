@@ -59,7 +59,7 @@ function equella_get_course_contents($courseid, $sectionid) {
                 $sectionvalues->selected = true;
             }
             $sectionvalues->id = $section->section;
-            $sectionvalues->name = get_section_name($course, $section);
+            $sectionvalues->name = utility::sanitize_text(get_section_name($course, $section));
             $sectionvalues->folders = array();
             $sectioncontents = array();
 
