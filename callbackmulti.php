@@ -46,15 +46,11 @@ foreach($links as $link) {
         $targetsection = clean_param($link['folder'], PARAM_INT);
     }
 
-    if (isset($link['filename'])) {
-        $mod->filename = clean_param($link['filename'], PARAM_FILE);
-    }
+    // When a full openEQUELLA item is selected, 'filename' is missing.
+    // So initializing it to an empty string prevents the "Undefined property" crash during the mimeinfo() check below.
+    $mod->filename = isset($link['filename']) ? clean_param($link['filename'], PARAM_FILE) : '';
 
-    if (isset($link['mimeType'])) {
-        $mod->mimetype = clean_param($link['mimeType'], PARAM_TEXT);
-    } else {
-        $mod->mimetype = mimeinfo('type', $mod->filename);
-    }
+    $mod->mimetype = isset($link['mimeType']) ? clean_param($link['mimeType'], PARAM_TEXT) : mimeinfo('type', $mod->filename);
 
     if (isset($link['activationUuid'])) {
         $mod->activation = clean_param($link['activationUuid'], PARAM_ALPHANUMEXT);

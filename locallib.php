@@ -59,7 +59,8 @@ function equella_get_course_contents($courseid, $sectionid) {
                 $sectionvalues->selected = true;
             }
             $sectionvalues->id = $section->section;
-            $sectionvalues->name = get_section_name($course, $section);
+            // Decode the section name here to get literal characters
+            $sectionvalues->name = utility::decode_html_entities(get_section_name($course, $section));
             $sectionvalues->folders = array();
             $sectioncontents = array();
 

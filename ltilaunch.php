@@ -13,6 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+use mod_equella\utils\utility;
+
 require_once ('../../config.php');
 require_once ('lib.php');
 require_once ('locallib.php');
@@ -111,9 +113,12 @@ function get_item_xml($course, $sectionid) {
     $integuserxml->addChild('lastname', $USER->lastname);
 
     // Generic course info
+    // Sanitize names to prevent the XML parser from crashing
+    $courseFullname = utility::sanitize_text($course->fullname);
+    $courseShortname = utility::sanitize_text($course->shortname);
     $integcoursexml = $integxml->addChild('course');
-    $integcoursexml->addChild('fullname', $course->fullname);
-    $integcoursexml->addChild('shortname', $course->shortname);
+    $integcoursexml->addChild('fullname', $courseFullname);
+    $integcoursexml->addChild('shortname', $courseShortname);
     $integcoursexml->addChild('code', $course->idnumber);
 
     // Moodle specific course info
@@ -122,7 +127,9 @@ function get_item_xml($course, $sectionid) {
     $integmoodlecoursexml->addChild('id', $course->id);
 
     // Moodle section info
-    $integmoodlexml->addChild('section', get_section_name($course, $sectionid));
+    // Sanitize names to prevent the XML parser from crashing
+    $sectionName = utility::sanitize_text(get_section_name($course, $sectionid));
+    $integmoodlexml->addChild('section', $sectionName);
 
     // Moodle specific course categories (there is probably a more optimal way to do this)
     $catparentxml = $integmoodlexml;
@@ -140,5 +147,8 @@ function get_item_xml($course, $sectionid) {
         }
     }
 
-    return str_replace(array("\r", "\n"),'',$xml->asXML());
+    $xmlString = $xml->asXML();
+    $rawXml = utility::decode_html_entities($xmlString);
+
+    return str_replace(array("\r", "\n"), '', $rawXml);
 }

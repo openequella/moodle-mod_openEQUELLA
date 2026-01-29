@@ -18,4 +18,26 @@ class utility
     public static function convert_newline_characters($content) {
         return preg_replace("/\r?\n/", "\r\n", $content);
     }
+
+    /**
+     * Sanitize a string by decoding HTML entities and escaping special characters.
+     * The `htmlspecialchars` function is used with the `double_encode` parameter set to `false`, ensuring that already-encoded entities are not re-encoded.
+     * 
+     * @param string $input The input string to sanitize.
+     * @return string The sanitized string.
+     */
+    public static function sanitize_text(string $input): string {
+        $decoded = self::decode_html_entities($input);
+        return htmlspecialchars($decoded, ENT_QUOTES, 'UTF-8', false);
+    }
+
+    /**
+     * Decode HTML entities in a string.
+     *
+     * @param string $input The input string to decode.
+     * @return string The decoded string.
+     */
+    public static function decode_html_entities(string $input): string {
+        return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
+    }
 }
