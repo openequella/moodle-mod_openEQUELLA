@@ -669,8 +669,7 @@ class equella_external extends external_api {
             $success = equella_update_instance($item);
 
             if (!$sectionid = course_add_cm_to_section($newCourse, $cm->id, $newSection->section)) {
-                print_error('cannotaddcoursemoduletosection');
-                return null;
+                throw new \moodle_exception('cannotaddcoursemoduletosection');
             }
 
             if (class_exists('core\\event\\course_module_updated')) {
