@@ -13,8 +13,10 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+use mod_equella\utils\utility;
+
 $functions = array(
-    'mod_equella_list_courses_for_user' => array(
+    utility::add_webservice_function_prefix('list_courses_for_user') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'list_courses_for_user',
         'classpath'   => 'mod/equella/externallib.php',
@@ -22,7 +24,7 @@ $functions = array(
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_list_sections_for_course' => array(
+    utility::add_webservice_function_prefix('list_sections_for_course') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'list_sections_for_course',
         'classpath'   => 'mod/equella/externallib.php',
@@ -30,7 +32,7 @@ $functions = array(
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_add_item_to_course' => array(
+    utility::add_webservice_function_prefix('add_item_to_course') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'add_item_to_course',
         'classpath'   => 'mod/equella/externallib.php',
@@ -38,14 +40,14 @@ $functions = array(
         'type'        => 'write',
         'capabilities' => 'moodle/course:manageactivities'
     ),
-    'mod_equella_test_connection' => array(
+    utility::add_webservice_function_prefix('test_connection') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'test_connection',
         'classpath'   => 'mod/equella/externallib.php',
         'description' => 'Tests the connection from openEQUELLA to Moodle. Returns success=>{param} if successful. (Where {param} is supplied when calling).',
         'type'        => 'read',
     ),
-    'mod_equella_find_usage_for_item' => array(
+    utility::add_webservice_function_prefix('find_usage_for_item') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'find_usage_for_item',
         'classpath'   => 'mod/equella/externallib.php',
@@ -53,7 +55,7 @@ $functions = array(
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_find_all_usage' => array(
+    utility::add_webservice_function_prefix('find_all_usage') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'find_all_usage',
         'classpath'   => 'mod/equella/externallib.php',
@@ -61,15 +63,15 @@ $functions = array(
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_unfiltered_usage_count' => array(
+    utility::add_webservice_function_prefix('unfiltered_usage_count') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'unfiltered_usage_count',
         'classpath'   => 'mod/equella/externallib.php',
-        'description' => 'Get the number of results that would be returned by mod_equella_find_all_usages without a course ID and folder ID value, and with an unlimited count',
+        'description' => 'Get the number of results that would be returned by find_all_usages without a course ID and folder ID value, and with an unlimited count',
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_get_course_code' => array(
+    utility::add_webservice_function_prefix('get_course_code') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'get_course_code',
         'classpath'   => 'mod/equella/externallib.php',
@@ -77,7 +79,7 @@ $functions = array(
         'type'        => 'read',
         'capabilities' => 'moodle/course:view'
     ),
-    'mod_equella_edit_item' => array(
+    utility::add_webservice_function_prefix('edit_item') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'edit_item',
         'classpath'   => 'mod/equella/externallib.php',
@@ -85,7 +87,7 @@ $functions = array(
         'type'        => 'write',
         'capabilities' => 'moodle/course:manageactivities'
     ),
-    'mod_equella_move_item' => array(
+    utility::add_webservice_function_prefix('move_item') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'move_item',
         'classpath'   => 'mod/equella/externallib.php',
@@ -93,7 +95,7 @@ $functions = array(
         'type'        => 'write',
         'capabilities' => 'moodle/course:manageactivities'
     ),
-    'mod_equella_delete_item' => array(
+    utility::add_webservice_function_prefix('delete_item') => array(
         'classname'   => 'equella_external',
         'methodname'  => 'delete_item',
         'classpath'   => 'mod/equella/externallib.php',

@@ -40,4 +40,15 @@ class utility
     public static function decode_html_entities(string $input): string {
         return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
     }
+
+    /**
+     * Adds the prefix to the given webservice function name.
+     *
+     * @param string $functionName The function name without the prefix.
+     * @return string The function name with the prefix.
+     */
+    public static function add_webservice_function_prefix(string $functionName): string {
+        $prefix = 'mod_equella_';
+        return $prefix . $functionName;
+    }
 }
