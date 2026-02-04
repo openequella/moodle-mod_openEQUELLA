@@ -1,0 +1,22 @@
+{
+  "name": "equella-moodle-module-dnd",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "lint": "eslint ./**/*.ts",
+    "format": "eslint --fix ./**/*.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.2",
+    "@typescript-eslint/eslint-plugin": "8.53.1",
+    "@typescript-eslint/parser": "8.53.1",
+    "eslint": "9.39.2",
+    "globals": "17.0.0",
+    "ts-loader": "9.5.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.53.1",
+    "webpack": "5.104.1",
+    "webpack-cli": "6.0.1"
+  }
+}

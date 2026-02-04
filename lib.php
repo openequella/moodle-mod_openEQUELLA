@@ -383,40 +383,52 @@ function equella_handle_mod_updated($event) {
 
 /**
  * Register the ability to handle drag and drop file uploads
- *
- * @return array containing details of the files / types the mod can handle
+ * This just tells Moodle "Yes, we support DND", so it enables the drop zone.
  */
-if ((int)equella_get_config( 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_ASK) {
-    function equella_dndupload_register() {
-        return array('files' => array(array('extension' => '*','message' => get_string('dnduploadresource', 'mod_equella'))));
-    }
-}
+function equella_dndupload_register() {
+    $intercept_setting = (int) get_config('equella', 'equella_intercept_files');
 
-/**
- * Register the ability to handle drag and drop file uploads with meta data
- *
- * @return array containing details of the files / types the mod can handle
- */
-if ((int)equella_get_config('equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_META) {
-    function equella_dndupload_register() {
-        global $PAGE, $CFG, $COURSE;
-        $config = [
-            [
-                'courseid' => $COURSE->id,
-                'maxbytes' => get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes)
-            ]
-        ];
-        $PAGE->requires->yui_module('moodle-mod_equella-dndupload', 'M.mod_equella.dndupload.init', $config);
+    if ($intercept_setting === EQUELLA_CONFIG_INTERCEPT_META) {
         return array('files' => array(
             array('extension' => '*', 'message' => get_string('dnduploadresourcemetadata', 'mod_equella'))
         ));
     }
+
+    if ($intercept_setting === EQUELLA_CONFIG_INTERCEPT_ASK) {
+        return array('files' => array(
+            array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
+        ));
+    }
+
+    return null;
 }
 
-//https://github.com/equella/moodle-mod_equella/issues/60
-if ((int)equella_get_config( 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_NONE) {
-    function equella_dndupload_register() {
-        return null;
+/**
+ * Standard Moodle Hook: Run code before the footer is printed.
+ * We use this to reliably inject the Drag-and-Drop JavaScript.
+ */
+function mod_equella_before_footer() {
+    global $PAGE, $COURSE, $CFG;
+
+    // 1. Safety Check: Only run on Course View pages
+    if (strpos($PAGE->pagetype, 'course-view') !== 0) {
+        return;
+    }
+
+    // 2. Safety Check: Only run if Edit Mode is ON
+    if (!$PAGE->user_is_editing()) {
+        return;
+    }
+
+    $intercept_setting = (int) get_config('equella', 'equella_intercept_files');
+
+    if ($intercept_setting === EQUELLA_CONFIG_INTERCEPT_META) {
+        $config = [
+            'courseId' => $COURSE->id,
+            'maxBytes' => get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes)
+        ];
+
+        $PAGE->requires->js_call_amd('mod_equella/dndupload', 'init', [$config]);
     }
 }
 
@@ -464,22 +476,22 @@ function equella_dndupload_handle($uploadinfo) {
         if (isset($uploadinfo->displayname)) {
             $params['item/title'] = $uploadinfo->displayname;
             // Legacy. Deprecated
-        	$params['displayname'] = $uploadinfo->displayname;
+            $params['displayname'] = $uploadinfo->displayname;
         }
         if (isset($uploadinfo->itemdescription)) {
             $params['item/description'] = $uploadinfo->itemdescription;
             // Legacy. Deprecated
-        	$params['itemdescription'] = $uploadinfo->itemdescription;
+            $params['itemdescription'] = $uploadinfo->itemdescription;
         }
         if (isset($uploadinfo->copyright)){
             $params['item/iscopyright'] = $uploadinfo->copyright;
             // Legacy. Deprecated
-        	$params['copyrightflag'] = $uploadinfo->copyright;
+            $params['copyrightflag'] = $uploadinfo->copyright;
         }
-    	if (isset($uploadinfo->itemkeyword)) {
+        if (isset($uploadinfo->itemkeyword)) {
             $params['item/keyword'] = $uploadinfo->itemkeyword;
             // Legacy. Deprecated
-        	$params['itemkeyword'] = $uploadinfo->itemkeyword;
+            $params['itemkeyword'] = $uploadinfo->itemkeyword;
         }
 
         $info = equella_rest_api::contribute_file_with_shared_secret($file->get_filename(), $handle, $params);
@@ -601,13 +613,13 @@ function equella_grade_item_update($eq, $grades=null) {
         $grades = null;
     }
     return grade_update(EQUELLA_SOURCE,
-                        $eq->courseid,
-                        EQUELLA_ITEM_TYPE,
-                        EQUELLA_ITEM_MODULE,
-                        $eq->id,
-                        0,
-                        $grades,
-                        $params);
+        $eq->courseid,
+        EQUELLA_ITEM_TYPE,
+        EQUELLA_ITEM_MODULE,
+        $eq->id,
+        0,
+        $grades,
+        $params);
 }
 
 function equella_get_user_grades($equella, $userid = 0) {
