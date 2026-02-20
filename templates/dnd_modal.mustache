@@ -1,0 +1,33 @@
+{{! --- DND upload form --- }}
+<form id="equella-upload-form-container">
+    <div class="alert alert-info" role="alert">
+        <strong>File:</strong> {{fileName}} {{fileSize}}
+    </div>
+    <div class="form-group">
+        <label><strong>Does this include copyright content?*</strong></label>
+        <div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="eq_copyright" id="cp_yes" value="Yes">
+                <label class="form-check-label" for="cp_yes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="eq_copyright" id="cp_no" value="No">
+                <label class="form-check-label" for="cp_no">No</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="eq_title"><strong>Title*</strong></label>
+        <input type="text" class="form-control" name="eq_title" id="eq_title" value="{{fileName}}">
+        <small class="form-text text-muted">Min 6 characters.</small>
+    </div>
+    <div class="form-group">
+        <label for="eq_desc"><strong>Description*</strong></label>
+        <textarea class="form-control" name="eq_desc" id="eq_desc" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="eq_kw"><strong>Keywords</strong></label>
+        <input type="text" class="form-control" name="eq_kw" id="eq_kw" placeholder="Comma separated">
+    </div>
+    <div id="eq_validate_error" class="alert alert-danger d-none" role="alert"></div>
+</form>
