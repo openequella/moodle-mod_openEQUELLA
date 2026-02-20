@@ -1,0 +1,82 @@
+name: oEQ Moodle Module CI
+on:
+  push:
+    branches:
+      - master
+      - release/*
+    tags:
+      - "**"
+  pull_request: 
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout to module code
+        uses: actions/checkout@v4
+        
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: tsrc/package-lock.json
+          
+      - name: Install node dependencies (tsrc) and build dndupload
+        working-directory: tsrc
+        run: |
+          npm ci
+          
+      - name: Lint TypeScript code
+        working-directory: tsrc
+        run: npm run lint
+        
+      - name: Build (tsc + webpack)
+        working-directory: tsrc
+        run: npm run build       # outputs bundled JS to amd/
+        
+      - name: Determine archive name
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+          elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            BRANCH="${GITHUB_REF#refs/heads/}"
+            BRANCH="${BRANCH//\//-}"
+            SHA=$(git rev-parse --short HEAD)
+            VERSION="${BRANCH}_${SHA}"
+          else
+          # PR trigger — refs/pull/N/merge
+            SHA=$(git rev-parse --short HEAD)
+            VERSION="pr_${SHA}"
+          fi
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          ARCHIVE_NAME="${REPO_NAME}-${VERSION}"
+          echo "archive_name=${ARCHIVE_NAME}" >> $GITHUB_OUTPUT
+          
+      - name: Prepare artifacts
+        run: |
+          mkdir -p dist
+          ARCHIVE_NAME="${{ steps.version.outputs.archive_name }}"
+          rsync -av \
+             --exclude='.git' \
+             --exclude='tsrc/node_modules' \
+             --exclude='dist' \
+             ./ "dist/${ARCHIVE_NAME}/"
+          cd dist
+          zip -r "${ARCHIVE_NAME}.zip" "${ARCHIVE_NAME}/"
+          tar -czvf "${ARCHIVE_NAME}.tar.gz" "${ARCHIVE_NAME}/"
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            dist/${{ steps.version.outputs.archive_name }}.zip
+            dist/${{ steps.version.outputs.archive_name }}.tar.gz
+      
+
+          
+      
+      
+        

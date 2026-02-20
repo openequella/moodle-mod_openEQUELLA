@@ -1,10 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 
-module.exports = {
+const sharedConfig = {
     entry: './dndupload/dndupload.ts',
-    mode: 'development',
-    devtool: false,
     module: {
         rules: [
             {
@@ -14,6 +12,41 @@ module.exports = {
             },
         ],
     },
+    externals: [
+        /^core\/.+/,
+        /^core_form\/.+/,
+        /^core_courseformat\/.+/,
+        'jquery',
+    ],
+    plugins: [
+        new webpack.BannerPlugin({
+            raw: true,
+            entryOnly: true,
+            banner: '/* eslint-disable */\n// This file is generated from TypeScript. Do not edit directly.'
+        })
+    ]
+}
+
+const prodConfig = {
+    ...sharedConfig,
+    mode: 'production',
+    devtool: 'source-map',
+    resolve: {
+        extensions: ['.ts', '.js'],
+    },
+    output: {
+        filename: 'dndupload.min.js',
+        path: path.resolve(__dirname, '../amd/build'),
+        library: {
+            type: 'amd',
+        },
+    }
+};
+
+const devConfig = {
+    ...sharedConfig,
+    mode: 'development',
+    devtool: false,
     resolve: {
         extensions: ['.ts', '.js'],
     },
@@ -23,18 +56,7 @@ module.exports = {
         library: {
             type: 'amd',
         },
-    },
-    externals: [
-        /^core\/.+/,
-        /^core_form\/.+/,
-        'jquery',
-    ],
-    // Inject the "Ignore Me" banner
-    plugins: [
-        new webpack.BannerPlugin({
-            raw: true,
-            entryOnly: true,
-            banner: '/* eslint-disable */\n// This file is generated from TypeScript. Do not edit directly.'
-        })
-    ]
+    }
 };
+
+module.exports = [devConfig, prodConfig]
