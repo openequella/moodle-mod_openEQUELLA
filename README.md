@@ -71,6 +71,32 @@ In the `openEQUELLA action` setting, type `structured`, assuming you are using a
 
 You're done! You now have a Moodle instance and an openEQUELLA instance integrated together.
 
+## Development: Drag and Drop (DND) Upload
+
+The Drag and Drop file upload feature is built using modern JavaScript (TypeScript and Webpack). The source code is located in the `tsrc` directory.
+
+If you are modifying the DND feature, you must compile the TypeScript code into the `amd/build` and `amd/src` directories for Moodle to recognize the changes.
+
+### Prerequisites
+* [Node.js](https://nodejs.org/) (LTS recommended)
+
+### Build Instructions
+
+1. Navigate to the source directory:
+```sh
+   cd tsrc
+```
+
+2. Install the required dependencies:
+```sh
+   npm install
+```
+
+3. Build the files for production:
+```sh
+   npm run build
+```
+
 More Information
 ----------------
 
