@@ -14,7 +14,6 @@ const sharedConfig = {
     },
     externals: [
         /^core\/.+/,
-        /^core_form\/.+/,
         /^core_courseformat\/.+/,
         'jquery',
     ],
