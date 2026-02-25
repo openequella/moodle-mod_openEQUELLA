@@ -51,14 +51,6 @@ interface UploadData {
     keywords: string;
 }
 
-/** Resolved identifiers for a course section element in the DOM. */
-interface SectionData {
-    /** The section number extracted from the element, or `null`. */
-    number: string | null;
-    /** The database id of the section, or `null`. */
-    id: number | null;
-}
-
 /** Represents a single item extracted from a {@link DataTransfer} during a drop event. */
 interface DropItem {
     /** The {@link File} object obtained from the drop. */
@@ -67,30 +59,17 @@ interface DropItem {
     isFile: boolean;
 }
 
-/** Identifies if a section is in the sidebar, main content, or neither. */
-type SectionType = 'sidebar' | 'main' | null;
-
 // --- Constants ---
 
-const SELECTORS = {
-    MAIN_SECTION: '.course-content li.section',
-    SIDEBAR_SECTION: '#courseindex-content .courseindex-section',
-    OVERLAY_PREVIEW: '.overlay-preview',
-    FORM: {
-        ERROR: '#eq_validate_error',
-        FORM_CONTAINER: '#equella-upload-form-container',
-        COPYRIGHT: 'eq_copyright',
-        TITLE: 'eq_title',
-        DESC: 'eq_desc',
-        KEYWORDS: 'eq_kw',
-    },
+const FORM_SELECTORS= {
+    ERROR: '#eq_validate_error',
+    FORM_CONTAINER: '#equella-upload-form-container',
+    COPYRIGHT: 'eq_copyright',
+    TITLE: 'eq_title',
+    DESC: 'eq_desc',
+    KEYWORDS: 'eq_kw',
 }
 
-const CLASSES = {
-    HIDE: 'd-none',
-    SIDEBAR_BORDER: 'overlay-preview-borders',
-    DRAG_OVER: 'dragover',
-}
 
 const UPLOAD_ENDPOINT = `${Config.wwwroot}/mod/equella/dndupload.php`;
 
@@ -109,70 +88,80 @@ export const init = (config: InitConfig): void => {
         targetSectionId: null,
     };
 
-    bindEvents(state);
+    const dropTransferRef = captureDropTransfers();
+    registerUploadHandler(state, dropTransferRef);
 };
 
-// --- Event Binding ---
+// --- Event Interception ---
 
-/** Registers global `dragover`, `dragenter`, `dragleave`, and `drop` listeners on `document`. */
-const bindEvents = (state: DndState): void => {
-    document.addEventListener('dragover', (e: DragEvent) => {
-        if (isFilesDrag(e)) e.preventDefault();
+/**
+ * Attaches a `drop` listener that stores the latest {@link DataTransfer} so directory detection can be performed later.
+ * @returns A ref object whose `.value` holds the most recent drop's {@link DataTransfer}.
+ */
+const captureDropTransfers = (): { value: DataTransfer | null } => {
+    const ref: { value: DataTransfer | null } = { value: null };
+    document.addEventListener('drop', (e: DragEvent) => {
+        if (isFilesDrag(e)) {
+            ref.value = e.dataTransfer;
+        }
     }, true);
-
-    document.addEventListener('dragenter', (e: DragEvent) => {
-        if (!isFilesDrag(e)) return;
-        e.preventDefault();
-        const section = findClosestSection(e.target as HTMLElement);
-        if (section) showSectionOverlay(section);
-    }, true);
-
-    document.addEventListener('dragleave', (e: DragEvent) => {
-        if (!isFilesDrag(e)) return;
-        const target = e.target as HTMLElement;
-        if (!target || target.nodeType !== Node.ELEMENT_NODE) return;
-
-        const section = findClosestSection(target);
-        if (!section) return;
-
-        // Ignore dragleave if the mouse is just moving between child elements of the same section.
-        if (e.relatedTarget && section.contains(e.relatedTarget as Node)) return;
-        hideSectionOverlay(section);
-    }, true);
-
-    document.addEventListener('drop', async (e: DragEvent) => {
-        if (!isFilesDrag(e)) return;
-        e.preventDefault();
-        e.stopPropagation();
-        resetVisuals();
-        await handleDrop(e, state);
-    }, true);
+    return ref;
 };
 
 /**
- * Processes a drop event: resolves the target section, iterates dropped items,
- * rejects folders, and delegates each file to {@link handleFileUpload}.
+ * Overrides the Moodle course editor's native `uploadFiles` method so
+ * dropped files are routed through the openEQUELLA upload modal instead.
  */
-const handleDrop = async (e: DragEvent, state: DndState): Promise<void> => {
-    const dt = e.dataTransfer;
-    if (!dt || dt.items.length === 0) return;
+const registerUploadHandler = (
+    state: DndState,
+    dropTransferRef: { value: DataTransfer | null },
+): void => {
+    const courseEditor = getCourseEditor(state.courseId);
 
-    const targetElement = findClosestSection(e.target as HTMLElement);
-    if (!targetElement) return;
-
-    const sectionData = resolveSectionData(targetElement);
-    if (sectionData.number === null) return;
-
-    state.targetSection = sectionData.number;
-    state.targetSectionId = sectionData.id;
-
-    for (const { file, isFile } of extractDropItems(dt)) {
-        if (!isFile) {
-            await showErrorToast(`Folders cannot be uploaded directly. Please zip "${file.name}" and try again.`);
-            continue;
-        }
-        await handleFileUpload(file, state);
+    if (!courseEditor) {
+        console.warn('EQUELLA: Course editor not found. DND custom interception failed.');
+        return;
     }
+
+    courseEditor.uploadFiles = async (sectionId: number, sectionNum: number, files: File[]) => {
+        state.targetSection = sectionNum.toString();
+        state.targetSectionId = sectionId;
+
+        const validFiles = await filterValidFiles(files, dropTransferRef);
+        dropTransferRef.value = null;
+
+        for (const file of validFiles) {
+            await handleFileUpload(file, state);
+        }
+    };
+};
+
+// --- Drop Processing ---
+
+/**
+ * Filters out directories from the dropped items.
+ * Falls back to the raw `files` array when {@link DataTransfer} is unavailable.
+ */
+const filterValidFiles = async (
+    files: File[],
+    dropTransferRef: { value: DataTransfer | null },
+): Promise<File[]> => {
+    if (!dropTransferRef.value) return files;
+
+    const validFiles: File[] = [];
+    const dropItems = extractDropItems(dropTransferRef.value);
+
+    for (const item of dropItems) {
+        if (item.isFile) {
+            validFiles.push(item.file);
+        } else {
+            await showErrorToast(
+                `Folders cannot be uploaded directly. Please zip "${item.file.name}" and try again.`,
+            );
+        }
+    }
+
+    return validFiles;
 };
 
 /**
@@ -194,62 +183,6 @@ const extractDropItems = (dt: DataTransfer): Array<DropItem> => {
         if (entry && file) items.push({ file, isFile: entry.isFile });
     }
     return items;
-};
-
-// --- Section Overlay ---
-
-/** Tracks all elements that currently carry a visual DND highlight. */
-const highlightedSections = new Set<Element>();
-
-/** Determines whether a section element belongs to the sidebar or main content area. */
-const getSectionType = (section: Element): SectionType => {
-    if (section.matches(SELECTORS.SIDEBAR_SECTION)) return 'sidebar';
-    if (section.matches(SELECTORS.MAIN_SECTION)) return 'main';
-    return null;
-};
-
-/** Walks up the DOM from `target` to find the closest course-section element. */
-const findClosestSection = (target: HTMLElement): HTMLElement | null => {
-    const { MAIN_SECTION, SIDEBAR_SECTION } = SELECTORS;
-    return target.closest(`${MAIN_SECTION}, ${SIDEBAR_SECTION}`);
-};
-
-/** Extracts the section number and database id from a section element's data attributes. */
-const resolveSectionData = (target: HTMLElement): SectionData => ({
-    number:
-        target.getAttribute('data-number') ??
-        target.getAttribute('data-section') ??
-        target.id?.replace('section-', '') ??
-        null,
-    id: Number(target.getAttribute('data-id')) || null,
-});
-
-/** Shows the drag-over visual overlay on the given section element. */
-const showSectionOverlay = (section: Element): void => {
-    const type = getSectionType(section);
-    if (type === 'sidebar') {
-        section.classList.add(CLASSES.SIDEBAR_BORDER);
-    } else if (type === 'main') {
-        section.querySelector(SELECTORS.OVERLAY_PREVIEW)?.classList.remove(CLASSES.HIDE);
-    }
-    highlightedSections.add(section);
-};
-
-/** Hides the drag-over visual overlay on the given section element. */
-const hideSectionOverlay = (section: Element): void => {
-    const type = getSectionType(section);
-    section.classList.remove(CLASSES.DRAG_OVER);
-    if (type === 'sidebar') {
-        section.classList.remove(CLASSES.SIDEBAR_BORDER);
-    } else if (type === 'main') {
-        section.querySelector(SELECTORS.OVERLAY_PREVIEW)?.classList.add(CLASSES.HIDE);
-    }
-};
-
-/** Removes all active drag-over highlights across every tracked section. */
-const resetVisuals = (): void => {
-    highlightedSections.forEach(hideSectionOverlay);
-    highlightedSections.clear();
 };
 
 // --- Modal ---
@@ -310,7 +243,7 @@ const renderModal = async (state: DndState) => {
  * @param root The modal's root DOM element.
  */
 const extractFormValues = (root: HTMLElement) => {
-    const { FORM_CONTAINER, COPYRIGHT, TITLE, DESC, KEYWORDS } = SELECTORS.FORM;
+    const { FORM_CONTAINER, COPYRIGHT, TITLE, DESC, KEYWORDS } = FORM_SELECTORS;
     const form = root.querySelector(FORM_CONTAINER) as HTMLFormElement;
     const formData = new FormData(form);
     const getField = (name: string) => (formData.get(name) as string ?? '').trim();
@@ -350,7 +283,7 @@ const validateForm = (root: HTMLElement, state: DndState): UploadData => {
 
 /** Displays validation error message inside the modal form. */
 const showFormError = (root: HTMLElement, message: string): void => {
-    const errorBox = root.querySelector(SELECTORS.FORM.ERROR) as HTMLElement | null;
+    const errorBox = root.querySelector(FORM_SELECTORS.ERROR) as HTMLElement | null;
     if (errorBox) {
         errorBox.classList.remove('d-none');
         errorBox.innerHTML = message;
@@ -378,7 +311,7 @@ const handleFileUpload = async (file: File, state: DndState): Promise<void> => {
 
     try {
         await performUpload(data, state, process);
-        await refreshSectionState(state.courseId, state.targetSectionId);
+        await refreshSectionState(state);
     } catch (e) {
         process.setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -450,12 +383,13 @@ const performUpload = (data: UploadData, state: DndState, process: LoadingProces
  * Dispatches a Moodle course-editor state refresh so the new activity
  * appears without a full page reload.
  */
-const refreshSectionState = async (courseId: number, sectionDbId: number | null): Promise<void> => {
+const refreshSectionState = async (state: DndState): Promise<void> => {
+    const {courseId, targetSectionId} = state;
     const editor = getCourseEditor(courseId);
     if (!editor) return;
 
-    if (sectionDbId) {
-        await editor.dispatch('sectionState', [sectionDbId]);
+    if (targetSectionId) {
+        await editor.dispatch('sectionState', [targetSectionId]);
     } else {
         await editor.dispatch('courseState');
     }
