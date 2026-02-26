@@ -199,16 +199,16 @@ const extractDropItems = (dt: DataTransfer): Array<DropItem> => {
 /**
  * Loads all localized strings required for the modal and validation.
  */
-const loadModalStrings = async (file: File | null): Promise<ModalStrings> => {
+const loadModalStrings = async (file: File): Promise<ModalStrings> => {
     const keyPrefix = 'dnd.modal.';
-    const {name, size} = file!;
+    const {name, size} = file;
     
     const [errCopyright, errTitle, errDesc, errInternal, uploadTitle, fileInfo, btnUpload] = await Promise.all([
         getModEquellaString(`${keyPrefix}err.copyright`),
         getModEquellaString(`${keyPrefix}err.title`),
         getModEquellaString(`${keyPrefix}err.desc`),
         getModEquellaString(`${keyPrefix}err.internal`),
-        getModEquellaString(`${keyPrefix}title`),
+        getModEquellaString(`${keyPrefix}title.upload`),
         getModEquellaString(`${keyPrefix}fileinfo`, {name, size: formatBytes(size)}),
         get_string('upload', 'core'),
     ]);

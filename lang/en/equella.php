@@ -189,7 +189,7 @@ $string['privacy:metadata:lti_client:roles'] = 'Your Moodle roles are sent to th
 
 ////////////////////////////////////////////////////////
 // DND modal and upload errors
-$string['dnd.modal.title'] = 'Add to openEQUELLA';
+$string['dnd.modal.title.upload'] = 'Add to openEQUELLA';
 $string['dnd.modal.fileinfo'] = '<strong>File:</strong> {$a->name} {$a->size}';
 $string['dnd.modal.copyright'] = 'Does this include copyright content? *';
 $string['dnd.modal.yes'] = 'Yes';
