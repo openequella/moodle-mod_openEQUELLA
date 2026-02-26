@@ -4,7 +4,7 @@ import globals from "globals";
 
 export default [
     js.configs.recommended, // Basic JS rules
-    ...tseslint.configs.recommended, // Bascic TS rules
+    ...tseslint.configs.recommended, // Basic TS rules
     {
         languageOptions: {
             globals: {
