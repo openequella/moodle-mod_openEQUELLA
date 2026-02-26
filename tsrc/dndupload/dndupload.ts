@@ -72,7 +72,7 @@ interface ModalStrings {
 
 // --- Constants ---
 
-const FORM_SELECTORS= {
+const FORM_SELECTORS = {
     ERROR: '#eq_validate_error',
     FORM_CONTAINER: '#equella-upload-form-container',
     COPYRIGHT: 'eq_copyright',
@@ -454,7 +454,7 @@ const formatBytes = (bytes: number, decimals = 2): string => {
 const showErrorToast = async (msg: string): Promise<void> => await addToast(msg, {
     type: 'danger',
     title: await getModEquellaString('dnd.err.title.uploadfailed')
-})
+});
 
 /**
  * Helper to fetch a localized string for the mod_equella component.
