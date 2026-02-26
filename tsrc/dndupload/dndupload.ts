@@ -286,7 +286,7 @@ const showFormError = (root: HTMLElement, message: string): void => {
     const errorBox = root.querySelector(FORM_SELECTORS.ERROR) as HTMLElement | null;
     if (errorBox) {
         errorBox.classList.remove('d-none');
-        errorBox.innerHTML = message;
+        errorBox.textContent = message;
     }
 };
 
