@@ -59,6 +59,17 @@ interface DropItem {
     isFile: boolean;
 }
 
+/** Collection of localized strings used in the DND Modal. */
+interface ModalStrings {
+    errCopyright: string;
+    errTitle: string;
+    errDesc: string;
+    errInternal: string;
+    uploadTitle: string;
+    fileInfo: string;
+    btnUpload: string;
+}
+
 // --- Constants ---
 
 const FORM_SELECTORS= {
@@ -69,7 +80,6 @@ const FORM_SELECTORS= {
     DESC: 'eq_desc',
     KEYWORDS: 'eq_kw',
 }
-
 
 const UPLOAD_ENDPOINT = `${Config.wwwroot}/mod/equella/dndupload.php`;
 
@@ -155,9 +165,8 @@ const filterValidFiles = async (
         if (item.isFile) {
             validFiles.push(item.file);
         } else {
-            await showErrorToast(
-                `Folders cannot be uploaded directly. Please zip "${item.file.name}" and try again.`,
-            );
+            const msg = await getModEquellaString('dnd.err.folder', item.file.name);
+            await showErrorToast(msg);
         }
     }
 
@@ -188,13 +197,34 @@ const extractDropItems = (dt: DataTransfer): Array<DropItem> => {
 // --- Modal ---
 
 /**
+ * Loads all localized strings required for the modal and validation.
+ */
+const loadModalStrings = async (file: File | null): Promise<ModalStrings> => {
+    const keyPrefix = 'dnd.modal.';
+    const {name, size} = file!;
+    
+    const [errCopyright, errTitle, errDesc, errInternal, uploadTitle, fileInfo, btnUpload] = await Promise.all([
+        getModEquellaString(`${keyPrefix}err.copyright`),
+        getModEquellaString(`${keyPrefix}err.title`),
+        getModEquellaString(`${keyPrefix}err.desc`),
+        getModEquellaString(`${keyPrefix}err.internal`),
+        getModEquellaString(`${keyPrefix}title`),
+        getModEquellaString(`${keyPrefix}fileinfo`, {name, size: formatBytes(size)}),
+        get_string('upload', 'core'),
+    ]);
+
+    return { errCopyright, errTitle, errDesc, errInternal, uploadTitle, fileInfo, btnUpload };
+};
+
+/**
  * Opens the upload modal, waits for the user to submit or cancel, and returns
  * the validated {@link UploadData} on success or `null` on cancellation.
  */
 const launchUploadModal = async (state: DndState): Promise<UploadData | null> => {
     if (!state.activeFile) return null;
 
-    const modal = await renderModal(state);
+    const strings = await loadModalStrings(state.activeFile);
+    const modal = await renderModal(strings);
 
     return new Promise<UploadData | null>((resolve) => {
         let finalData: UploadData | null = null;
@@ -203,7 +233,7 @@ const launchUploadModal = async (state: DndState): Promise<UploadData | null> =>
             e.preventDefault();
             const root = modal.getRoot()[0] as HTMLElement;
             try {
-                finalData = validateForm(root, state);
+                finalData = validateForm(root, state, strings);
                 modal.destroy();
             } catch (err: any) {
                 showFormError(root, err.message);
@@ -218,22 +248,19 @@ const launchUploadModal = async (state: DndState): Promise<UploadData | null> =>
  * Renders the upload modal dialog using the `mod_equella/dnd_modal` Mustache template.
  * @returns The created {@link ModalSaveCancel} instance.
  */
-const renderModal = async (state: DndState) => {
-    const { name, size } = state.activeFile!;
-
-    const [formHtml, btnText] = await Promise.all([
-        Templates.render('mod_equella/dnd_modal', { fileName: name, fileSize: formatBytes(size) }),
-        get_string('upload', 'core'),
-    ]);
+const renderModal = async (strings: ModalStrings) => {
+    const formHtml = await Templates.render('mod_equella/dnd_modal', {
+        fileInfo: strings.fileInfo
+    });
 
     const modal = await ModalSaveCancel.create({
-        title: 'Add to openEQUELLA',
+        title: strings.uploadTitle,
         body: formHtml,
         large: true,
     });
 
     modal.setRemoveOnClose(true);
-    modal.setButtonText('save', btnText);
+    modal.setButtonText('save', strings.btnUpload);
     modal.show();
     return modal;
 };
@@ -260,23 +287,28 @@ const extractFormValues = (root: HTMLElement) => {
  * Throws a descriptive error if any required form field is missing or too short.
  * @throws {Error} When validation fails.
  */
-const assertFormValid = (copyright: string | null, title: string, desc: string): void => {
-    if (!copyright) throw new Error('Please select a copyright option.');
-    if (title.length < 6) throw new Error('Title must be at least 6 characters.');
-    if (desc.length < 2) throw new Error('Description is required.');
+const assertFormValid = (
+    copyright: string | null,
+    title: string,
+    desc: string,
+    strings: ModalStrings
+): void => {
+    if (!copyright) throw new Error(strings.errCopyright);
+    if (title.length < 6) throw new Error(strings.errTitle);
+    if (desc.length < 2) throw new Error(strings.errDesc);
 };
 
 /**
  * Validates the modal form and assembles an {@link UploadData} object.
  * @throws {Error} When the form is invalid or internal state is missing.
  */
-const validateForm = (root: HTMLElement, state: DndState): UploadData => {
+const validateForm = (root: HTMLElement, state: DndState, strings: ModalStrings): UploadData => {
     if (!state.activeFile || !state.targetSection) {
-        throw new Error('Internal Error: Missing file or section.');
+        throw new Error(strings.errInternal);
     }
 
     const { copyright, title, desc, keywords } = extractFormValues(root);
-    assertFormValid(copyright, title, desc);
+    assertFormValid(copyright, title, desc, strings);
 
     return { file: state.activeFile, section: state.targetSection, copyright: copyright!, title, desc, keywords };
 };
@@ -298,7 +330,8 @@ const showFormError = (root: HTMLElement, message: string): void => {
  */
 const handleFileUpload = async (file: File, state: DndState): Promise<void> => {
     if (state.maxBytes > 0 && file.size > state.maxBytes) {
-        await showErrorToast(`"${file.name}" exceeds the upload limit (${formatBytes(file.size)} / ${formatBytes(state.maxBytes)}).`);
+        const msg = await get_string('dndmaxbytes', 'core_error', {size: formatBytes(state.maxBytes)});
+        await showErrorToast(msg);
         return;
     }
 
@@ -339,10 +372,14 @@ const buildFormData = (data: UploadData, state: DndState): FormData => {
  * Parses the XHR response.
  * @throws {Error} On non-200 status or a non-zero `error` field.
  */
-const parseUploadResponse = (xhr: XMLHttpRequest): void => {
-    if (xhr.status !== 200) throw new Error(`HTTP Error: ${xhr.status}`);
+const parseUploadResponse = async (xhr: XMLHttpRequest): Promise<void> => {
+    if (xhr.status !== 200) {
+        throw new Error(await getModEquellaString('dnd.err.http', xhr.status.toString()));
+    }
     const result = JSON.parse(xhr.responseText);
-    if (result?.error !== 0) throw new Error(result?.error || 'Unknown error');
+    if (result?.error !== 0) {
+        throw new Error(result?.error || await get_string('dndupload', 'core_error'));
+    }
 };
 
 /** Wires up progress, load, and error handlers on the given {@link XMLHttpRequest}. */
@@ -357,9 +394,9 @@ const attachXhrHandlers = (
             process.setPercentage(Math.round((e.loaded / e.total) * 100));
         }
     };
-    xhr.onload = () => {
+    xhr.onload = async () => {
         try {
-            parseUploadResponse(xhr);
+            await parseUploadResponse(xhr);
             process.setPercentage(100);
             process.finish();
             resolve();
@@ -367,7 +404,7 @@ const attachXhrHandlers = (
             reject(err as Error);
         }
     };
-    xhr.onerror = () => reject(new Error('Network Error'));
+    xhr.onerror = async () => reject(new Error(await getModEquellaString('dnd.err.network')));
 };
 
 /** Sends the upload XHR and returns a promise that resolves on success. */
@@ -414,4 +451,15 @@ const formatBytes = (bytes: number, decimals = 2): string => {
 };
 
 /** Displays a danger toast notification with a fixed title. */
-const showErrorToast = async (msg: string): Promise<void> => await addToast(msg, { type: 'danger', title: 'Upload Failed' })
+const showErrorToast = async (msg: string): Promise<void> => await addToast(msg, {
+    type: 'danger',
+    title: await getModEquellaString('dnd.err.title.uploadfailed')
+})
+
+/**
+ * Helper to fetch a localized string for the mod_equella component.
+ * @param key The string key.
+ * @param param Optional parameters for the string.
+ */
+const getModEquellaString = (key: string, param?: string | object): Promise<string> =>
+    get_string(key, 'mod_equella', param);

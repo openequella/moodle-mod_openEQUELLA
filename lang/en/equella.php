@@ -186,3 +186,25 @@ $string['privacy:metadata:lti_client:familyname'] = 'Your family name is sent to
 $string['privacy:metadata:lti_client:fullname'] = 'Your full name is sent to the openEQUELLA system for SSO login';
 $string['privacy:metadata:lti_client:email'] = 'Your email address is sent to the openEQUELLA system for SSO login';
 $string['privacy:metadata:lti_client:roles'] = 'Your Moodle roles are sent to the openEQUELLA system, which allows you to access your data on the remote system.';
+
+////////////////////////////////////////////////////////
+// DND modal and upload errors
+$string['dnd.modal.title'] = 'Add to openEQUELLA';
+$string['dnd.modal.fileinfo'] = '<strong>File:</strong> {$a->name} {$a->size}';
+$string['dnd.modal.copyright'] = 'Does this include copyright content? *';
+$string['dnd.modal.yes'] = 'Yes';
+$string['dnd.modal.no'] = 'No';
+$string['dnd.modal.title'] = 'Title *';
+$string['dnd.modal.minchars'] = 'Min 6 characters.';
+$string['dnd.modal.desc'] = 'Description *';
+$string['dnd.modal.keywords'] = 'Keywords';
+$string['dnd.modal.commaseparated'] = 'Comma separated';
+$string['dnd.modal.err.copyright'] = 'Please select a copyright option.';
+$string['dnd.modal.err.title'] = 'Title must be at least 6 characters.';
+$string['dnd.modal.err.desc'] = 'Description is required.';
+$string['dnd.modal.err.internal'] = 'Internal Error: Missing file or section.';
+
+$string['dnd.err.title.uploadfailed'] = 'Upload Failed';
+$string['dnd.err.folder'] = 'Folders cannot be uploaded directly. Please zip "{$a}" and try again.';
+$string['dnd.err.network'] = 'Network Error';
+$string['dnd.err.http'] = 'HTTP Error: {$a}';
