@@ -28,12 +28,16 @@ function get_block_configdata($blockname) {
     return unserialize(base64_decode($blockinstance->configdata));
 }
 /**
- * Create EQUELLA full url
+ * Create openEQUELLA full url.
  *
  * @return string
  */
 function equella_full_url($urlpart) {
-    return str_ireplace('signon.do', $urlpart, equella_get_config('equella_url'));
+    $eq_url = equella_get_config('equella_url');
+        if (empty($eq_url)) {
+            throw new moodle_exception('urlnotset', 'mod_equella');
+        }
+    return str_ireplace('signon.do', $urlpart, $eq_url);
 }
 
 /**
