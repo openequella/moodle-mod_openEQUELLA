@@ -791,14 +791,15 @@ class equella_rest_api {
             }
         }
         // URL is in HTTP header
-        $resp = $curl->getResponse();
-        if (empty($resp['Location'])) {
-            throw new moodle_exception('restapinolocation', 'equella');
+        $resp = array_change_key_case($curl->getResponse());
+        if (empty($resp['location'])) {
+            throw new moodle_exception('restapinolocation', 'mod_equella');
         }
-        $itemurl = $resp['Location'];
+        $itemurl = $resp['location'];
         if (!$useoauth) {
             $itemurl = equella_appendtoken($itemurl);
         }
+        
         $json = $curl->get($itemurl);
         $info = json_decode($json);
         if (!empty($info)) {
