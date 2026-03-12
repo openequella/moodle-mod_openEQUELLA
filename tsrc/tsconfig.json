@@ -8,6 +8,7 @@
   },
   "include": [
     "dndupload/**/*",
-    "moodle/**/*"
+    "moodle/**/*",
+    "tests/**/*"
   ]
 }
