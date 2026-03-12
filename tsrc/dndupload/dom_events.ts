@@ -82,7 +82,11 @@ const filterValidFiles = async (
     const dropItems = extractDropItems(dropTransferRef.value);
 
     const {validFiles, folderNames} = dropItems.reduce<{validFiles: File[], folderNames: string[]}>((acc, item)=> {
-        item.isFile ? acc.validFiles.push(item.file) : acc.folderNames.push(item.file.name)
+        if (item.isFile) {
+            acc.validFiles.push(item.file);
+        } else {
+            acc.folderNames.push(item.file.name);
+        }
         return acc;
     }, { validFiles: [], folderNames: []})
 
