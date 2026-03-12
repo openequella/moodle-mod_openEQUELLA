@@ -34,9 +34,9 @@ function get_block_configdata($blockname) {
  */
 function equella_full_url($urlpart) {
     $eq_url = equella_get_config('equella_url');
-        if (empty($eq_url)) {
-            throw new moodle_exception('urlnotset', 'mod_equella');
-        }
+    if (empty($eq_url)) {
+        throw new moodle_exception('urlnotset', 'mod_equella');
+    }
     return str_ireplace('signon.do', $urlpart, $eq_url);
 }
 

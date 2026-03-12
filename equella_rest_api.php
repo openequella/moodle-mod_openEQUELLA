@@ -172,7 +172,7 @@ class equella_rest_api {
         $decodedResult = json_decode($result);
 
         if (empty($decodedResult)) {
-            throw new moodle_exception(html_to_text($result));
+            throw new moodle_exception('restapiinvalidresponse', 'mod_equella', '', null, html_to_text($result));
         }
 
         $message = $decodedResult->error_description ?? $decodedResult->error ?? null;
@@ -180,9 +180,8 @@ class equella_rest_api {
             throw new equella_exception('openEQUELLA: ' . $message);
         }
 
-        // Unknown structured error.
-        throw new moodle_exception(
-            debugging() ? print_r($decodedResult, true) : 'error'
+        throw new moodle_exception('restapiinvalidresponse', 'mod_equella', '', null,
+            debugging() ? print_r($decodedResult, true) : null
         );
     }
 
