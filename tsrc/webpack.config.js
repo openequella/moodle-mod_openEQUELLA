@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 const sharedConfig = {
-    entry: './dndupload/dndupload.ts',
+    entry: './dndupload/index.ts',
     module: {
         rules: [
             {

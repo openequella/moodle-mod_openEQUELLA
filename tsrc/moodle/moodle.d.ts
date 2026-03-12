@@ -10,7 +10,15 @@ declare module 'core/*' {
 }
 
 declare module 'core/str' {
+    export interface StringRequest {
+        key: string;
+        component?: string;
+        param?: any;
+        lang?: string;
+    }
+
     export const get_string: (key: string, component: string, param?: any) => Promise<string>;
+    export const get_strings: (requests: StringRequest[]) => Promise<string[]>;
 }
 
 declare module 'core/toast' {

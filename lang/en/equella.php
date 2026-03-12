@@ -205,6 +205,7 @@ $string['dnd.modal.err.desc'] = 'Description is required.';
 $string['dnd.modal.err.internal'] = 'Internal Error: Missing file or section.';
 
 $string['dnd.err.title.uploadfailed'] = 'Upload Failed';
-$string['dnd.err.folder'] = 'Folders cannot be uploaded directly. Please zip "{$a}" and try again.';
+$string['dnd.err.folder'] = 'The dropped item(s) <strong>{$a}</strong> appear to be a directory. Please compress it into a zip archive and try again.';
 $string['dnd.err.network'] = 'Network Error';
 $string['dnd.err.http'] = 'HTTP Error: {$a}';
+$string['dnd.err.maxbytes'] = 'The following file(s) exceed the maximum upload size of {$a->size}: "{$a->file}".';

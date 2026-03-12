@@ -7,27 +7,27 @@
         <label><strong>{{#str}}dnd.modal.copyright, mod_equella{{/str}}</strong></label>
         <div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="eq_copyright" id="cp_yes" value="Yes">
+                <input class="form-check-input" type="radio" name="oeq_copyright" id="cp_yes" value="Yes">
                 <label class="form-check-label" for="cp_yes">{{#str}}dnd.modal.yes, mod_equella{{/str}}</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="eq_copyright" id="cp_no" value="No">
+                <input class="form-check-input" type="radio" name="oeq_copyright" id="cp_no" value="No">
                 <label class="form-check-label" for="cp_no">{{#str}}dnd.modal.no, mod_equella{{/str}}</label>
             </div>
         </div>
     </div>
     <div class="form-group">
-        <label for="eq_title"><strong>{{#str}}dnd.modal.title, mod_equella{{/str}}</strong></label>
-        <input type="text" class="form-control" name="eq_title" id="eq_title" value="{{fileName}}">
+        <label for="oeq_title"><strong>{{#str}}dnd.modal.title, mod_equella{{/str}}</strong></label>
+        <input type="text" class="form-control" name="oeq_title" id="oeq_title" value="{{fileName}}">
         <small class="form-text text-muted">{{#str}}dnd.modal.minchars, mod_equella{{/str}}</small>
     </div>
     <div class="form-group">
-        <label for="eq_desc"><strong>{{#str}}dnd.modal.desc, mod_equella{{/str}}</strong></label>
-        <textarea class="form-control" name="eq_desc" id="eq_desc" rows="3"></textarea>
+        <label for="oeq_desc"><strong>{{#str}}dnd.modal.desc, mod_equella{{/str}}</strong></label>
+        <textarea class="form-control" name="oeq_desc" id="oeq_desc" rows="3"></textarea>
     </div>
     <div class="form-group">
-        <label for="eq_kw"><strong>{{#str}}dnd.modal.keywords, mod_equella{{/str}}</strong></label>
-        <input type="text" class="form-control" name="eq_kw" id="eq_kw" placeholder="{{#str}}dnd.modal.commaseparated, mod_equella{{/str}}">
+        <label for="oeq_kw"><strong>{{#str}}dnd.modal.keywords, mod_equella{{/str}}</strong></label>
+        <input type="text" class="form-control" name="oeq_kw" id="oeq_kw" placeholder="{{#str}}dnd.modal.commaseparated, mod_equella{{/str}}">
     </div>
-    <div id="eq_validate_error" class="alert alert-danger d-none" role="alert"></div>
+    <div id="oeq_validate_error" class="alert alert-danger d-none" role="alert"></div>
 </form>

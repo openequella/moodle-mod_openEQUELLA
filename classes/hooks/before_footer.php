@@ -36,26 +36,11 @@ class before_footer {
     public static function callback(\core\hook\output\before_footer_html_generation $hook): void {
         global $PAGE, $COURSE, $CFG;
 
-        // Only run on course-view pages.
-        if (strpos($PAGE->pagetype, 'course-view') !== 0) {
+        if (!self::is_intercept_active() || !self::is_suitable_page_state()) {
             return;
         }
 
-        // Only run when editing is enabled.
-        if (!$PAGE->user_is_editing()) {
-            return;
-        }
-
-        $intercept_setting = (int) get_config('equella', 'equella_intercept_files');
-
-        if ($intercept_setting !== EQUELLA_CONFIG_INTERCEPT_META) {
-            return;
-        }
-
-        $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes);
-        if ($maxbytes === USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
-            $maxbytes = get_max_upload_file_size();
-        }
+        $maxbytes = self::calculate_max_file_size();
 
         $config = [
             'courseId' => $COURSE->id,
@@ -63,5 +48,41 @@ class before_footer {
         ];
 
         $PAGE->requires->js_call_amd('mod_equella/dndupload', 'init', [$config]);
+    }
+
+    /**
+     * Returns true if the equella intercept setting is set to META.
+     *
+     * @return bool
+     */
+    private static function is_intercept_active(): bool {
+        $intercept_setting = (int) get_config('equella', 'equella_intercept_files');
+        return $intercept_setting === EQUELLA_CONFIG_INTERCEPT_META;
+    }
+
+    /**
+     * Returns true if the current page is a course-view page with editing enabled.
+     *
+     * @return bool
+     */
+    private static function is_suitable_page_state(): bool {
+        global $PAGE;
+        return strpos($PAGE->pagetype, 'course-view') === 0 && $PAGE->user_is_editing();
+    }
+
+    /**
+     * Returns the effective maximum upload file size for the current user and course.
+     *
+     * @return int
+     */
+    private static function calculate_max_file_size(): int {
+        global $PAGE, $COURSE, $CFG;
+
+        $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes);
+        if ($maxbytes === USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
+            $maxbytes = get_max_upload_file_size();
+        }
+
+        return $maxbytes;
     }
 }
