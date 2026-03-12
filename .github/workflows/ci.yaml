@@ -19,18 +19,21 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version-file: '.nvmrc'
           cache: 'npm'
           cache-dependency-path: tsrc/package-lock.json
           
-      - name: Install node dependencies (tsrc) and build dndupload
+      - name: Install node dependencies (tsrc)
         working-directory: tsrc
-        run: |
-          npm ci
+        run: npm ci
           
       - name: Lint TypeScript code
         working-directory: tsrc
         run: npm run lint
+
+      - name: Run unit tests for Typescript
+        working-directory: tsrc
+        run: npm test
         
       - name: Build (tsc + webpack)
         working-directory: tsrc
@@ -69,14 +72,8 @@ jobs:
           tar -czvf "${ARCHIVE_NAME}.tar.gz" "${ARCHIVE_NAME}/"
           
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           path: |
             dist/${{ steps.version.outputs.archive_name }}.zip
             dist/${{ steps.version.outputs.archive_name }}.tar.gz
-      
-
-          
-      
-      
-        
