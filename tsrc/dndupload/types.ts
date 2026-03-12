@@ -62,7 +62,6 @@ export interface ModalStrings {
     errCopyright: string;
     errTitle: string;
     errDesc: string;
-    errInternal: string;
     uploadTitle: string;
     fileInfo: string;
     btnUpload: string;

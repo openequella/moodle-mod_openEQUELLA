@@ -30,7 +30,6 @@ const loadModalStrings = async (file: File): Promise<ModalStrings> => {
         { key: 'err.copyright' },
         { key: 'err.title' },
         { key: 'err.desc' },
-        { key: 'err.internal' },
         { key: 'title.upload' },
         { key: 'fileinfo', param: { name, size: formatBytes(size) } },
     ];
@@ -44,13 +43,12 @@ const loadModalStrings = async (file: File): Promise<ModalStrings> => {
         errCopyright,
         errTitle,
         errDesc,
-        errInternal,
         uploadTitle,
         fileInfo,
         btnUpload
     ] = await get_strings(requests);
 
-    return { errCopyright, errTitle, errDesc, errInternal, uploadTitle, fileInfo, btnUpload };
+    return { errCopyright, errTitle, errDesc, uploadTitle, fileInfo, btnUpload };
 };
 
 /**
@@ -170,4 +168,3 @@ const updateErrorDisplay = (root: HTMLElement, message: string | null): void => 
 
     errorBox.classList.toggle(DISPLAY_NONE_CLASS, !isVisible);
 };
-

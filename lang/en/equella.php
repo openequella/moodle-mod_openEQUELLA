@@ -202,7 +202,6 @@ $string['dnd.modal.commaseparated'] = 'Comma separated';
 $string['dnd.modal.err.copyright'] = 'Please select a copyright option.';
 $string['dnd.modal.err.title'] = 'Title must be at least 6 characters.';
 $string['dnd.modal.err.desc'] = 'Description is required.';
-$string['dnd.modal.err.internal'] = 'Internal Error: Missing file or section.';
 
 $string['dnd.err.title.uploadfailed'] = 'Upload Failed';
 $string['dnd.err.folder'] = 'The dropped item(s) <strong>{$a}</strong> appear to be a directory. Please compress it into a zip archive and try again.';
