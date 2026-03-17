@@ -80,7 +80,7 @@ The DND upload feature is built using TypeScript and Webpack. The source code is
 If you are modifying the DND feature, you must compile the TypeScript code into the `amd/build` and `amd/src` directories for Moodle to recognize the changes.
 
 ### Prerequisites
-* [Node.js](https://nodejs.org/) (LTS recommended)
+* [Node.js](https://nodejs.org/): Use [nvm](https://github.com/nvm-sh/nvm) to install the version defined in `tsrc/.nvmrc`.
 
 ### Build Instructions
 
@@ -103,4 +103,3 @@ More Information
 ----------------
 
 For any more information regarding integration with Moodle from openEQUELLA, visit [this documentation page.](http://openequella.github.io/guides/MoodleIntegrationGuide.html)
-
