@@ -16,7 +16,7 @@ export default [
         },
     },
     {
-        files: ["**/*.d.ts", "tests/__mocks__/**/*.ts", "tests/**/*.test.ts"],
+        files: ["**/*.d.ts", "tests/**/*.ts"],
         rules: {
             "@typescript-eslint/no-explicit-any": "off",
         },
@@ -24,7 +24,6 @@ export default [
     {
         files: ["**/*.ts"],
         rules: {
-            "@typescript-eslint/no-explicit-any": "off", // Moodle has lots of "any".
             "no-console": "off",
         },
     },
