@@ -5,19 +5,26 @@ import {LoadingProcess, processMonitor} from 'core/process_monitor';
 import {getCourseEditor} from 'core_courseformat/courseeditor';
 import {launchUploadModal} from "./modal_handler";
 
+const PROCESS_REMOVE_DELAY_MS = 2000;
+
+/**
+ * Attempts to acquire upload data, returning null if the user cancels.
+ */
+const tryAcquireUploadData = async (state: DndState, file: File): Promise<UploadData | null> => {
+    try {
+        return await launchUploadModal(state, file);
+    } catch (e) {
+        if (e instanceof UploadCancelledError) return null;
+        throw e;
+    }
+};
+
 /**
  * Handles a single file upload: opens the modal, performs the XHR upload, and refreshes the course section state.
  */
 export const handleFileUpload = async (file: File, state: DndState): Promise<void> => {
-    let data: UploadData;
-    try {
-        data = await launchUploadModal(state, file);
-    } catch (e) {
-        if (e instanceof UploadCancelledError) {
-            return;
-        }
-        throw e;
-    }
+    const data = await tryAcquireUploadData(state, file);
+    if (!data) return;
 
     const process = processMonitor.addLoadingProcess({ name: data.file.name });
 
@@ -28,7 +35,7 @@ export const handleFileUpload = async (file: File, state: DndState): Promise<voi
         process.setError(e instanceof Error ? e.message : String(e));
         throw e;
     } finally {
-        setTimeout(() => process.remove(), 2000);
+        setTimeout(() => process.remove(), PROCESS_REMOVE_DELAY_MS);
     }
 };
 
@@ -45,7 +52,10 @@ const refreshSectionState = async (state: DndState): Promise<void> => {
     await editor.dispatch(action, payload);
 };
 
-/** Sends the upload XHR and returns a promise that resolves on success. */
+/**
+ * Sends the upload XHR to the openEQUELLA module's endpoint (`dndupload.php`).
+ * Returns a promise that resolves when the server confirms the upload is successful.
+ */
 const performUpload = (data: UploadData, state: DndState, process: LoadingProcess): Promise<void> =>
     new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
