@@ -1,9 +1,13 @@
 import Config from 'core/config';
 
+/** Moodle component name. */
 export const PLUGIN_NAME = 'mod_equella';
+/** Server endpoint for file uploads. */
 export const UPLOAD_ENDPOINT = `${Config.wwwroot}/mod/equella/dndupload.php`;
+/** CSS class name to hide elements. */
 export const DISPLAY_NONE_CLASS = 'd-none';
 
+/** DOM selectors for the upload form fields and error box. */
 export const FORM_SELECTORS = {
     ERROR: '#oeq_validate_error',
     FORM_CONTAINER: '#equella-upload-form-container',
@@ -13,6 +17,7 @@ export const FORM_SELECTORS = {
     KEYWORDS: 'oeq_kw',
 };
 
+/** Error thrown when the user closes the modal without uploading. */
 export class UploadCancelledError extends Error {
     constructor() {
         super('Upload cancelled by user.');
@@ -20,6 +25,7 @@ export class UploadCancelledError extends Error {
     }
 }
 
+/** Configuration passed from PHP on initialization. */
 export interface InitConfig {
     /** Id of course page where DND is active. */
     courseId: number;
@@ -27,6 +33,7 @@ export interface InitConfig {
     maxBytes: number;
 }
 
+/** Runtime state for the current drag-and-drop session. */
 export interface DndState extends InitConfig {
     /** The current Moodle session key. */
     sessKey: string;
@@ -36,6 +43,7 @@ export interface DndState extends InitConfig {
     targetSectionId: number | null;
 }
 
+/** Metadata collected from the upload modal form. */
 export interface UploadData {
     /** The file to upload. */
     file: File;
@@ -51,6 +59,7 @@ export interface UploadData {
     keywords: string;
 }
 
+/** Represents an item from a drag event, distinguishing files from folders. */
 export interface DropItem {
     /** The {@link File} object obtained from the drop. */
     file: File;
@@ -58,6 +67,7 @@ export interface DropItem {
     isFile: boolean;
 }
 
+/** Localized strings used in the upload modal UI. */
 export interface ModalStrings {
     errCopyright: string;
     errTitle: string;
@@ -67,3 +77,11 @@ export interface ModalStrings {
     btnUpload: string;
 }
 
+/** Interface for the Moodle core Modal object. */
+export interface ModalInstance {
+    setRemoveOnClose: (remove: boolean) => void;
+    setButtonText: (buttonId: string, text: string) => void;
+    show: () => void;
+    destroy: () => void;
+    getRoot: () => { on: (event: string, cb: (e: Event) => void) => void; 0: HTMLElement };
+}

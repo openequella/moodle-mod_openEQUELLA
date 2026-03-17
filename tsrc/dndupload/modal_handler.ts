@@ -2,7 +2,16 @@ import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalEvents from 'core/modal_events';
 import {get_strings, StringRequest} from 'core/str';
 import Templates from 'core/templates';
-import {DndState, FORM_SELECTORS, ModalStrings, PLUGIN_NAME, UploadCancelledError, UploadData, DISPLAY_NONE_CLASS} from './types';
+import {
+    DndState, 
+    FORM_SELECTORS, 
+    ModalStrings, 
+    PLUGIN_NAME, 
+    UploadCancelledError, 
+    UploadData, 
+    DISPLAY_NONE_CLASS,
+    ModalInstance
+} from './types';
 import {formatBytes} from './utils';
 
 /**
@@ -26,7 +35,7 @@ const loadModalStrings = async (file: File): Promise<ModalStrings> => {
     const keyPrefix = 'dnd.modal.';
     const {name, size} = file;
 
-    const modalStringConfigs: Array<{ key: string; param?: any }> = [
+    const modalStringConfigs: Array<{ key: string; param?: Record<string, string> }> = [
         { key: 'err.copyright' },
         { key: 'err.title' },
         { key: 'err.desc' },
@@ -86,7 +95,7 @@ const renderModal = async (strings: ModalStrings, file: File) => {
  * @param reject Callback for user cancellation.
  */
 const attachModalEventHandlers = (
-    modal: any,
+    modal: ModalInstance,
     partialData: Partial<UploadData>,
     strings: ModalStrings,
     resolve: (data: UploadData) => void,
@@ -102,8 +111,10 @@ const attachModalEventHandlers = (
             assertFormDataValid(formData, strings);
             finalData = { ...formData, ...partialData } as UploadData;
             modal.destroy();
-        } catch (err: any) {
+        } catch (err: unknown) {
+            if (err instanceof Error)
             updateErrorDisplay(root, err.message);
+            else console.error(err);
         }
     };
 
