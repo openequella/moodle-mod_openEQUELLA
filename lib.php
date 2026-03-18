@@ -383,41 +383,24 @@ function equella_handle_mod_updated($event) {
 
 /**
  * Register the ability to handle drag and drop file uploads
- *
- * @return array containing details of the files / types the mod can handle
+ * This just tells Moodle "Yes, we support DND", so it enables the drop zone.
  */
-if ((int)equella_get_config( 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_ASK) {
-    function equella_dndupload_register() {
-        return array('files' => array(array('extension' => '*','message' => get_string('dnduploadresource', 'mod_equella'))));
-    }
-}
+function mod_equella_dndupload_register() {
+    $intercept_setting = (int) get_config('equella', 'equella_intercept_files');
 
-/**
- * Register the ability to handle drag and drop file uploads with meta data
- *
- * @return array containing details of the files / types the mod can handle
- */
-if ((int)equella_get_config('equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_META) {
-    function equella_dndupload_register() {
-        global $PAGE, $CFG, $COURSE;
-        $config = [
-            [
-                'courseid' => $COURSE->id,
-                'maxbytes' => get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes)
-            ]
-        ];
-        $PAGE->requires->yui_module('moodle-mod_equella-dndupload', 'M.mod_equella.dndupload.init', $config);
+    if ($intercept_setting === EQUELLA_CONFIG_INTERCEPT_META) {
         return array('files' => array(
             array('extension' => '*', 'message' => get_string('dnduploadresourcemetadata', 'mod_equella'))
         ));
     }
-}
 
-//https://github.com/equella/moodle-mod_equella/issues/60
-if ((int)equella_get_config( 'equella_intercept_files') == EQUELLA_CONFIG_INTERCEPT_NONE) {
-    function equella_dndupload_register() {
-        return null;
+    if ($intercept_setting === EQUELLA_CONFIG_INTERCEPT_ASK) {
+        return array('files' => array(
+            array('extension' => '*', 'message' => get_string('dnduploadresource', 'mod_equella'))
+        ));
     }
+
+    return null;
 }
 
 /**
@@ -426,7 +409,7 @@ if ((int)equella_get_config( 'equella_intercept_files') == EQUELLA_CONFIG_INTERC
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function equella_dndupload_handle($uploadinfo) {
+function mod_equella_dndupload_handle($uploadinfo) {
     global $USER, $CFG;
     require_once ($CFG->dirroot . '/mod/equella/locallib.php');
 
