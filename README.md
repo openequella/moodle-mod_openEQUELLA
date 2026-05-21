@@ -1,105 +1,77 @@
 Moodle Module For openEQUELLA Integration
 =========================================
 
+This plugin (`mod_equella`) integrates [openEQUELLA](https://openequella.github.io/)
+with [Moodle](https://moodle.org/), allowing instructors and content authors to
+search for, select and embed resources stored in openEQUELLA directly from
+within Moodle courses.
+
 Requirements
 ------------
 
 - This module requires openEQUELLA 4.1 QA3 or higher.
-- The master branch works with the Moodle 2.7 and up.
+- The `master` branch works with Moodle 2.7 and up. For earlier Moodle
+  versions, use the appropriate Git branch.
 
-For Moodle earlier versions, choose the appropriate git branches.
+Installation
+------------
+
+The recommended way to install the plugin is to download a packaged release
+from GitHub:
+
+1. Go to the
+   [Releases](https://github.com/openequella/moodle-mod_equella/releases)
+   page of this repository.
+2. Under the latest release, download the `moodle-mod_equella-<version>.zip`
+   archive (listed under **Assets**).
+3. Extract the archive. It will produce a directory named `moodle-mod_equella`.
+4. **Rename the extracted directory to `equella`.** The plugin will not work
+   correctly if the directory is not named `equella`, because the plugin
+   component is `mod_equella` and Moodle expects to find it at `mod/equella`.
+5. Copy (or move) the renamed `equella` directory into the `mod` directory of
+   your Moodle installation, so its final location is `<moodle>/mod/equella`.
+6. Log in to your Moodle site as an administrator. Moodle will detect the new
+   plugin and prompt you to complete the upgrade — follow the on-screen
+   instructions to finish the installation.
+
+Alternatively, an administrator may install the plugin through Moodle's
+**Site administration → Plugins → Install plugins** page by uploading the
+release ZIP file directly. After the upload, rename the plugin folder to
+`equella` if prompted, then continue with the upgrade.
+
+Configuration
+-------------
+
+After installation, configure the plugin from
+**Site administration → Plugins → Activity modules → openEQUELLA**:
+
+- Set the **openEQUELLA URL** to your openEQUELLA sign-on endpoint. This must
+  use the URI `/[institutionname]/signon.do`, for example
+  `https://equella.example.org/vanilla/signon.do`.
+- Set the **openEQUELLA action** to `structured` if you are using openEQUELLA
+  6.1 or later.
+- Review the other settings (shared secrets, drag-and-drop options, etc.) and
+  adjust them to match your openEQUELLA institution's configuration.
+
+Once configured, the **openEQUELLA** activity will be available to add to any
+course.
 
 Support
 -------
 
-Feel free to fork this and send back Pull Requests for any defects or features
-that you want to contribute back. Opening issues
-[here](https://github.com/openequella/moodle-mod_equella/issues) is also recommended.
-
-Docker Installation For Testing Purposes
-----------------------------------------
- 
-Clone [this link](https://github.com/jmhjjardison/docker-moodle) to get a docker instance of Moodle.
-Then use Docker to build it.
-
-```sh
-git clone https://github.com/jmhardison/docker-moodle
-cd docker-moodle
-docker build -t moodle .
-```
-
-Then setup and run the MYSQL database for use with the docker Moodle.
- 
-```sh
-docker run -d --name DB -p 3306:3306 -e MYSQL_DATABASE=moodle -e MYSQL_ROOT_PASSWORD=moodle -e MYSQL_USER=moodle -e MYSQL_PASSWORD=moodle mysql
-```
-
-Then, run the Moodle instance. Give it a URL  and a matching port. 
-
-```sh
-docker run -d -P --name moodle --link DB:DB -e MOODLE_URL=http://localhost:8099 -p 8099:80 jhardison/moodle
-```
-
-__NOTE:__ 
-This port and URL should not conflict with that of your openEQUELLA.
-
-From this point on, you should open the Moodle instance in your web browser
-and follow the installation process.
- 
-You can access the Terminal of your Moodle if you so wish with the following command:
-
-```sh
-docker exec -it moodle bash
-```
-
-This project folder should be copied into the Moodle at `/var/www/html/mod`. It must be renamed from `moodle-mod_equella`
-to simply `equella` in order to work properly. From your machine terminal in the folder that contains the `moodle-mod_equella` directory:
-
-```sh
-docker cp  moodle-mod_equella/ moodle:/var/www/html/mod/
-docker exec -it moodle bash
-cd ./var/www/html/mod/
-mv moodle-mod_equella/ equella/
-```
-
-Login to Moodle. It should notify you that a new module has been detected. Click to upgrade.
-
-In the settings, set an openEQUELLA URL. Note: this must have the URI `/[institutionname]/signon.do` so 
-for example, `http://localhost:8080/vanilla/signon.do`.
-
-In the `openEQUELLA action` setting, type `structured`, assuming you are using a recent (6.1 and above) version of openEQUELLA.
-
-You're done! You now have a Moodle instance and an openEQUELLA instance integrated together.
-
-## Development: DND Upload with Metadata Interception
-
-This section applies when a site administrator has enabled **(Intercept drag and drop files → Auto contribute file to openEQUELLA with meta data)** in the openEQUELLA module plugin settings. When active, dragging a file onto a course page opens a custom metadata modal (title, description, copyright, keywords) instead of using Moodle's default upload behaviour.
-
-The DND upload feature is built using TypeScript and Webpack. The source code is located in the `tsrc` directory.
-
-If you are modifying the DND feature, you must compile the TypeScript code into the `amd/build` and `amd/src` directories for Moodle to recognize the changes.
-
-### Prerequisites
-* [Node.js](https://nodejs.org/): Use [nvm](https://github.com/nvm-sh/nvm) to install the version defined in `tsrc/.nvmrc`.
-
-### Build Instructions
-
-1. Navigate to the source directory:
-```sh
-   cd tsrc
-```
-
-2. Install the required dependencies:
-```sh
-   npm ci
-```
-
-3. Build the files for production:
-```sh
-   npm run build
-```
+If you encounter a problem or have a feature request, please open an issue on
+the [issue tracker](https://github.com/openequella/moodle-mod_equella/issues).
 
 More Information
 ----------------
 
-For any more information regarding integration with Moodle from openEQUELLA, visit [this documentation page.](http://openequella.github.io/guides/MoodleIntegrationGuide.html)
+For more information regarding integration with Moodle from openEQUELLA, see
+the [Moodle Integration Guide](http://openequella.github.io/guides/MoodleIntegrationGuide.html).
+
+Contributing
+------------
+
+Interested in contributing to the plugin or setting up a local development
+environment? See [CONTRIBUTING.md](CONTRIBUTING.md) for issue reporting
+guidelines, a Docker-based test setup, and instructions for building the
+TypeScript drag-and-drop upload feature.
