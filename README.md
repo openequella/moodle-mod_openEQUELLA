@@ -13,14 +13,13 @@ Installation
 
 1. Go to the
    [Releases](https://github.com/openequella/moodle-mod_openEQUELLA/releases)
-   page and, under the latest release's **Assets**, download
-   `moodle-mod_openEQUELLA-<version>.zip`.
+   page and download the latest release archive from **Assets**.
 2. Install the plugin in one of the following ways:
 
    - **Via Moodle's plugin installer:** As an administrator, go to
      **Site administration → Plugins → Install plugins** and upload the
-     downloaded ZIP file, then follow the on-screen upgrade prompts.
-   - **Manually:** Extract the ZIP, rename the resulting directory to
+     downloaded archive, then follow the on-screen upgrade prompts.
+   - **Manually:** Extract the archive, rename the resulting directory to
      `equella`, place it at `<moodle>/mod/equella`, then log in as an
      administrator and follow the upgrade prompts.
 
@@ -35,15 +34,13 @@ After installation, configure the plugin from
 - Set the **openEQUELLA action** to `structured`.
 - Fill in the **Shared secrets** settings. The Moodle module's drag-and-drop
   feature requires the shared secrets field to be populated in order to work.
-- Configure the **SSO identification** setting (introduced in
-  [PR #95](https://github.com/openequella/moodle-mod_openEQUELLA/pull/95)) to
-  choose which Moodle user field is sent to openEQUELLA to identify the user
-  during single sign-on. By default the Moodle username is used, but any
-  field listed in the `user_info_field` table can be selected instead. This
-  is useful when your openEQUELLA institution identifies users by an
-  attribute other than the Moodle username (for example, a corporate ID or
-  email address), so that the same person is matched consistently across both
-  systems.
+- Configure the **SSO identification** setting to choose which Moodle user
+  field is sent to openEQUELLA to identify the user during single sign-on. By
+  default the Moodle username is used, but you can select another available
+  user profile field instead. This is useful when your openEQUELLA institution
+  identifies users by an attribute other than the Moodle username (for
+  example, a corporate ID or email address), so that the same person is
+  matched consistently across both systems.
 
 Once configured, the **openEQUELLA** activity will be available to add to any
 course.

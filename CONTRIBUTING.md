@@ -37,26 +37,18 @@ log in to Moodle to complete the plugin upgrade.
 Development: DND Upload with Metadata Interception
 --------------------------------------------------
 
-The implementation was modernised in
-[PR #117](https://github.com/openequella/moodle-mod_openEQUELLA/pull/117),
-which replaced the legacy YUI module with a TypeScript source compiled into
-Moodle AMD modules via Webpack. The relevant pieces are:
+This section applies when a site administrator has enabled **Intercept drag
+and drop files → Auto contribute file to openEQUELLA with meta data** in the
+plugin settings. When active, dragging a file onto a course page opens a
+custom metadata modal (title, description, copyright, keywords) instead of
+using Moodle's default upload behaviour.
 
-- `tsrc/dndupload/dndupload.ts` — the main TypeScript source for the
-  drag-and-drop behaviour, which overrides the `CourseEditor` instance's
-  `uploadFiles` method.
-- `tsrc/moodle/moodle.d.ts` — TypeScript type definitions for the Moodle
-  core APIs used by the feature (e.g. `processMonitor`, `get_string`),
-  since Moodle Core does not ship its own type definitions.
-- `templates/dnd_modal.mustache` — the Mustache template for the metadata
-  modal.
-- `classes/hooks/before_footer.php` (registered via `db/hooks.php`) — a
-  `before_footer_html_generation` callback that injects the AMD module only
-  on course-view pages when editing is enabled and the relevant plugin
-  setting is on.
-- `tsrc/webpack.config.js`, `tsconfig.json`, `eslint.config.mjs` — build,
-  TypeScript and lint configuration. The bundled output is written into
-  `amd/build` and `amd/src` so Moodle can load it as a standard AMD module.
+The DND upload feature is built using TypeScript and Webpack. The source code
+is located in the `tsrc` directory.
+
+If you are modifying the DND feature, you must compile the TypeScript code
+into the `amd/build` and `amd/src` directories for Moodle to recognize the
+changes.
 
 > **Note:** The `amd/build` and `amd/src` directories are not committed to
 > this repository, so contributors who clone the repo must complete the
