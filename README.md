@@ -27,20 +27,24 @@ Configuration
 -------------
 
 After installation, configure the plugin from
-**Site administration → Plugins → Activity modules → openEQUELLA**:
+**Site administration → Plugins → Activity modules → openEQUELLA Resource**:
 
 - Set the **openEQUELLA URL**. The URI must be of the form
   `[institutionURL]/signon.do`.
 - Set the **openEQUELLA action** to `structured`.
-- Fill in the **Shared secrets** settings. The Moodle module's drag-and-drop
-  feature requires the shared secrets field to be populated in order to work.
+- Configure the **LTI settings**, if your openEQUELLA institution uses LTI for
+  launching and embedding resources from Moodle. When LTI is enabled, it is
+  used for opening and embedding openEQUELLA resources.
+- Fill in the **Shared secrets** settings. These settings are required for the
+  drag-and-drop upload feature, even if LTI is enabled.
 - Configure the **SSO identification** setting to choose which Moodle user
   field is sent to openEQUELLA to identify the user during single sign-on. By
   default the Moodle username is used, but you can select another available
   user profile field instead. This is useful when your openEQUELLA institution
-  identifies users by an attribute other than the Moodle username (for
-  example, a corporate ID or email address), so that the same person is
-  matched consistently across both systems.
+  identifies users by an attribute other than the Moodle username, such as an
+  email address or staff/student ID.
+- Review the other settings and adjust them to match your openEQUELLA
+  institution's configuration.
 
 Once configured, the **openEQUELLA** activity will be available to add to any
 course.
