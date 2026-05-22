@@ -37,15 +37,6 @@ log in to Moodle to complete the plugin upgrade.
 Development: DND Upload with Metadata Interception
 --------------------------------------------------
 
-The drag-and-drop (DND) upload feature lets users contribute files directly
-to openEQUELLA by dragging them onto a course page. When enabled, it
-replaces Moodle's default file upload flow with a custom metadata modal
-(title, description, copyright, keywords) so the dropped file can be
-contributed to openEQUELLA with the appropriate metadata. The feature is
-activated when a site administrator enables
-**Intercept drag and drop files → Auto contribute file to openEQUELLA with
-meta data** in the plugin settings.
-
 The implementation was modernised in
 [PR #117](https://github.com/openequella/moodle-mod_openEQUELLA/pull/117),
 which replaced the legacy YUI module with a TypeScript source compiled into
@@ -67,8 +58,13 @@ Moodle AMD modules via Webpack. The relevant pieces are:
   TypeScript and lint configuration. The bundled output is written into
   `amd/build` and `amd/src` so Moodle can load it as a standard AMD module.
 
-If you modify the DND feature, you must rebuild the TypeScript so the
-updated `amd/build` and `amd/src` files are picked up by Moodle.
+> **Note:** The `amd/build` and `amd/src` directories are not committed to
+> this repository, so contributors who clone the repo must complete the
+> prerequisites and build steps below before the DND upload feature will
+> work. End users installing the plugin from the
+> [Releases](https://github.com/openequella/moodle-mod_openEQUELLA/releases)
+> page do **not** need to do this — the release assets already include the
+> compiled `amd` folder.
 
 ### Prerequisites
 
