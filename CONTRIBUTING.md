@@ -77,23 +77,14 @@ changes.
    npm ci
    ```
 
-3. Lint the TypeScript source:
-
-   ```sh
-   npm run lint
-   ```
-
-4. Build the bundled AMD modules:
+3. Build the bundled AMD modules:
 
    ```sh
    npm run build
    ```
 
-   Use `npm run watch` during active development to rebuild automatically on
-   changes.
-
 ### Continuous Integration
 
 The GitHub Actions workflow at `.github/workflows/ci.yaml` runs the lint and
 build steps on every push and pull request, and packages the plugin into
-`.zip` and `.tar.gz` artifacts that are published on tagged releases.
+`.zip` and `.tar.gz` artifacts.
