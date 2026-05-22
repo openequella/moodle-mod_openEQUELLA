@@ -9,95 +9,71 @@ Reporting Issues and Submitting Pull Requests
 ---------------------------------------------
 
 - Open issues on the
-  [issue tracker](https://github.com/openequella/moodle-mod_equella/issues).
+  [issue tracker](https://github.com/openequella/moodle-mod_openEQUELLA/issues).
 - Fork the repository and send pull requests for any defects or features that
   you would like to contribute back.
 
 Branching
 ---------
 
-- The `master` branch targets Moodle 2.7 and later.
-- For earlier Moodle versions, choose the appropriate Git branch.
+- The `master` branch targets the latest supported Moodle version (currently
+  Moodle 4.5.x).
+- For older Moodle versions, choose the appropriate Git branch.
 
 Docker Installation For Testing Purposes
 ----------------------------------------
 
-Clone [this repository](https://github.com/jmhardison/docker-moodle) to get a
-Docker instance of Moodle, then use Docker to build it.
+For a local Moodle test environment, use the
+[moodlehq/moodle-docker](https://github.com/moodlehq/moodle-docker) project,
+which provides Docker configuration aimed at Moodle developers and testers
+and supports the latest Moodle versions.
 
-```sh
-git clone https://github.com/jmhardison/docker-moodle
-cd docker-moodle
-docker build -t moodle .
-```
-
-Set up and run the MySQL database for use with the Docker Moodle.
-
-```sh
-docker run -d --name DB -p 3306:3306 -e MYSQL_DATABASE=moodle -e MYSQL_ROOT_PASSWORD=moodle -e MYSQL_USER=moodle -e MYSQL_PASSWORD=moodle mysql
-```
-
-Then run the Moodle instance. Give it a URL and a matching port.
-
-```sh
-docker run -d -P --name moodle --link DB:DB -e MOODLE_URL=http://localhost:8099 -p 8099:80 jhardison/moodle
-```
-
-__NOTE:__ This port and URL should not conflict with that of your openEQUELLA.
-
-From this point on, open the Moodle instance in your web browser and follow the
-installation process.
-
-You can access the terminal of your Moodle container if you so wish:
-
-```sh
-docker exec -it moodle bash
-```
-
-This project folder should be copied into Moodle at `/var/www/html/mod`. It
-must be renamed from `moodle-mod_equella` to simply `equella` in order to work
-properly. From the directory that contains the `moodle-mod_equella` directory:
-
-```sh
-docker cp  moodle-mod_equella/ moodle:/var/www/html/mod/
-docker exec -it moodle bash
-cd ./var/www/html/mod/
-mv moodle-mod_equella/ equella/
-```
-
-Log in to Moodle. It should notify you that a new module has been detected.
-Click to upgrade.
-
-In the settings, set an openEQUELLA URL. Note: this must have the URI
-`/[institutionname]/signon.do`, for example
-`http://localhost:8080/vanilla/signon.do`.
-
-In the `openEQUELLA action` setting, type `structured`, assuming you are using
-a recent (6.1 and above) version of openEQUELLA.
-
-You're done! You now have a Moodle instance and an openEQUELLA instance
-integrated together.
+Refer to that repository's documentation for prerequisites and the full
+quick-start, then tailor the setup (database engine, Moodle version, ports,
+etc.) to your needs. Once the containers are up, mount or copy this plugin
+into `mod/equella` inside the Moodle webroot (`MOODLE_DOCKER_WWWROOT`) and
+log in to Moodle to complete the plugin upgrade.
 
 Development: DND Upload with Metadata Interception
 --------------------------------------------------
 
-This section applies when a site administrator has enabled **(Intercept drag
-and drop files → Auto contribute file to openEQUELLA with meta data)** in the
-openEQUELLA module plugin settings. When active, dragging a file onto a course
-page opens a custom metadata modal (title, description, copyright, keywords)
-instead of using Moodle's default upload behaviour.
+The drag-and-drop (DND) upload feature lets users contribute files directly
+to openEQUELLA by dragging them onto a course page. When enabled, it
+replaces Moodle's default file upload flow with a custom metadata modal
+(title, description, copyright, keywords) so the dropped file can be
+contributed to openEQUELLA with the appropriate metadata. The feature is
+activated when a site administrator enables
+**Intercept drag and drop files → Auto contribute file to openEQUELLA with
+meta data** in the plugin settings.
 
-The DND upload feature is built using TypeScript and Webpack. The source code
-is located in the `tsrc` directory.
+The implementation was modernised in
+[PR #117](https://github.com/openequella/moodle-mod_openEQUELLA/pull/117),
+which replaced the legacy YUI module with a TypeScript source compiled into
+Moodle AMD modules via Webpack. The relevant pieces are:
 
-If you are modifying the DND feature, you must compile the TypeScript code
-into the `amd/build` and `amd/src` directories for Moodle to recognize the
-changes.
+- `tsrc/dndupload/dndupload.ts` — the main TypeScript source for the
+  drag-and-drop behaviour, which overrides the `CourseEditor` instance's
+  `uploadFiles` method.
+- `tsrc/moodle/moodle.d.ts` — TypeScript type definitions for the Moodle
+  core APIs used by the feature (e.g. `processMonitor`, `get_string`),
+  since Moodle Core does not ship its own type definitions.
+- `templates/dnd_modal.mustache` — the Mustache template for the metadata
+  modal.
+- `classes/hooks/before_footer.php` (registered via `db/hooks.php`) — a
+  `before_footer_html_generation` callback that injects the AMD module only
+  on course-view pages when editing is enabled and the relevant plugin
+  setting is on.
+- `tsrc/webpack.config.js`, `tsconfig.json`, `eslint.config.mjs` — build,
+  TypeScript and lint configuration. The bundled output is written into
+  `amd/build` and `amd/src` so Moodle can load it as a standard AMD module.
+
+If you modify the DND feature, you must rebuild the TypeScript so the
+updated `amd/build` and `amd/src` files are picked up by Moodle.
 
 ### Prerequisites
 
-* [Node.js](https://nodejs.org/): Use [nvm](https://github.com/nvm-sh/nvm) to
-  install the version defined in `tsrc/.nvmrc`.
+* [Node.js](https://nodejs.org/): Use [nvm](https://github.com/nvm-sh/nvm)
+  to install the version defined in `tsrc/.nvmrc`.
 
 ### Build Instructions
 
@@ -113,8 +89,23 @@ changes.
    npm ci
    ```
 
-3. Build the files for production:
+3. Lint the TypeScript source:
+
+   ```sh
+   npm run lint
+   ```
+
+4. Build the bundled AMD modules:
 
    ```sh
    npm run build
    ```
+
+   Use `npm run watch` during active development to rebuild automatically on
+   changes.
+
+### Continuous Integration
+
+The GitHub Actions workflow at `.github/workflows/ci.yaml` runs the lint and
+build steps on every push and pull request, and packages the plugin into
+`.zip` and `.tar.gz` artifacts that are published on tagged releases.

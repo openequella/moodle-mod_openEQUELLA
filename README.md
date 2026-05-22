@@ -6,38 +6,23 @@ with [Moodle](https://moodle.org/), allowing instructors and content authors to
 search for, select and embed resources stored in openEQUELLA directly from
 within Moodle courses.
 
-Requirements
-------------
-
-- This module requires openEQUELLA 4.1 QA3 or higher.
-- The `master` branch works with Moodle 2.7 and up. For earlier Moodle
-  versions, use the appropriate Git branch.
+The latest release of this module requires Moodle v4.5.x.
 
 Installation
 ------------
 
-The recommended way to install the plugin is to download a packaged release
-from GitHub:
-
 1. Go to the
-   [Releases](https://github.com/openequella/moodle-mod_equella/releases)
-   page of this repository.
-2. Under the latest release, download the `moodle-mod_equella-<version>.zip`
-   archive (listed under **Assets**).
-3. Extract the archive. It will produce a directory named `moodle-mod_equella`.
-4. **Rename the extracted directory to `equella`.** The plugin will not work
-   correctly if the directory is not named `equella`, because the plugin
-   component is `mod_equella` and Moodle expects to find it at `mod/equella`.
-5. Copy (or move) the renamed `equella` directory into the `mod` directory of
-   your Moodle installation, so its final location is `<moodle>/mod/equella`.
-6. Log in to your Moodle site as an administrator. Moodle will detect the new
-   plugin and prompt you to complete the upgrade — follow the on-screen
-   instructions to finish the installation.
+   [Releases](https://github.com/openequella/moodle-mod_openEQUELLA/releases)
+   page and, under the latest release's **Assets**, download
+   `moodle-mod_openEQUELLA-<version>.zip`.
+2. Install the plugin in one of the following ways:
 
-Alternatively, an administrator may install the plugin through Moodle's
-**Site administration → Plugins → Install plugins** page by uploading the
-release ZIP file directly. After the upload, rename the plugin folder to
-`equella` if prompted, then continue with the upgrade.
+   - **Via Moodle's plugin installer:** As an administrator, go to
+     **Site administration → Plugins → Install plugins** and upload the
+     downloaded ZIP file, then follow the on-screen upgrade prompts.
+   - **Manually:** Extract the ZIP, rename the resulting directory to
+     `equella`, place it at `<moodle>/mod/equella`, then log in as an
+     administrator and follow the upgrade prompts.
 
 Configuration
 -------------
@@ -45,13 +30,20 @@ Configuration
 After installation, configure the plugin from
 **Site administration → Plugins → Activity modules → openEQUELLA**:
 
-- Set the **openEQUELLA URL** to your openEQUELLA sign-on endpoint. This must
-  use the URI `/[institutionname]/signon.do`, for example
-  `https://equella.example.org/vanilla/signon.do`.
-- Set the **openEQUELLA action** to `structured` if you are using openEQUELLA
-  6.1 or later.
-- Review the other settings (shared secrets, drag-and-drop options, etc.) and
-  adjust them to match your openEQUELLA institution's configuration.
+- Set the **openEQUELLA URL**. The URI must be of the form
+  `[institutionURL]/signon.do`.
+- Set the **openEQUELLA action** to `structured`.
+- Fill in the **Shared secrets** settings. The Moodle module's drag-and-drop
+  feature requires the shared secrets field to be populated in order to work.
+- Configure the **SSO identification** setting (introduced in
+  [PR #95](https://github.com/openequella/moodle-mod_openEQUELLA/pull/95)) to
+  choose which Moodle user field is sent to openEQUELLA to identify the user
+  during single sign-on. By default the Moodle username is used, but any
+  field listed in the `user_info_field` table can be selected instead. This
+  is useful when your openEQUELLA institution identifies users by an
+  attribute other than the Moodle username (for example, a corporate ID or
+  email address), so that the same person is matched consistently across both
+  systems.
 
 Once configured, the **openEQUELLA** activity will be available to add to any
 course.
@@ -60,7 +52,7 @@ Support
 -------
 
 If you encounter a problem or have a feature request, please open an issue on
-the [issue tracker](https://github.com/openequella/moodle-mod_equella/issues).
+the [issue tracker](https://github.com/openequella/moodle-mod_openEQUELLA/issues).
 
 More Information
 ----------------
