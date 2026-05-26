@@ -39,11 +39,10 @@ custom metadata modal (title, description, copyright, keywords) instead of
 using Moodle's default upload behaviour.
 
 The DND upload feature is built using TypeScript and Webpack, implementing Moodle's
-<a href="https://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module">course drag and drop upload support API</a>
-and making use of hooks. The compiled output follows Moodle's
-<a href="https://moodledev.io/docs/4.5/guides/javascript">JavaScript development guidelines</a>
-and <a href="https://moodledev.io/docs/4.5/guides/javascript/modules">AMD module format</a>
-(`amd/src` → `amd/build`). The source code is located in the `tsrc` directory.
+[course drag and drop upload support API](https://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module). The compiled output follows Moodle's
+[JavaScript development guidelines](https://moodledev.io/docs/4.5/guides/javascript)
+and [AMD module format](https://moodledev.io/docs/4.5/guides/javascript/modules). Moodle [hooks](https://moodledev.io/docs/4.5/apis/core/hooks) are used to control when the AMD module
+is loaded. The source code is located in the `tsrc` directory.
 
 If you are modifying the DND feature, you must compile the TypeScript code
 into the `amd/build` and `amd/src` directories for Moodle to recognize the
