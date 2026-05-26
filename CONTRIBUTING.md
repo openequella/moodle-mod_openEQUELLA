@@ -1,27 +1,23 @@
-Contributing to the Moodle Module for openEQUELLA
-==================================================
+# Contributing to the Moodle Module for openEQUELLA
 
 Thank you for your interest in contributing! This document describes how to
 report issues, submit changes, and set up a local development environment for
 working on the plugin.
 
-Reporting Issues and Submitting Pull Requests
----------------------------------------------
+## Reporting Issues and Submitting Pull Requests
 
 - Open issues on the
   [issue tracker](https://github.com/openequella/moodle-mod_openEQUELLA/issues).
 - Fork the repository and send pull requests for any defects or features that
   you would like to contribute back.
 
-Branching
----------
+## Branching
 
 - The `master` branch targets the latest supported Moodle version (currently
   Moodle 4.5.x).
 - For older Moodle versions, choose the appropriate Git branch.
 
-Docker Installation For Testing Purposes
-----------------------------------------
+## Docker Installation For Testing Purposes
 
 For a local Moodle test environment, use the
 [moodlehq/moodle-docker](https://github.com/moodlehq/moodle-docker) project,
@@ -34,8 +30,7 @@ etc.) to your needs. Once the containers are up, mount or copy this plugin
 into `mod/equella` inside the Moodle webroot (`MOODLE_DOCKER_WWWROOT`) and
 log in to Moodle to complete the plugin upgrade.
 
-Development: DND Upload with Metadata Interception
---------------------------------------------------
+## Development: Drag and Drop (DND) Upload
 
 This section applies when a site administrator has enabled **Intercept drag
 and drop files → Auto contribute file to openEQUELLA with meta data** in the
@@ -43,8 +38,9 @@ plugin settings. When active, dragging a file onto a course page opens a
 custom metadata modal (title, description, copyright, keywords) instead of
 using Moodle's default upload behaviour.
 
-The DND upload feature is built using TypeScript and Webpack. The source code
-is located in the `tsrc` directory.
+The DND upload feature is built using TypeScript and Webpack, implementing Moodle's
+[course drag and drop upload support API](https://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module)
+and making use of hooks. The source code is located in the `tsrc` directory.
 
 If you are modifying the DND feature, you must compile the TypeScript code
 into the `amd/build` and `amd/src` directories for Moodle to recognize the
@@ -85,6 +81,4 @@ changes.
 
 ### Continuous Integration
 
-The GitHub Actions workflow at `.github/workflows/ci.yaml` runs the lint and
-build steps on every push and pull request, and packages the plugin into
-`.zip` and `.tar.gz` artifacts.
+The GitHub Actions workflow at `.github/workflows/ci.yaml` runs on pushes to master, release/*, and tags, and on pull requests targeting master. It runs lint, TypeScript unit tests, and build steps, and packages the plugin into `.zip` and `.tar.gz` artifacts.

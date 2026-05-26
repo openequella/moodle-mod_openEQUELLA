@@ -1,5 +1,4 @@
-Moodle Module For openEQUELLA Integration
-=========================================
+# Moodle Module For openEQUELLA Integration
 
 This plugin (`mod_equella`) integrates [openEQUELLA](https://openequella.github.io/)
 with [Moodle](https://moodle.org/), allowing instructors and content authors to
@@ -8,8 +7,7 @@ within Moodle courses.
 
 The latest release of this module requires Moodle v4.5.x.
 
-Installation
-------------
+## Installation
 
 1. Go to the
    [Releases](https://github.com/openequella/moodle-mod_openEQUELLA/releases)
@@ -23,8 +21,7 @@ Installation
      `equella`, place it at `<moodle>/mod/equella`, then log in as an
      administrator and follow the upgrade prompts.
 
-Configuration
--------------
+## Configuration
 
 After installation, configure the plugin from
 **Site administration → Plugins → Activity modules → openEQUELLA Resource**:
@@ -50,20 +47,17 @@ After installation, configure the plugin from
 Once configured, the **openEQUELLA** activity will be available to add to any
 course.
 
-Support
--------
+## Support
 
 If you encounter a problem or have a feature request, please open an issue on
 the [issue tracker](https://github.com/openequella/moodle-mod_openEQUELLA/issues).
 
-More Information
-----------------
+## More Information
 
 For more information regarding integration with Moodle from openEQUELLA, see
 the [Moodle Integration Guide](http://openequella.github.io/guides/MoodleIntegrationGuide.html).
 
-Contributing
-------------
+## Contributing
 
 Interested in contributing to the plugin or setting up a local development
 environment? See [CONTRIBUTING.md](CONTRIBUTING.md) for issue reporting
