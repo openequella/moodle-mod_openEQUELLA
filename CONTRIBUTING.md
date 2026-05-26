@@ -30,7 +30,7 @@ etc.) to your needs. Once the containers are up, mount or copy this plugin
 into `mod/equella` inside the Moodle webroot (`MOODLE_DOCKER_WWWROOT`) and
 log in to Moodle to complete the plugin upgrade.
 
-## Development: Drag and Drop (DND) Upload
+## Development: Drag and Drop (DND) Upload with Metadata Interception
 
 This section applies when a site administrator has enabled **Intercept drag
 and drop files → Auto contribute file to openEQUELLA with meta data** in the
@@ -39,8 +39,11 @@ custom metadata modal (title, description, copyright, keywords) instead of
 using Moodle's default upload behaviour.
 
 The DND upload feature is built using TypeScript and Webpack, implementing Moodle's
-[course drag and drop upload support API](https://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module)
-and making use of hooks. The source code is located in the `tsrc` directory.
+<a href="https://docs.moodle.org/dev/Implementing_Course_drag_and_drop_upload_support_in_a_module">course drag and drop upload support API</a>
+and making use of hooks. The compiled output follows Moodle's
+<a href="https://moodledev.io/docs/4.5/guides/javascript">JavaScript development guidelines</a>
+and <a href="https://moodledev.io/docs/4.5/guides/javascript/modules">AMD module format</a>
+(`amd/src` → `amd/build`). The source code is located in the `tsrc` directory.
 
 If you are modifying the DND feature, you must compile the TypeScript code
 into the `amd/build` and `amd/src` directories for Moodle to recognize the
