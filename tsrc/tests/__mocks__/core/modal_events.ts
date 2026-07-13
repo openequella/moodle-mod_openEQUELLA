@@ -1,0 +1,1 @@
+export default {save: 'save-event', cancel: 'cancel-event', hidden: 'hidden-event'};

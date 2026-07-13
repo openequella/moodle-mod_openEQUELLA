@@ -13,9 +13,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026032300;
-$plugin->requires  = 2024100700;    // Requires this Moodle version
-$plugin->component = 'mod_equella'; // Full name of the plugin (used for diagnostics)
-$plugin->release = '1.3.3';
+$callbacks = [
+    [
+        'hook' => \core\hook\output\before_footer_html_generation::class,
+        'callback' => \mod_equella\hooks\before_footer::class . '::callback',
+    ],
+];
+

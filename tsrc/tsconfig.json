@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
+    "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
+  "include": [
+    "dndupload/**/*",
+    "moodle/**/*",
+    "tests/**/*"
+  ]
+}

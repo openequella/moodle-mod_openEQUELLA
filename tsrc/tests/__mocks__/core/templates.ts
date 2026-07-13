@@ -1,0 +1,1 @@
+export default {render: jest.fn(() => Promise.resolve('<div>Mock Template Render</div>'))};

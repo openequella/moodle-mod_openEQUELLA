@@ -1,0 +1,1 @@
+export default {wwwroot: 'https://moodle.example.com', sesskey: 'test_sesskey'};
