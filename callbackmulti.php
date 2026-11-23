@@ -18,6 +18,8 @@ require_once ("../../course/lib.php");
 require_once ("lib.php");
 
 require_login();
+require_sesskey();
+
 $links = required_param('tlelinks', PARAM_RAW);
 $courseid = required_param('course', PARAM_INT);
 $sectionnum = optional_param('section', 0, PARAM_INT);
@@ -26,6 +28,9 @@ $coursecontext = context_course::instance($courseid);
 require_capability('moodle/course:manageactivities', $coursecontext);
 
 $links = json_decode($links, true);
+if (!is_array($links)) {
+    throw new \core\exception\invalid_parameter_exception('Expected a list of selected resources');
+}
 $mod = new stdClass();
 $mod->course = $courseid;
 $mod->modulename = 'equella';

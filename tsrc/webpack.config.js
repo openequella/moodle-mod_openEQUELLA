@@ -2,7 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 
 const sharedConfig = {
-    entry: './dndupload/index.ts',
+    entry: { 
+        dndupload: './dndupload/index.ts', 
+        selectionreturn: './selectionreturn/index.ts'
+    },
     module: {
         rules: [
             {
@@ -34,7 +37,7 @@ const prodConfig = {
         extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'dndupload.min.js',
+        filename: '[name].min.js',
         path: path.resolve(__dirname, '../amd/build'),
         library: {
             type: 'amd',
@@ -50,7 +53,7 @@ const devConfig = {
         extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'dndupload.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, '../amd/src'),
         library: {
             type: 'amd',
