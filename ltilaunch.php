@@ -22,7 +22,7 @@ require_once ($CFG->libdir . '/completionlib.php');
 
 require_login();
 
-$action = optional_param('action', 'view', PARAM_ACTION);
+$action = optional_param('action', 'view', PARAM_ALPHANUMEXT);
 
 if ($action == 'view') {
     $cmid = required_param('cmid', PARAM_INT);
@@ -66,6 +66,7 @@ if ($action == 'view') {
     $args = new stdClass();
     $args->course = required_param('course', PARAM_INT);
     $args->section = required_param('section', PARAM_INT);
+    $args->returnstate = required_param('returnstate', PARAM_ALPHANUM);
     $course = $DB->get_record('course', array('id' => $args->course), '*', MUST_EXIST);
     $context = context_course::instance($args->course);
 

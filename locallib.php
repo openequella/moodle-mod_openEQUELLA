@@ -160,13 +160,15 @@ EOT;
 function equella_select_dialog($args) {
     global $PAGE;
 
-    $equrl = equella_build_integration_url($args);
+    $args->returnstate = bin2hex(random_bytes(16));
+    $callbackurl = equella_selection_callback_url($args)->out();
 
     if (equella_get_config('equella_enable_lti')) {
         $args->action = 'select';
         $launchurl = new moodle_url('/mod/equella/ltilaunch.php', (array)$args);
         $objecturl = $launchurl->out(false);
     } else {
+        $equrl = equella_build_integration_url($args);
         if (equella_get_config('equella_action') == EQUELLA_ACTION_STRUCTURED) {
             $redirecturl = new moodle_url('/mod/equella/redirectselection.php', array('equellaurl' => $equrl->out(false),'courseid' => $args->course,'sectionid' => $args->section));
             $objecturl = $redirecturl->out(false);
@@ -180,11 +182,15 @@ function equella_select_dialog($args) {
     $cancel = get_string('cancel');
     $cancelurl = new moodle_url('/course/view.php', array('id' => $args->course));
     $link = html_writer::link($cancelurl, $cancel);
+    $sesskey = s(sesskey());
+    $equellaurl = s(equella_get_config('equella_url'));
     $html = <<<EOF
-<div>
-    <button id="openequellachooser">$equellatitle</button>
+<form method="post" action="$callbackurl" data-equella-url="$equellaurl" data-return-state="$args->returnstate">
+    <input type="hidden" name="tlelinks" value="">
+    <input type="hidden" name="sesskey" value="$sesskey">
+    <button type="button" id="openequellachooser">$equellatitle</button>
     $link
-</div>
+</form>
 EOF;
     $PAGE->requires->js_init_call('M.mod_equella.display_equella', array($equellacontainer,880,600,$equellatitle,$objecturl), true);
 
@@ -217,8 +223,8 @@ function equella_parse_query($str) {
     return $op;
 }
 
-function equella_build_integration_url($args, $appendtoken = true) {
-    global $USER;
+/** Build the Moodle-owned destination for this selection and course section. */
+function equella_selection_callback_url($args): moodle_url {
     $callbackurlparams = array('course' => $args->course,'section' => $args->section);
 
     if (!empty($args->cmid)) {
@@ -239,7 +245,11 @@ function equella_build_integration_url($args, $appendtoken = true) {
         $callbackurlparams['modulename'] = 'equella';
     }
 
-    $callbackurl = new moodle_url('/mod/equella/callbackmulti.php', $callbackurlparams);
+    return new moodle_url('/mod/equella/callbackmulti.php', $callbackurlparams);
+}
+
+function equella_build_integration_url($args, $appendtoken = true) {
+    $callbackurl = equella_selection_callback_url($args);
     $cancelurl = new moodle_url('/mod/equella/cancel.php', array('course' => $args->course));
 
     $coursecode = equella_get_coursecode($args->course);
@@ -247,6 +257,8 @@ function equella_build_integration_url($args, $appendtoken = true) {
         'method' => 'lms',
         'attachmentUuidUrls' => 'true',
         'returnprefix' => 'tle',
+        'returnmethod' => 'postmessage-v1',
+        'returnstate' => $args->returnstate,
         'template' => 'standard',
         'courseId' => $args->course,
         'courseCode' => $coursecode,

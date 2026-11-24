@@ -82,9 +82,6 @@ M.mod_equella.display_equella = function(Y, equellaContainer, minwidth, minheigh
 	}
         newheight = newheight - 50;
 	obj.setStyle('height', newheight + 'px');
-	if (initialize) {
-            obj.setAttribute('src', redirecturl);
-        }
     };
     Y.use('panel', 'dd-plugin', 'resize-plugin', 'event', function(Y) {
 	var body = Y.one('body');
@@ -122,6 +119,9 @@ M.mod_equella.display_equella = function(Y, equellaContainer, minwidth, minheigh
 	var button = Y.one('#openequellachooser');
 	button.on('click', function(e) {
 	    panel.show();
+	});
+	require(['mod_equella/selectionreturn'], function(selection) {
+	    selection.launchOeqSelectionSession(document.getElementById(iframeid), redirecturl, button.getDOMNode().form);
 	});
     });
 }
