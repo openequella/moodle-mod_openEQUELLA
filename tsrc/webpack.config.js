@@ -1,6 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 
+// Name each module up front. Moodle doesn't auto-name webpack's define(() => ...) output.
+const amdLibrary = { type: 'amd', name: 'mod_equella/[name]' };
+
 const sharedConfig = {
     entry: { 
         dndupload: './dndupload/index.ts', 
@@ -39,9 +42,7 @@ const prodConfig = {
     output: {
         filename: '[name].min.js',
         path: path.resolve(__dirname, '../amd/build'),
-        library: {
-            type: 'amd',
-        },
+        library: amdLibrary,
     }
 };
 
@@ -55,9 +56,7 @@ const devConfig = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, '../amd/src'),
-        library: {
-            type: 'amd',
-        },
+        library: amdLibrary,
     }
 };
 
