@@ -22,7 +22,7 @@ require_once ($CFG->libdir . '/completionlib.php');
 
 require_login();
 
-$action = optional_param('action', 'view', PARAM_ACTION);
+$action = optional_param('action', 'view', PARAM_ALPHANUMEXT);
 
 if ($action == 'view') {
     $cmid = required_param('cmid', PARAM_INT);
