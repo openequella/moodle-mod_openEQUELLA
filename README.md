@@ -21,6 +21,12 @@ The latest release of this module requires Moodle v4.5.x.
      `equella`, place it at `<moodle>/mod/equella`, then log in as an
      administrator and follow the upgrade prompts.
 
+     When upgrading by this manual method, delete the existing
+     `<moodle>/mod/equella` directory before putting the new one in place,
+     rather than copying the new files over the top. Copying over the top
+     only replaces files of the same name and leaves behind any file that
+     the new release removed.
+
 ## Configuration
 
 After installation, configure the plugin from
