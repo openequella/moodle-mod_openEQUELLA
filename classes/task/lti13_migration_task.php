@@ -98,7 +98,7 @@ class lti13_migration_task extends adhoc_task
      */
     private  function getModuleId($moduleName) {
         global $DB;
-        return $DB->get_field_sql("SELECT id FROM {modules} WHERE name = '$moduleName'");
+        return $DB->get_field('modules', 'id', ['name' => $moduleName]);
     }
 
     public function execute()
@@ -111,11 +111,11 @@ class lti13_migration_task extends adhoc_task
 
             $ltiTool = new stdClass();
             $ltiTypeName = $this->get_custom_data();
-            $ltiTypeID = $DB->get_field_sql("SELECT id FROM {lti_types} WHERE name = '" . $ltiTypeName . "'");
+            $ltiTypeID = $DB->get_field('lti_types', 'id', ['name' => $ltiTypeName]);
             $ltiTool->id = $ltiTypeID;
             $ltiTool->configurations = lti_get_type_config($ltiTypeID);
 
-            $courseModuleList = $DB->get_records_sql("SELECT * FROM {course_modules} cm WHERE cm.module = " . $oeqMoodleModuleID);
+            $courseModuleList = $DB->get_records('course_modules', ['module' => $oeqMoodleModuleID]);
 
             foreach ($courseModuleList as $cm) {
                 echo "Processing course ID: " . $cm->course . " openEQUELLA resource ID: " . $cm->instance . "\n";

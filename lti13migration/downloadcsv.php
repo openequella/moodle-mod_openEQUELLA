@@ -36,10 +36,10 @@ $oeqMoodleModuleID = $DB->get_field_sql("SELECT id FROM {modules} WHERE name = '
 // the specified modules.
 // So using the below SQL should be better.
 $courseSql = "SELECT c.id, c.fullname FROM {course} c, {course_modules} cm" .
-    " WHERE cm.module = " . $oeqMoodleModuleID .
+    " WHERE cm.module = :moduleid" .
     " AND c.id = cm.course" .
     " GROUP BY c.id, c.fullname HAVING count(*) > 0";
-$courses = $DB->get_records_sql($courseSql);
+$courses = $DB->get_records_sql($courseSql, ['moduleid' => $oeqMoodleModuleID]);
 
 $csvHeaders = array('Course ID', 'Course name', 'Course URL');
 $csvContent = array_map(function ($course) {
