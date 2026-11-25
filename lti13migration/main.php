@@ -1,5 +1,8 @@
 <?php
 require_once('../../../config.php');
+
+require_login();
+require_capability('moodle/site:config', context_system::instance());
 ?>
 
 <!--
@@ -29,7 +32,11 @@ along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 global $DB;
 
 $ltiToolNames = $DB->get_fieldset_sql("SELECT name FROM {lti_types} WHERE ltiversion='1.3.0'");
-$options = implode(array_map(function ($name) { return "<option value='$name'>$name</option>"; }, $ltiToolNames));
+$options = implode(array_map(function ($name) {
+    $escapedName = s($name);
+    return "<option value='$escapedName'>$escapedName</option>";
+}, $ltiToolNames));
+$sesskey = sesskey();
 
 echo "
   <h1>Update oEQ resource links to use LTI 1.3</h1>
@@ -38,7 +45,8 @@ echo "
     Before starting the migration, you can download a CSV which will list all courses which contain items that will be
     affected by the migration. This CSV can be used for review, and no system modifications will occur.
   </p>
-  <form method='GET' action='downloadcsv.php'>
+  <form method='POST' action='downloadcsv.php'>
+    <input type='hidden' name='sesskey' value='$sesskey'>
     <input type='submit' value='Download CSV'>
   </form>
 
@@ -47,7 +55,8 @@ echo "
     in courses may display slightly differently (e.g. use different thumbnails) after the migration. Please ensure that 
     you have backed up your Moodle data before proceeding.
   </p>
-  <form method='GET' action='migrate.php'>
+  <form method='POST' action='migrate.php'>
+    <input type='hidden' name='sesskey' value='$sesskey'>
 
     <label for=\"ltiTypeName\">Please select the LTI 1.3 tool you want to use in the migration</label>
     <select name='ltiTypeName'> $options </select> 

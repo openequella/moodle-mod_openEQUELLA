@@ -19,6 +19,10 @@ require_once($CFG->dirroot . '/mod/lti/classes/external.php');
 require_once($CFG->dirroot . '/lib/datalib.php');
 require_once($CFG->dirroot . '/mod/equella/lib.php');
 
+require_login();
+require_capability('moodle/site:config', context_system::instance());
+require_sesskey();
+
 global $DB;
 
 header('Content-Type: text/csv; charset=utf-8');
