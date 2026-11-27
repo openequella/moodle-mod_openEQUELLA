@@ -1,6 +1,10 @@
 <?php
 require_once('../../../config.php');
 
+require_login();
+require_capability('moodle/site:config', context_system::instance());
+require_sesskey();
+
 function buildUrl($page) {
     return (new moodle_url($page)) -> out(false);
 }
@@ -10,7 +14,7 @@ $taskLogsPage = buildUrl('/admin/tasklogs.php');
 $purgeCachePage = buildUrl('/admin/purgecaches.php');
 
 $task = new \mod_equella\task\lti13_migration_task();
-$task -> set_custom_data($_GET['ltiTypeName']);
+$task -> set_custom_data(required_param('ltiTypeName', PARAM_TEXT));
 \core\task\manager::queue_adhoc_task($task);
 ?>
 

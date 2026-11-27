@@ -19,6 +19,10 @@ require_once($CFG->dirroot . '/mod/lti/classes/external.php');
 require_once($CFG->dirroot . '/lib/datalib.php');
 require_once($CFG->dirroot . '/mod/equella/lib.php');
 
+require_login();
+require_capability('moodle/site:config', context_system::instance());
+require_sesskey();
+
 global $DB;
 
 header('Content-Type: text/csv; charset=utf-8');
@@ -32,10 +36,10 @@ $oeqMoodleModuleID = $DB->get_field_sql("SELECT id FROM {modules} WHERE name = '
 // the specified modules.
 // So using the below SQL should be better.
 $courseSql = "SELECT c.id, c.fullname FROM {course} c, {course_modules} cm" .
-    " WHERE cm.module = " . $oeqMoodleModuleID .
+    " WHERE cm.module = :moduleid" .
     " AND c.id = cm.course" .
     " GROUP BY c.id, c.fullname HAVING count(*) > 0";
-$courses = $DB->get_records_sql($courseSql);
+$courses = $DB->get_records_sql($courseSql, ['moduleid' => $oeqMoodleModuleID]);
 
 $csvHeaders = array('Course ID', 'Course name', 'Course URL');
 $csvContent = array_map(function ($course) {
